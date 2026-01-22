@@ -153,6 +153,13 @@ export const LuckyDraw = () => {
         ...prev,
         [place]: { ...prev[place], remaining: prev[place].remaining - batchSize },
       }));
+      
+      // Clear history if this prize is now fully drawn
+      const newRemaining = prizes[place].remaining - batchSize;
+      if (newRemaining === 0) {
+        setHistory([]);
+      }
+      
       setIsDrawing(false);
     }, totalTime);
   }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes]);
