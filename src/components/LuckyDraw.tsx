@@ -333,10 +333,10 @@ export const LuckyDraw = () => {
             <Button
               onClick={drawNumber}
               disabled={isDrawing || isComplete}
-              className="draw-button text-primary-foreground min-w-[280px]"
+              className="draw-button text-primary-foreground min-w-[320px] px-8 py-6 text-xl md:text-2xl"
               size="lg"
             >
-              <Sparkles className="w-5 h-5 mr-2" />
+              <Sparkles className="w-7 h-7 mr-3" />
               {getButtonText()}
             </Button>
             
