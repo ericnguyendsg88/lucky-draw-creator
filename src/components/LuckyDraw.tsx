@@ -49,6 +49,7 @@ export const LuckyDraw = () => {
   const [prizes, setPrizes] = useState(initialPrizes);
   const [currentNumber, setCurrentNumber] = useState<number | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
   const [history, setHistory] = useState<DrawnNumber[]>([]);
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
   const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
@@ -121,13 +122,15 @@ export const LuckyDraw = () => {
     numbersToAdd.forEach((num, index) => {
       const startTime = index * totalTimePerNumber;
       
-      // Start rolling sound for this number
+      // Start spinning for this number
       setTimeout(() => {
+        setIsSpinning(true);
         const rollingSound = soundManager.startContinuousRolling();
         
-        // Show the number after animation
+        // Stop spinning and show the number after animation
         setTimeout(() => {
           rollingSound?.stop();
+          setIsSpinning(false);
           soundManager.playNumberLand();
           setCurrentNumber(num);
           setHistory(prev => [{ number: num, place }, ...prev]);
@@ -311,7 +314,7 @@ export const LuckyDraw = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <NumberDisplay number={currentNumber} isDrawing={isDrawing} />
+          <NumberDisplay number={currentNumber} isDrawing={isSpinning} />
           
           {/* Draw Button */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
