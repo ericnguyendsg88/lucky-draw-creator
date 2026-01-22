@@ -85,12 +85,21 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', sans-serif;
-    background: var(--gradient-primary);
+    background: url('/background.jpg') no-repeat center center fixed;
+    background-size: cover;
     min-height: 100vh;
-    background-size: 100% 100%;
-    background-attachment: fixed;
     overflow-x: hidden;
     position: relative;
+  }
+  
+  /* Overlay for better text readability */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    z-index: 0;
   }
   
   /* Stage spotlight effects */
@@ -99,12 +108,12 @@
     position: fixed;
     inset: 0;
     background: 
-      linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%),
-      linear-gradient(225deg, rgba(255, 255, 255, 0.15) 0%, transparent 30%),
-      linear-gradient(-45deg, rgba(255, 255, 255, 0.1) 0%, transparent 25%),
-      linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 25%);
+      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 30%),
+      linear-gradient(225deg, rgba(255, 255, 255, 0.05) 0%, transparent 30%),
+      linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 0%, transparent 25%),
+      linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0%, transparent 25%);
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
     animation: spotlightMove 8s ease-in-out infinite;
   }
   
