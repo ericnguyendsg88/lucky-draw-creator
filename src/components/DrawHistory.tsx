@@ -1,4 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "./ui/button";
+import { Trash2 } from "lucide-react";
 
 interface DrawnNumber {
   number: number;
@@ -7,6 +9,7 @@ interface DrawnNumber {
 
 interface DrawHistoryProps {
   history: DrawnNumber[];
+  onClear: () => void;
 }
 
 const placeColors = {
@@ -40,7 +43,7 @@ const placeSizes = {
   4: "px-5 py-3 text-base md:text-lg", // 4th - Medium
 };
 
-export const DrawHistory = ({ history }: DrawHistoryProps) => {
+export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
   if (history.length === 0) return null;
   
   return (
@@ -49,14 +52,25 @@ export const DrawHistory = ({ history }: DrawHistoryProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <h3 
-        className="text-3xl md:text-4xl font-display font-black mb-6 text-center text-white"
-        style={{
-          textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
-        }}
-      >
-        ✨ LỊCH SỬ BỐC THĂM ✨
-      </h3>
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <h3 
+          className="text-3xl md:text-4xl font-display font-black text-center text-white"
+          style={{
+            textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
+          }}
+        >
+          ✨ LỊCH SỬ BỐC THĂM ✨
+        </h3>
+        <Button
+          onClick={onClear}
+          variant="outline"
+          size="sm"
+          className="border-red-400/40 hover:bg-red-500/20 hover:border-red-400/60 text-red-200"
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Xóa
+        </Button>
+      </div>
       <div 
         className="flex flex-wrap gap-4 md:gap-5 justify-center max-h-80 overflow-y-auto p-6 md:p-8 rounded-3xl"
         style={{

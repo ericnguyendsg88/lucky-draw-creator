@@ -179,6 +179,11 @@ export const LuckyDraw = () => {
     setSelectedPlace(null);
   };
   
+  const clearHistory = () => {
+    soundManager.playClick();
+    setHistory([]);
+  };
+  
   const getButtonText = () => {
     if (isComplete) return "Đã Bốc Hết Giải Thưởng!";
     if (isDrawing) return "Đang Bốc Thăm...";
@@ -365,7 +370,7 @@ export const LuckyDraw = () => {
         </motion.div>
         
         {/* History */}
-        <DrawHistory history={history} />
+        <DrawHistory history={history} onClear={clearHistory} />
         
         {/* Completion Message */}
         {isComplete && (
