@@ -51,13 +51,7 @@ export const LuckyDraw = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
   const [history, setHistory] = useState<DrawnNumber[]>([]);
-  const [drawnNumbersByPrize, setDrawnNumbersByPrize] = useState<Record<0 | 1 | 2 | 3 | 4, Set<number>>>({
-    0: new Set(),
-    1: new Set(),
-    2: new Set(),
-    3: new Set(),
-    4: new Set(),
-  });
+  const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
   const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
   
   // Auto-select first available prize if none selected
@@ -113,15 +107,15 @@ export const LuckyDraw = () => {
     
     // Generate all numbers at once
     const numbersToAdd: number[] = [];
-    const currentPrizeDrawnNumbers = new Set(drawnNumbersByPrize[place]);
+    const newDrawnNumbers = new Set(drawnNumbers);
     
     for (let i = 0; i < batchSize; i++) {
       let newNumber: number;
       do {
         newNumber = Math.floor(Math.random() * 1000);
-      } while (currentPrizeDrawnNumbers.has(newNumber));
+      } while (newDrawnNumbers.has(newNumber));
       numbersToAdd.push(newNumber);
-      currentPrizeDrawnNumbers.add(newNumber);
+      newDrawnNumbers.add(newNumber);
     }
     
     // Draw numbers sequentially
@@ -154,23 +148,16 @@ export const LuckyDraw = () => {
     // Update state after all numbers are shown
     const totalTime = numbersToAdd.length * totalTimePerNumber;
     setTimeout(() => {
-      setDrawnNumbersByPrize(prev => ({
-        ...prev,
-        [place]: currentPrizeDrawnNumbers,
-      }));
+      setDrawnNumbers(newDrawnNumbers);
       setPrizes(prev => ({
         ...prev,
         [place]: { ...prev[place], remaining: prev[place].remaining - batchSize },
       }));
       
-      // Clear history and drawn numbers if this prize is now fully drawn
+      // Clear history if this prize is now fully drawn
       const newRemaining = prizes[place].remaining - batchSize;
       if (newRemaining === 0) {
         setHistory([]);
-        setDrawnNumbersByPrize(prev => ({
-          ...prev,
-          [place]: new Set(),
-        }));
       }
       
       setIsDrawing(false);
@@ -188,13 +175,7 @@ export const LuckyDraw = () => {
     setPrizes(initialPrizes);
     setCurrentNumber(null);
     setHistory([]);
-    setDrawnNumbersByPrize({
-      0: new Set(),
-      1: new Set(),
-      2: new Set(),
-      3: new Set(),
-      4: new Set(),
-    });
+    setDrawnNumbers(new Set());
     setSelectedPlace(null);
   };
   
