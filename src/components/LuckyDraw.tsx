@@ -99,9 +99,9 @@ export const LuckyDraw = () => {
     setIsDrawing(true);
     const place = currentPlace;
     const batchSize = Math.min(batchSizes[place], prizes[place].remaining);
-    // Each number gets 2s animation + 3s pause
-    const drawDurationPerNumber = 2000; // Slot machine spinning time
-    const pauseBetweenNumbers = 3000; // Pause after each number lands
+    // Each number gets 2.5s animation + 5s clear display pause
+    const drawDurationPerNumber = 2500; // Slot machine spinning time
+    const pauseBetweenNumbers = 5000; // Longer pause to clearly display each number
     const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     // Generate all numbers at once
