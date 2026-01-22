@@ -135,6 +135,12 @@ export const LuckyDraw = () => {
           setCurrentNumber(num);
           setHistory(prev => [{ number: num, place }, ...prev]);
           
+          // Decrease remaining count for this prize by 1
+          setPrizes(prev => ({
+            ...prev,
+            [place]: { ...prev[place], remaining: prev[place].remaining - 1 },
+          }));
+          
           // Trigger confetti and win sound for each number
           triggerConfetti(place);
           if (index === numbersToAdd.length - 1) {
@@ -145,14 +151,10 @@ export const LuckyDraw = () => {
       }, startTime);
     });
     
-    // Update state after all numbers are shown
+    // Update drawn numbers and check if prize is complete
     const totalTime = numbersToAdd.length * totalTimePerNumber;
     setTimeout(() => {
       setDrawnNumbers(newDrawnNumbers);
-      setPrizes(prev => ({
-        ...prev,
-        [place]: { ...prev[place], remaining: prev[place].remaining - batchSize },
-      }));
       
       // Clear history if this prize is now fully drawn
       const newRemaining = prizes[place].remaining - batchSize;
