@@ -183,7 +183,7 @@ export const LuckyDraw = () => {
   };
   
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4 pt-32">
       {/* Animated floating particles */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
