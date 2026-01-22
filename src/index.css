@@ -180,13 +180,11 @@
   
   .prize-card {
     @apply rounded-2xl p-5 text-center transition-all duration-300;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(20, 30, 60, 0.7);
+    border: 2px solid rgba(100, 150, 255, 0.3);
     box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.6),
-      0 0 30px rgba(100, 150, 255, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      0 8px 24px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(100, 150, 255, 0.2);
     position: relative;
     overflow: hidden;
   }
@@ -313,15 +311,12 @@
   /* Slot Machine Styles */
   .slot-machine-container {
     @apply relative rounded-3xl p-8 md:p-12;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.12) 0%, rgba(50, 80, 150, 0.15) 100%);
-    backdrop-filter: blur(30px);
-    border: 3px solid rgba(255, 255, 255, 0.25);
+    background: linear-gradient(135deg, rgba(30, 40, 90, 0.85) 0%, rgba(20, 30, 70, 0.85) 100%);
+    border: 3px solid rgba(100, 150, 255, 0.3);
     box-shadow: 
-      0 30px 80px rgba(0, 0, 0, 0.8),
-      0 0 100px rgba(100, 150, 255, 0.4),
-      0 0 60px rgba(150, 200, 255, 0.3),
-      inset 0 2px 0 rgba(255, 255, 255, 0.2),
-      inset 0 -2px 0 rgba(0, 0, 0, 0.5);
+      0 20px 60px rgba(0, 0, 0, 0.7),
+      0 0 80px rgba(100, 150, 255, 0.3),
+      0 0 40px rgba(150, 200, 255, 0.2);
   }
   
   .slot-digits-wrapper {
@@ -336,14 +331,12 @@
     @apply relative overflow-hidden rounded-2xl;
     width: 80px;
     height: 120px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 245, 255, 0.9) 100%);
-    backdrop-filter: blur(10px);
-    border: 3px solid rgba(255, 255, 255, 0.4);
+    background: linear-gradient(180deg, #e8f0ff 0%, #dce8ff 100%);
+    border: 3px solid rgba(59, 130, 246, 0.4);
     box-shadow: 
-      inset 0 2px 8px rgba(150, 180, 255, 0.3),
-      0 8px 24px rgba(0, 0, 0, 0.6),
-      0 0 40px rgba(150, 200, 255, 0.5),
-      0 0 20px rgba(200, 220, 255, 0.4);
+      inset 0 1px 3px rgba(150, 180, 255, 0.4),
+      0 8px 20px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(150, 200, 255, 0.4);
   }
   
   @media (min-width: 768px) {
@@ -431,13 +424,11 @@
   
   .history-number {
     @apply px-5 py-3 rounded-xl text-base md:text-lg font-mono font-black;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(40, 50, 100, 0.8) 0%, rgba(30, 40, 80, 0.8) 100%);
+    border: 2px solid rgba(100, 150, 255, 0.3);
     box-shadow: 
-      0 6px 16px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(100, 150, 255, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      0 6px 16px rgba(0, 0, 0, 0.4),
+      0 0 25px rgba(100, 150, 255, 0.3);
     transition: all 0.3s ease;
   }
   
