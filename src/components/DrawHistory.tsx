@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DrawnNumber {
   number: number;
@@ -66,24 +66,27 @@ export const DrawHistory = ({ history }: DrawHistoryProps) => {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
         }}
       >
-        {history.map((item, index) => (
-          <motion.div
-            key={`${item.number}-${index}`}
-            className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
-            initial={{ opacity: 0, scale: 0.5, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ 
-              delay: 0.05,
-              type: "spring",
-              stiffness: 260,
-              damping: 20
-            }}
-            whileHover={{ scale: item.place === 0 ? 1.15 : 1.12, y: -4 }}
-          >
-            <span className={item.place === 0 ? "text-2xl md:text-3xl mr-2" : "text-xl md:text-2xl mr-2"}>{placeEmojis[item.place]}</span>
-            <span className="font-black">{String(item.number).padStart(3, "0")}</span>
-          </motion.div>
-        ))}
+        <AnimatePresence initial={false}>
+          {history.map((item, index) => (
+            <motion.div
+              key={`${item.number}-${item.place}-${history.length - index}`}
+              className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
+              initial={{ opacity: 0, scale: 0.5, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 260,
+                damping: 20
+              }}
+              layout
+              whileHover={{ scale: item.place === 0 ? 1.15 : 1.12, y: -4 }}
+            >
+              <span className={item.place === 0 ? "text-2xl md:text-3xl mr-2" : "text-xl md:text-2xl mr-2"}>{placeEmojis[item.place]}</span>
+              <span className="font-black">{String(item.number).padStart(3, "0")}</span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
