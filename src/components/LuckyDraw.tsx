@@ -99,12 +99,10 @@ export const LuckyDraw = () => {
     setIsDrawing(true);
     const place = currentPlace;
     const batchSize = Math.min(batchSizes[place], prizes[place].remaining);
-    // Special prize gets longer animation time for dramatic effect
-    const drawDuration = place === 0 ? 3500 : 2000;
-    const intervalBetweenNumbers = 300;
-    
-    // Start continuous rolling sound
-    const rollingSound = soundManager.startContinuousRolling();
+    // Each number gets 2s animation + 3s pause
+    const drawDurationPerNumber = 2000; // Slot machine spinning time
+    const pauseBetweenNumbers = 3000; // Pause after each number lands
+    const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     // Generate all numbers at once
     const numbersToAdd: number[] = [];
@@ -119,37 +117,41 @@ export const LuckyDraw = () => {
       newDrawnNumbers.add(newNumber);
     }
     
-    // Animate drawing
-    setTimeout(() => {
-      // Stop rolling sound
-      rollingSound?.stop();
+    // Draw numbers sequentially
+    numbersToAdd.forEach((num, index) => {
+      const startTime = index * totalTimePerNumber;
       
-      // Show numbers one by one
-      numbersToAdd.forEach((num, index) => {
+      // Start rolling sound for this number
+      setTimeout(() => {
+        const rollingSound = soundManager.startContinuousRolling();
+        
+        // Show the number after animation
         setTimeout(() => {
+          rollingSound?.stop();
           soundManager.playNumberLand();
           setCurrentNumber(num);
           setHistory(prev => [{ number: num, place }, ...prev]);
           
-          // Trigger confetti and win sound for the last number
+          // Trigger confetti and win sound for each number
+          triggerConfetti(place);
           if (index === numbersToAdd.length - 1) {
-            triggerConfetti(place);
             const winIntensity = place === 0 ? 'large' : place <= 2 ? 'medium' : 'small';
             soundManager.playWin(winIntensity);
           }
-        }, index * intervalBetweenNumbers);
-      });
-      
-      // Update state after all numbers are shown
-      setTimeout(() => {
-        setDrawnNumbers(newDrawnNumbers);
-        setPrizes(prev => ({
-          ...prev,
-          [place]: { ...prev[place], remaining: prev[place].remaining - batchSize },
-        }));
-        setIsDrawing(false);
-      }, numbersToAdd.length * intervalBetweenNumbers + 500);
-    }, drawDuration);
+        }, drawDurationPerNumber);
+      }, startTime);
+    });
+    
+    // Update state after all numbers are shown
+    const totalTime = numbersToAdd.length * totalTimePerNumber;
+    setTimeout(() => {
+      setDrawnNumbers(newDrawnNumbers);
+      setPrizes(prev => ({
+        ...prev,
+        [place]: { ...prev[place], remaining: prev[place].remaining - batchSize },
+      }));
+      setIsDrawing(false);
+    }, totalTime);
   }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes]);
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
