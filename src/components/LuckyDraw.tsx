@@ -172,6 +172,9 @@ export const LuckyDraw = () => {
   };
   
   const reset = () => {
+    soundManager.playClick();
+    setIsDrawing(false);
+    setIsSpinning(false);
     setPrizes(initialPrizes);
     setCurrentNumber(null);
     setHistory([]);
