@@ -2,61 +2,132 @@ import { motion } from "framer-motion";
 import { Trophy, Award, Medal, Star } from "lucide-react";
 
 interface PrizeCardProps {
-  place: 1 | 2 | 3 | 4;
+  place: 0 | 1 | 2 | 3 | 4;
   total: number;
   remaining: number;
   isActive: boolean;
+  isSelected?: boolean;
 }
 
 const prizeConfig = {
+  0: {
+    label: "Giải Đặc Biệt",
+    icon: Trophy,
+    className: "prize-card-special",
+    iconColor: "text-pink-300",
+    bgGradient: "from-pink-500/10 via-purple-500/10 to-transparent",
+    emoji: "💎",
+    prizeAmount: "10,000,000",
+  },
   1: {
-    label: "1st Place",
+    label: "Giải Nhất",
     icon: Trophy,
     className: "prize-card-gold",
-    iconColor: "text-gold",
-    bgGradient: "from-gold/20 to-gold/5",
+    iconColor: "text-yellow-300",
+    bgGradient: "from-yellow-500/10 via-yellow-400/5 to-transparent",
+    emoji: "👑",
+    prizeAmount: "7,000,000",
   },
   2: {
-    label: "2nd Place",
+    label: "Giải Nhì",
     icon: Award,
     className: "prize-card-silver",
-    iconColor: "text-silver",
-    bgGradient: "from-silver/20 to-silver/5",
+    iconColor: "text-slate-100",
+    bgGradient: "from-slate-100/10 via-slate-200/5 to-transparent",
+    emoji: "🥈",
+    prizeAmount: "5,000,000",
   },
   3: {
-    label: "3rd Place",
+    label: "Giải Ba",
     icon: Medal,
     className: "prize-card-bronze",
-    iconColor: "text-bronze",
-    bgGradient: "from-bronze/20 to-bronze/5",
+    iconColor: "text-orange-300",
+    bgGradient: "from-orange-400/10 via-orange-300/5 to-transparent",
+    emoji: "🥉",
+    prizeAmount: "2,000,000",
   },
   4: {
-    label: "4th Place",
+    label: "Giải Tư",
     icon: Star,
     className: "prize-card-fourth",
-    iconColor: "text-fourth",
-    bgGradient: "from-fourth/20 to-fourth/5",
+    iconColor: "text-blue-300",
+    bgGradient: "from-blue-400/10 via-blue-300/5 to-transparent",
+    emoji: "⭐",
+    prizeAmount: "1,000,000",
   },
 };
 
-export const PrizeCard = ({ place, total, remaining, isActive }: PrizeCardProps) => {
+export const PrizeCard = ({ place, total, remaining, isActive, isSelected = false }: PrizeCardProps) => {
   const config = prizeConfig[place];
   const Icon = config.icon;
+  const progress = ((total - remaining) / total) * 100;
   
   return (
     <motion.div
-      className={`prize-card ${config.className} ${isActive ? 'ring-2 ring-primary scale-105' : ''} bg-gradient-to-b ${config.bgGradient}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: (4 - place) * 0.1 }}
-      whileHover={{ scale: isActive ? 1.05 : 1.02 }}
+      className={`prize-card ${config.className} ${isSelected ? 'ring-4 ring-white/60' : ''} bg-gradient-to-br ${config.bgGradient} relative overflow-hidden`}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ 
+        opacity: 1, 
+        y: 0,
+        scale: isSelected ? 1.1 : (isActive ? 1.05 : 1)
+      }}
+      transition={{ duration: 0.2, type: "spring", stiffness: 400, damping: 25 }}
+      whileHover={{ scale: isSelected ? 1.12 : (isActive ? 1.08 : 1.03), y: -4 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <Icon className={`w-8 h-8 mx-auto mb-2 ${config.iconColor}`} />
-      <h3 className="font-display font-bold text-lg mb-1">{config.label}</h3>
-      <div className="text-3xl font-display font-bold mb-1">
-        {remaining}<span className="text-muted-foreground text-lg">/{total}</span>
+      {/* Animated background glow */}
+      {isActive && (
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          style={{
+            background: `radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.2) 0%, transparent 70%)`,
+            opacity: 0.2,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+      )}
+      
+      <motion.div
+        className="relative z-10"
+        animate={isActive ? { 
+          y: [0, -5, 0],
+        } : {}}
+        transition={{ duration: 0.6, repeat: Infinity }}
+      >
+        <div className="text-3xl md:text-4xl mb-1">{config.emoji}</div>
+        <Icon className={`w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 ${config.iconColor}`} />
+      </motion.div>
+      <h3 className="font-display font-bold text-sm md:text-base mb-1 relative z-10">{config.label}</h3>
+      
+      {/* Prize Amount */}
+      <div className="mb-2 relative z-10">
+        <div className={`text-lg md:text-xl font-black ${config.iconColor}`}>
+          {config.prizeAmount}
+        </div>
+        <div className="text-xs text-blue-100/60 font-medium">VND</div>
       </div>
-      <p className="text-xs text-muted-foreground">remaining</p>
+      
+      <div className="text-2xl md:text-3xl font-display font-black mb-1 relative z-10">
+        {remaining}<span className="text-muted-foreground text-base md:text-lg font-semibold">/{total}</span>
+      </div>
+      <p className="text-xs text-muted-foreground mb-3 relative z-10">còn lại</p>
+      
+      {/* Progress bar */}
+      <div className="w-full bg-black/30 rounded-full h-2 overflow-hidden backdrop-blur-sm relative z-10">
+        <motion.div 
+          className={`h-full ${config.iconColor} bg-current rounded-full`}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          style={{
+            boxShadow: `0 0 10px currentColor`,
+          }}
+        />
+      </div>
     </motion.div>
   );
 };

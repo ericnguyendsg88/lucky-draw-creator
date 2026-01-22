@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -49,6 +49,10 @@
     --gradient-silver: linear-gradient(135deg, hsl(210 20% 85%) 0%, hsl(210 20% 70%) 50%, hsl(210 20% 85%) 100%);
     --gradient-bronze: linear-gradient(135deg, hsl(25 80% 55%) 0%, hsl(30 70% 50%) 50%, hsl(25 80% 60%) 100%);
     --gradient-fourth: linear-gradient(135deg, hsl(210 100% 65%) 0%, hsl(210 100% 55%) 50%, hsl(210 100% 70%) 100%);
+    
+    --shadow-glow: 0 0 30px hsl(217 91% 60% / 0.3);
+    --shadow-gold: 0 0 40px hsl(45 93% 58% / 0.4);
+  }
     
     --shadow-glow: 0 0 30px hsl(217 91% 60% / 0.3);
     --shadow-gold: 0 0 40px hsl(45 93% 58% / 0.4);
@@ -178,29 +182,6 @@
       0 8px 32px rgba(0, 0, 0, 0.6),
       0 0 30px rgba(100, 150, 255, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .prize-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      45deg,
-      transparent,
-      rgba(255, 255, 255, 0.15),
-      transparent
-    );
-    transform: rotate(45deg);
-    transition: all 0.6s;
-  }
-  
-  .prize-card:hover::before {
-    left: 100%;
   }
   
   .prize-card-gold {
@@ -214,11 +195,9 @@
   .prize-card-gold:hover {
     box-shadow: 
       0 12px 48px rgba(0, 0, 0, 0.7),
-      0 0 60px hsl(var(--gold) / 0.6),
-      0 0 40px hsl(var(--gold-light) / 0.5),
+      0 0 50px hsl(var(--gold) / 0.5),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transform: translateY(-6px) scale(1.02);
-    border-color: hsl(var(--gold) / 0.8);
+    transform: translateY(-4px);
   }
   
   .prize-card-silver {
@@ -232,11 +211,9 @@
   .prize-card-silver:hover {
     box-shadow: 
       0 12px 48px rgba(0, 0, 0, 0.7),
-      0 0 60px rgba(200, 200, 255, 0.5),
-      0 0 40px rgba(230, 230, 255, 0.4),
+      0 0 50px rgba(200, 200, 255, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transform: translateY(-6px) scale(1.02);
-    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-4px);
   }
   
   .prize-card-bronze {
@@ -250,11 +227,9 @@
   .prize-card-bronze:hover {
     box-shadow: 
       0 12px 48px rgba(0, 0, 0, 0.7),
-      0 0 60px hsl(var(--bronze) / 0.5),
-      0 0 40px hsl(25 80% 65% / 0.4),
+      0 0 50px hsl(var(--bronze) / 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transform: translateY(-6px) scale(1.02);
-    border-color: hsl(var(--bronze) / 0.7);
+    transform: translateY(-4px);
   }
   
   .prize-card-fourth {
@@ -268,31 +243,9 @@
   .prize-card-fourth:hover {
     box-shadow: 
       0 12px 48px rgba(0, 0, 0, 0.7),
-      0 0 60px hsl(210 100% 60% / 0.6),
-      0 0 40px hsl(210 100% 70% / 0.5),
+      0 0 50px hsl(210 100% 60% / 0.5),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transform: translateY(-6px) scale(1.02);
-    border-color: hsl(210 100% 60% / 0.7);
-  }
-  
-  .prize-card-special {
-    border-color: hsl(320 100% 60% / 0.6);
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.6),
-      0 0 40px hsl(320 100% 60% / 0.4),
-      0 0 60px hsl(280 100% 60% / 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  }
-  
-  .prize-card-special:hover {
-    box-shadow: 
-      0 12px 48px rgba(0, 0, 0, 0.7),
-      0 0 80px hsl(320 100% 60% / 0.7),
-      0 0 60px hsl(280 100% 60% / 0.6),
-      0 0 40px hsl(340 100% 60% / 0.5),
-      inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    transform: translateY(-6px) scale(1.02);
-    border-color: hsl(320 100% 60% / 0.8);
+    transform: translateY(-4px);
   }
   
   .number-display {
@@ -421,15 +374,13 @@
   }
   
   .history-number {
-    @apply px-5 py-3 rounded-xl text-base md:text-lg font-mono font-black;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    @apply px-3 py-1 rounded-lg text-sm font-mono font-bold;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     box-shadow: 
-      0 6px 16px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(100, 150, 255, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    transition: all 0.3s ease;
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(100, 150, 255, 0.15);
   }
   
   @keyframes float {
