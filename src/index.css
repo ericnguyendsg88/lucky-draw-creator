@@ -85,7 +85,7 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', sans-serif;
-    background: url('/background.jpg') no-repeat center center fixed;
+    background: url('/background.jpg') no-repeat center center scroll;
     background-size: cover;
     min-height: 100vh;
     overflow-x: hidden;
