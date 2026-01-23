@@ -153,11 +153,9 @@ export const LuckyDraw = () => {
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
     if (prizes[place].remaining > 0 && !isDrawing) {
+      soundManager.playClick();
       setSelectedPlace(place);
-      // Automatically start drawing after selecting
-      setTimeout(() => {
-        drawNumber();
-      }, 100);
+      setIsFocusMode(true);
     }
   };
   
