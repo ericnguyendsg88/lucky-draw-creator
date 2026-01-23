@@ -30,16 +30,16 @@ interface PrizeState {
 }
 
 const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
-  4: { total: 60, remaining: 60 },
-  3: { total: 30, remaining: 30 },
+  4: { total: 48, remaining: 48 },
+  3: { total: 24, remaining: 24 },
   2: { total: 2, remaining: 2 },
   1: { total: 1, remaining: 1 },
   0: { total: 1, remaining: 1 },
 };
 
 const batchSizes: Record<0 | 1 | 2 | 3 | 4, number> = {
-  4: 20,
-  3: 10,
+  4: 16,
+  3: 12,
   2: 1,
   1: 1,
   0: 1,
