@@ -53,21 +53,10 @@ export const LuckyDraw = () => {
   const [history, setHistory] = useState<DrawnNumber[]>([]);
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
   const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
+  const [isFocusMode, setIsFocusMode] = useState(false);
   
-  // Auto-select first available prize if none selected
-  const getFirstAvailablePlace = useCallback((): 0 | 1 | 2 | 3 | 4 | null => {
-    if (prizes[4].remaining > 0) return 4;
-    if (prizes[3].remaining > 0) return 3;
-    if (prizes[2].remaining > 0) return 2;
-    if (prizes[1].remaining > 0) return 1;
-    if (prizes[0].remaining > 0) return 0;
-    return null;
-  }, [prizes]);
-  
-  const currentPlace = selectedPlace !== null && prizes[selectedPlace].remaining > 0 
-    ? selectedPlace 
-    : getFirstAvailablePlace();
-  const isComplete = currentPlace === null;
+  const currentPlace = selectedPlace;
+  const isComplete = currentPlace === null || prizes[currentPlace].remaining === 0;
   
   const triggerConfetti = (place: 0 | 1 | 2 | 3 | 4) => {
     const intensity = {
@@ -98,6 +87,7 @@ export const LuckyDraw = () => {
     
     soundManager.playClick();
     setIsDrawing(true);
+    setIsFocusMode(true);
     const place = currentPlace;
     const batchSize = Math.min(batchSizes[place], prizes[place].remaining);
     // Each number gets 2.5s animation + 5s clear display pause
@@ -156,13 +146,8 @@ export const LuckyDraw = () => {
     setTimeout(() => {
       setDrawnNumbers(newDrawnNumbers);
       
-      // Clear history if this prize is now fully drawn
-      const newRemaining = prizes[place].remaining - batchSize;
-      if (newRemaining === 0) {
-        setHistory([]);
-      }
-      
       setIsDrawing(false);
+      setIsFocusMode(false);
     }, totalTime);
   }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes]);
   
@@ -182,6 +167,7 @@ export const LuckyDraw = () => {
     setHistory([]);
     setDrawnNumbers(new Set());
     setSelectedPlace(null);
+    setIsFocusMode(false);
   };
   
   const clearHistory = () => {
@@ -190,9 +176,9 @@ export const LuckyDraw = () => {
   };
   
   const getButtonText = () => {
-    if (isComplete) return "Đã Bốc Hết Giải Thưởng!";
     if (isDrawing) return "Đang Bốc Thăm...";
-    if (currentPlace === null) return "Không có giải";
+    if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
+    if (prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
     const placeLabels = { 0: "Đặc Biệt", 1: "Nhất", 2: "Nhì", 3: "Ba", 4: "Tư" };
     const batchSize = Math.min(batchSizes[currentPlace], prizes[currentPlace].remaining);
     const remaining = prizes[currentPlace].remaining;
@@ -295,33 +281,74 @@ export const LuckyDraw = () => {
         <motion.div 
           className="mb-4"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
+          animate={{ 
+            opacity: isFocusMode && selectedPlace !== 0 ? 0 : 1, 
+            y: isFocusMode && selectedPlace !== 0 ? 20 : 0,
+            scale: isFocusMode && selectedPlace === 0 ? 1.1 : 1,
+            height: isFocusMode && selectedPlace !== 0 ? 0 : 'auto'
+          }}
+          transition={{ delay: 0.05, duration: 0.5 }}
         >
           <div onClick={() => handlePrizeClick(0)} className="cursor-pointer">
-            <PrizeCard place={0} total={prizes[0].total} remaining={prizes[0].remaining} isActive={currentPlace === 0} isSelected={selectedPlace === 0} />
+            <PrizeCard place={0} total={prizes[0].total} remaining={prizes[0].remaining} isActive={currentPlace === 0} isSelected={selectedPlace === 0} isFocused={isFocusMode && selectedPlace === 0} />
           </div>
         </motion.div>
         
         {/* Prize Cards */}
         <motion.div 
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8"
+          className={`grid gap-3 md:gap-4 mb-8 transition-all duration-500 ${isFocusMode && selectedPlace !== null && selectedPlace !== 0 ? 'grid-cols-1 place-items-center' : 'grid-cols-2 md:grid-cols-4'}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div onClick={() => handlePrizeClick(1)} className="cursor-pointer">
-            <PrizeCard place={1} total={prizes[1].total} remaining={prizes[1].remaining} isActive={currentPlace === 1} isSelected={selectedPlace === 1} />
-          </div>
-          <div onClick={() => handlePrizeClick(2)} className="cursor-pointer">
-            <PrizeCard place={2} total={prizes[2].total} remaining={prizes[2].remaining} isActive={currentPlace === 2} isSelected={selectedPlace === 2} />
-          </div>
-          <div onClick={() => handlePrizeClick(3)} className="cursor-pointer">
-            <PrizeCard place={3} total={prizes[3].total} remaining={prizes[3].remaining} isActive={currentPlace === 3} isSelected={selectedPlace === 3} />
-          </div>
-          <div onClick={() => handlePrizeClick(4)} className="cursor-pointer">
-            <PrizeCard place={4} total={prizes[4].total} remaining={prizes[4].remaining} isActive={currentPlace === 4} isSelected={selectedPlace === 4} />
-          </div>
+          <motion.div 
+            onClick={() => handlePrizeClick(1)} 
+            className="cursor-pointer w-full"
+            animate={{
+              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 1 ? 0 : 1,
+              scale: isFocusMode && selectedPlace === 1 ? 1.2 : 1,
+              height: isFocusMode && selectedPlace !== null && selectedPlace !== 1 ? 0 : 'auto'
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <PrizeCard place={1} total={prizes[1].total} remaining={prizes[1].remaining} isActive={currentPlace === 1} isSelected={selectedPlace === 1} isFocused={isFocusMode && selectedPlace === 1} />
+          </motion.div>
+          <motion.div 
+            onClick={() => handlePrizeClick(2)} 
+            className="cursor-pointer w-full"
+            animate={{
+              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 2 ? 0 : 1,
+              scale: isFocusMode && selectedPlace === 2 ? 1.2 : 1,
+              height: isFocusMode && selectedPlace !== null && selectedPlace !== 2 ? 0 : 'auto'
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <PrizeCard place={2} total={prizes[2].total} remaining={prizes[2].remaining} isActive={currentPlace === 2} isSelected={selectedPlace === 2} isFocused={isFocusMode && selectedPlace === 2} />
+          </motion.div>
+          <motion.div 
+            onClick={() => handlePrizeClick(3)} 
+            className="cursor-pointer w-full"
+            animate={{
+              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 3 ? 0 : 1,
+              scale: isFocusMode && selectedPlace === 3 ? 1.2 : 1,
+              height: isFocusMode && selectedPlace !== null && selectedPlace !== 3 ? 0 : 'auto'
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <PrizeCard place={3} total={prizes[3].total} remaining={prizes[3].remaining} isActive={currentPlace === 3} isSelected={selectedPlace === 3} isFocused={isFocusMode && selectedPlace === 3} />
+          </motion.div>
+          <motion.div 
+            onClick={() => handlePrizeClick(4)} 
+            className="cursor-pointer w-full"
+            animate={{
+              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 4 ? 0 : 1,
+              scale: isFocusMode && selectedPlace === 4 ? 1.2 : 1,
+              height: isFocusMode && selectedPlace !== null && selectedPlace !== 4 ? 0 : 'auto'
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <PrizeCard place={4} total={prizes[4].total} remaining={prizes[4].remaining} isActive={currentPlace === 4} isSelected={selectedPlace === 4} isFocused={isFocusMode && selectedPlace === 4} />
+          </motion.div>
         </motion.div>
         
         {/* Number Display */}
@@ -337,7 +364,7 @@ export const LuckyDraw = () => {
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
             <Button
               onClick={drawNumber}
-              disabled={isDrawing || isComplete}
+              disabled={isDrawing || currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
               className="draw-button text-primary-foreground min-w-[320px] px-8 py-6 text-xl md:text-2xl"
               size="lg"
             >
@@ -378,7 +405,7 @@ export const LuckyDraw = () => {
         <DrawHistory history={history} onClear={clearHistory} />
         
         {/* Completion Message */}
-        {isComplete && (
+        {Object.values(prizes).every(p => p.remaining === 0) && (
           <motion.div
             className="text-center mt-8"
             initial={{ opacity: 0, scale: 0.5 }}

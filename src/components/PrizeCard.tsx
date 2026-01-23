@@ -7,6 +7,7 @@ interface PrizeCardProps {
   remaining: number;
   isActive: boolean;
   isSelected?: boolean;
+  isFocused?: boolean;
 }
 
 const prizeConfig = {
@@ -57,35 +58,37 @@ const prizeConfig = {
   },
 };
 
-export const PrizeCard = ({ place, total, remaining, isActive, isSelected = false }: PrizeCardProps) => {
+export const PrizeCard = ({ place, total, remaining, isActive, isSelected = false, isFocused = false }: PrizeCardProps) => {
   const config = prizeConfig[place];
   const Icon = config.icon;
   const progress = ((total - remaining) / total) * 100;
   
   return (
     <motion.div
-      className={`prize-card ${config.className} ${isSelected ? 'ring-4 ring-white/60' : ''} bg-gradient-to-br ${config.bgGradient} relative overflow-hidden`}
+      className={`prize-card ${config.className} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${config.bgGradient} relative overflow-hidden`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ 
         opacity: 1, 
         y: 0,
-        scale: isSelected ? 1.1 : (isActive ? 1.05 : 1)
+        scale: isSelected && !isFocused ? 1.1 : (isActive ? 1.05 : 1)
       }}
       transition={{ duration: 0.2, type: "spring", stiffness: 400, damping: 25 }}
-      whileHover={{ scale: isSelected ? 1.12 : (isActive ? 1.08 : 1.03), y: -4 }}
+      whileHover={{ scale: isFocused ? 1.02 : (isSelected ? 1.12 : (isActive ? 1.08 : 1.03)), y: isFocused ? 0 : -4 }}
       whileTap={{ scale: 0.98 }}
     >
       {/* Animated background glow */}
-      {isActive && (
+      {(isActive || isFocused) && (
         <motion.div
           className="absolute inset-0 rounded-2xl"
           style={{
-            background: `radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.2) 0%, transparent 70%)`,
-            opacity: 0.2,
+            background: isFocused 
+              ? `radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`
+              : `radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.2) 0%, transparent 70%)`,
+            opacity: isFocused ? 0.4 : 0.2,
           }}
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.2, 0.3, 0.2],
+            opacity: isFocused ? [0.4, 0.6, 0.4] : [0.2, 0.3, 0.2],
           }}
           transition={{ duration: 2, repeat: Infinity }}
         />
