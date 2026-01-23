@@ -5,7 +5,7 @@ import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
 import { DrawHistory } from "./DrawHistory";
 import { Button } from "./ui/button";
-import { Sparkles, RotateCcw } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowLeft } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -174,6 +174,14 @@ export const LuckyDraw = () => {
   const clearHistory = () => {
     soundManager.playClick();
     setHistory([]);
+  };
+  
+  const goBackHome = () => {
+    if (!isDrawing) {
+      soundManager.playClick();
+      setIsFocusMode(false);
+      setSelectedPlace(null);
+    }
   };
   
   const getButtonText = () => {
@@ -354,6 +362,27 @@ export const LuckyDraw = () => {
           transition={{ delay: 0.2 }}
         >
           <NumberDisplay number={currentNumber} isDrawing={isSpinning} />
+          
+          {/* Back to Home Button */}
+          {isFocusMode && (
+            <motion.div
+              className="mb-4"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Button
+                onClick={goBackHome}
+                disabled={isDrawing}
+                variant="outline"
+                size="lg"
+                className="px-6"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Quay Lại Trang Chủ
+              </Button>
+            </motion.div>
+          )}
           
           {/* Draw Button */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
