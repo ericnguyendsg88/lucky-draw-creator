@@ -361,27 +361,6 @@ export const LuckyDraw = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {/* Back to Home Button */}
-          {isFocusMode && (
-            <motion.div
-              className="mb-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Button
-                onClick={goBackHome}
-                disabled={isDrawing}
-                variant="default"
-                size="lg"
-                className="px-10 py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-xl"
-              >
-                <ArrowLeft className="w-6 h-6 mr-3" />
-                Quay Lại Trang Chủ
-              </Button>
-            </motion.div>
-          )}
-          
           <NumberDisplay number={currentNumber} isDrawing={isSpinning} />
           
           {/* Draw Button */}
@@ -418,6 +397,32 @@ export const LuckyDraw = () => {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Hủy</AlertDialogCancel>
                     <AlertDialogAction onClick={reset}>Xác Nhận Làm Lại</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+          
+          {/* Back to Home Button */}
+          {isFocusMode && (
+            <motion.div
+              className="mt-6"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Button
+                onClick={goBackHome}
+                disabled={isDrawing}
+                variant="default"
+                size="lg"
+                className="px-10 py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-xl"
+              >
+                <ArrowLeft className="w-6 h-6 mr-3" />
+                Quay Lại Trang Chủ
+              </Button>
+            </motion.div>
+          )}
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
