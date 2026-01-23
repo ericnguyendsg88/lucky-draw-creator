@@ -423,11 +423,6 @@ export const LuckyDraw = () => {
               </Button>
             </motion.div>
           )}
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div>
         </motion.div>
         
         {/* History */}
