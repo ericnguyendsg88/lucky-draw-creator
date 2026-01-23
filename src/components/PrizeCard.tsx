@@ -8,6 +8,7 @@ interface PrizeCardProps {
   isActive: boolean;
   isSelected?: boolean;
   isFocused?: boolean;
+  onClick?: () => void;
 }
 
 const prizeConfig = {
@@ -58,14 +59,15 @@ const prizeConfig = {
   },
 };
 
-export const PrizeCard = ({ place, total, remaining, isActive, isSelected = false, isFocused = false }: PrizeCardProps) => {
+export const PrizeCard = ({ place, total, remaining, isActive, isSelected = false, isFocused = false, onClick }: PrizeCardProps) => {
   const config = prizeConfig[place];
   const Icon = config.icon;
   const progress = ((total - remaining) / total) * 100;
   
   return (
     <motion.div
-      className={`prize-card ${config.className} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${config.bgGradient} relative overflow-hidden`}
+      onClick={onClick}
+      className={`prize-card ${config.className} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${config.bgGradient} relative overflow-hidden cursor-pointer`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ 
         opacity: 1, 
