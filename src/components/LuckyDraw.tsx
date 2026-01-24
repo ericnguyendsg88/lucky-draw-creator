@@ -536,7 +536,7 @@ export const LuckyDraw = () => {
             >
               <Button
                 onClick={goBackHome}
-                disabled={isDrawing}
+                disabled={isDrawing && !isPaused}
                 variant="default"
                 size="lg"
                 className="px-10 py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-xl"
