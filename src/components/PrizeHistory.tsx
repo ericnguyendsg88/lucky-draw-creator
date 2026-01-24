@@ -69,7 +69,7 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
           textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
         }}
       >
-        {placeEmojis[place]} Số Đã Trúng Giải {placeNames[place]} ({prizeHistory.length})
+        {placeEmojis[place]} Danh sách trúng thưởng ({prizeHistory.length})
       </h3>
       
       <div className="space-y-4">
