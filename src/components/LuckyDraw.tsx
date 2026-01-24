@@ -5,7 +5,7 @@ import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
 import { PrizeHistory } from "./PrizeHistory";
 import { Button } from "./ui/button";
-import { Sparkles, RotateCcw, ArrowLeft, Pause, Play } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { soundManager } from "@/lib/sounds";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { soundManager, SoundPack } from "@/lib/sounds";
 
 interface DrawnNumber {
   number: number;
@@ -71,8 +80,15 @@ export const LuckyDraw = () => {
   });
   const [pendingNumbers, setPendingNumbers] = useState<number[]>([]);
   const [currentDrawIndex, setCurrentDrawIndex] = useState(0);
+  const [soundPack, setSoundPackState] = useState<SoundPack>(soundManager.getSoundPack());
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
   
+  const handleSoundPackChange = (pack: string) => {
+    const newPack = pack as SoundPack;
+    soundManager.setSoundPack(newPack);
+    setSoundPackState(newPack);
+    soundManager.playClick();
+  };
   
   const currentPlace = selectedPlace;
   const isComplete = currentPlace === null || prizes[currentPlace].remaining === 0;
@@ -328,6 +344,39 @@ export const LuckyDraw = () => {
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* Sound Pack Selector - Top Right */}
+        <div className="absolute top-0 right-0 z-20">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon"
+                className="bg-white/10 border-white/20 hover:bg-white/20 text-white backdrop-blur-sm"
+              >
+                <Volume2 className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-slate-900/95 border-white/20 backdrop-blur-lg">
+              <DropdownMenuLabel className="text-white/80">Âm Thanh</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-white/20" />
+              <DropdownMenuRadioGroup value={soundPack} onValueChange={handleSoundPackChange}>
+                <DropdownMenuRadioItem value="arcade" className="text-white focus:bg-white/20 focus:text-white">
+                  🎮 Arcade - Kiểu 8-bit
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="vegas" className="text-white focus:bg-white/20 focus:text-white">
+                  🎰 Vegas - Sòng bài cổ điển
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="retro" className="text-white focus:bg-white/20 focus:text-white">
+                  ⚙️ Retro - Cơ khí cổ điển
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="modern" className="text-white focus:bg-white/20 focus:text-white">
+                  ✨ Modern - Hiện đại
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
         {/* Header */}
         <motion.div
           className="text-center mb-8"
