@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { soundManager } from "@/lib/sounds";
 
@@ -8,55 +7,37 @@ interface NumberDisplayProps {
 }
 
 const SlotDigit = ({ digit, isDrawing }: { digit: string; isDrawing: boolean }) => {
-  const [rollingDigits, setRollingDigits] = useState<number[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [displayDigit, setDisplayDigit] = useState<string | number>(digit);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   
   useEffect(() => {
     if (isDrawing) {
-      // Generate random rolling digits
-      const digits = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10));
-      setRollingDigits(digits);
-      setCurrentIndex(0);
-      
-      // Start rolling animation
+      // Use faster interval with simple random digit
       intervalRef.current = setInterval(() => {
-        setCurrentIndex(prev => {
-          soundManager.playRolling();
-          return (prev + 1) % digits.length;
-        });
-      }, 50);
+        setDisplayDigit(Math.floor(Math.random() * 10));
+        soundManager.playRolling();
+      }, 80);
       
       return () => {
         if (intervalRef.current) clearInterval(intervalRef.current);
       };
     } else {
-      // Stop rolling and show final digit
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      setDisplayDigit(digit);
     }
-  }, [isDrawing]);
-  
-  const displayDigit = isDrawing ? rollingDigits[currentIndex] : digit;
+  }, [isDrawing, digit]);
   
   return (
     <div className="slot-digit-container">
       <div className="slot-digit-frame">
-        <motion.div
-          className="slot-digit"
-          key={`${digit}-${isDrawing}-${currentIndex}`}
-          animate={isDrawing ? { 
-            y: [0, -10, 0],
-          } : { y: 0 }}
-          transition={{ 
-            duration: 0.1,
-            ease: "easeInOut"
-          }}
+        <div 
+          className={`slot-digit ${isDrawing ? 'slot-digit-spinning' : ''}`}
         >
           {displayDigit ?? "-"}
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -76,31 +57,11 @@ export const NumberDisplay = ({ number, isDrawing }: NumberDisplayProps) => {
   
   return (
     <div className="relative">
-      {/* Glow effect */}
-      <motion.div 
-        className="absolute inset-0 bg-primary/20 blur-3xl rounded-full"
-        animate={isDrawing ? {
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
-        } : {}}
-        transition={{
-          duration: 0.5,
-          repeat: isDrawing ? Infinity : 0,
-          ease: "easeInOut"
-        }}
-      />
+      {/* Glow effect - CSS animation instead of framer-motion */}
+      <div className={`absolute inset-0 bg-primary/20 blur-3xl rounded-full transition-opacity duration-300 ${isDrawing ? 'slot-glow-pulse' : 'opacity-30'}`} />
       
       {/* Slot machine container */}
-      <motion.div
-        className="slot-machine-container relative z-10"
-        animate={isDrawing ? { 
-          scale: [1, 1.02, 1],
-        } : { scale: 1 }}
-        transition={{ 
-          duration: 0.3, 
-          repeat: isDrawing ? Infinity : 0 
-        }}
-      >
+      <div className={`slot-machine-container relative z-10 ${isDrawing ? 'slot-machine-active' : ''}`}>
         <div className="slot-digits-wrapper">
           {displayDigits.map((digit, index) => (
             <SlotDigit 
@@ -110,7 +71,7 @@ export const NumberDisplay = ({ number, isDrawing }: NumberDisplayProps) => {
             />
           ))}
         </div>
-      </motion.div>
+      </div>
       
       {/* Slot machine decorative frame */}
       <div className="slot-machine-frame" />
