@@ -541,7 +541,7 @@ export const LuckyDraw = () => {
                   className="px-6"
                 >
                   <RotateCcw className="w-5 h-5 mr-2" />
-                  Làm Lại Tất Cả
+                  Reset
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
