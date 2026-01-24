@@ -289,17 +289,11 @@ export const LuckyDraw = () => {
   
   const getButtonText = () => {
     if (isPaused) return "Đã Tạm Dừng - Nhấn Tiếp Tục";
-    if (isDrawing) return `Đang Bốc Thăm... (${currentDrawIndex}/${pendingNumbers.length})`;
+    if (isDrawing) return "Đang Bốc Thăm...";
     if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
     if (prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
     const placeLabels = { 0: "Đặc Biệt", 1: "Nhất", 2: "Nhì", 3: "Ba", 4: "Khuyến Khích" };
-    const currentDrawCountIndex = drawCounts[currentPlace];
-    const batchSize = Math.min(
-      batchSizes[currentPlace][currentDrawCountIndex] || batchSizes[currentPlace][batchSizes[currentPlace].length - 1],
-      prizes[currentPlace].remaining
-    );
-    const remaining = prizes[currentPlace].remaining;
-    return `Bốc ${batchSize} Giải ${placeLabels[currentPlace]} (Còn ${remaining})`;
+    return `Bốc Giải ${placeLabels[currentPlace]}`;
   };
   
   return (
