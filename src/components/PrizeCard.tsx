@@ -19,7 +19,7 @@ const prizeConfig = {
     iconColor: "text-pink-300",
     bgGradient: "from-pink-500/10 via-purple-500/10 to-transparent",
     emoji: "💎",
-    prizeAmount: "10,000,000",
+    prizeAmount: "15,000,000",
   },
   1: {
     label: "Giải Nhất",
@@ -28,7 +28,7 @@ const prizeConfig = {
     iconColor: "text-yellow-300",
     bgGradient: "from-yellow-500/10 via-yellow-400/5 to-transparent",
     emoji: "👑",
-    prizeAmount: "7,000,000",
+    prizeAmount: "10,000,000",
   },
   2: {
     label: "Giải Nhì",
@@ -37,7 +37,7 @@ const prizeConfig = {
     iconColor: "text-slate-100",
     bgGradient: "from-slate-100/10 via-slate-200/5 to-transparent",
     emoji: "🥈",
-    prizeAmount: "5,000,000",
+    prizeAmount: "7,000,000",
   },
   3: {
     label: "Giải Ba",
@@ -46,10 +46,10 @@ const prizeConfig = {
     iconColor: "text-orange-300",
     bgGradient: "from-orange-400/10 via-orange-300/5 to-transparent",
     emoji: "🥉",
-    prizeAmount: "2,000,000",
+    prizeAmount: "3,000,000",
   },
   4: {
-    label: "Giải Tư",
+    label: "Giải Khuyến Khích",
     icon: Star,
     className: "prize-card-fourth",
     iconColor: "text-blue-300",
