@@ -40,8 +40,8 @@ interface PrizeState {
 }
 
 const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
-  4: { total: 35, remaining: 35 },  // Giải Khuyến Khích: 35 prizes, 2 draws (17 + 18)
-  3: { total: 10, remaining: 10 },  // Giải Ba: 10 prizes, 1 draw
+  4: { total: 30, remaining: 30 },  // Giải Khuyến Khích: 30 prizes, 2 draws (15 + 15)
+  3: { total: 15, remaining: 15 },  // Giải Ba: 15 prizes, 1 draw
   2: { total: 2, remaining: 2 },    // Giải Nhì: 2 prizes, 2 draws (1 each)
   1: { total: 1, remaining: 1 },    // Giải Nhất: 1 prize
   0: { total: 1, remaining: 1 },    // Giải Đặc Biệt: 1 prize
@@ -50,8 +50,8 @@ const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
 // Batch sizes for each prize level
 // Giải Khuyến Khích: first draw 17, second draw 18 (handled dynamically)
 const batchSizes: Record<0 | 1 | 2 | 3 | 4, number[]> = {
-  4: [17, 18],  // 2 draws: 17 then 18
-  3: [10],      // 1 draw: all 10
+  4: [15, 15],  // 2 draws: 15 then 15
+  3: [15],      // 1 draw: all 15
   2: [2],       // 1 draw: both prizes at once
   1: [1],       // 1 draw: 1
   0: [1],       // 1 draw: 1
