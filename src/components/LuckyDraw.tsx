@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
-import { DrawHistory } from "./DrawHistory";
+import { PrizeHistory } from "./PrizeHistory";
 import { Button } from "./ui/button";
 import { Sparkles, RotateCcw, ArrowLeft, Pause, Play } from "lucide-react";
 import {
@@ -522,6 +522,11 @@ export const LuckyDraw = () => {
               </Button>
             </motion.div>
           )}
+          
+          {/* Prize-specific History - only in focus mode */}
+          {selectedPlace !== null && (
+            <PrizeHistory history={history} place={selectedPlace} />
+          )}
         </motion.div>
         )}
         
@@ -555,8 +560,6 @@ export const LuckyDraw = () => {
           </div>
         )}
         
-        {/* History */}
-        <DrawHistory history={history} onClear={clearHistory} />
         
         {/* Completion Message */}
         {Object.values(prizes).every(p => p.remaining === 0) && (
