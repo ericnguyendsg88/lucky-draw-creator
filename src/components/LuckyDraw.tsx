@@ -151,9 +151,16 @@ export const LuckyDraw = () => {
   };
   
   const continueDrawing = (numbersToAdd: number[], startIndex: number, place: 0 | 1 | 2 | 3 | 4) => {
-    // Giải Đặc Biệt gets longer spin time (10s total = 8s spin + 2s pause)
-    const drawDurationPerNumber = place === 0 ? 8000 : 2500;
-    const pauseBetweenNumbers = place === 0 ? 2000 : 2500;
+    // Custom spin times: Đặc Biệt 10s, Nhất 8s, Nhì 6s, others 5s
+    const drawDurations: Record<0 | 1 | 2 | 3 | 4, number> = {
+      0: 8000,  // Giải Đặc Biệt: 8s spin + 2s pause = 10s
+      1: 6000,  // Giải Nhất: 6s spin + 2s pause = 8s
+      2: 4000,  // Giải Nhì: 4s spin + 2s pause = 6s
+      3: 2500,  // Giải Ba: default
+      4: 2500,  // Giải Khuyến Khích: default
+    };
+    const drawDurationPerNumber = drawDurations[place];
+    const pauseBetweenNumbers = 2000;
     const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
