@@ -169,7 +169,6 @@ export const LuckyDraw = () => {
       }));
       
       setIsDrawing(false);
-      setIsFocusMode(false);
       setPendingNumbers([]);
       setCurrentDrawIndex(0);
     }, totalTime);
