@@ -1,17 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
-import { Trash2, RotateCcw } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 interface DrawnNumber {
   number: number;
@@ -21,7 +10,6 @@ interface DrawnNumber {
 interface DrawHistoryProps {
   history: DrawnNumber[];
   onClear: () => void;
-  onResetPrize: (place: 0 | 1 | 2 | 3 | 4) => void;
 }
 
 const placeColors = {
@@ -56,7 +44,7 @@ const placeNames = {
   4: "Khuyến Khích",
 };
 
-export const DrawHistory = ({ history, onClear, onResetPrize }: DrawHistoryProps) => {
+export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
   if (history.length === 0) return null;
   
   // Count prizes by place
@@ -92,7 +80,7 @@ export const DrawHistory = ({ history, onClear, onResetPrize }: DrawHistoryProps
           </Button>
         </div>
         
-        {/* Prize counts summary with individual reset buttons */}
+        {/* Prize counts summary */}
         <div className="flex flex-wrap gap-3 justify-center">
           {([0, 1, 2, 3, 4] as const).map((place) => {
             const count = prizeCounts[place] || 0;
@@ -100,31 +88,9 @@ export const DrawHistory = ({ history, onClear, onResetPrize }: DrawHistoryProps
             return (
               <div
                 key={place}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border ${placeColors[place]} text-sm font-bold`}
+                className={`px-4 py-2 rounded-full border ${placeColors[place]} text-sm font-bold`}
               >
-                <span>{placeEmojis[place]} {placeNames[place]}: {count}</span>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button
-                      className="ml-1 p-1 rounded-full hover:bg-white/20 transition-colors"
-                      title={`Làm lại ${placeNames[place]}`}
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Làm lại Giải {placeNames[place]}?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Hành động này sẽ xóa {count} số đã bốc cho Giải {placeNames[place]} và cho phép bốc lại. Các giải khác không bị ảnh hưởng.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Hủy</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => onResetPrize(place)}>Xác Nhận</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                {placeEmojis[place]} {placeNames[place]}: {count}
               </div>
             );
           })}
