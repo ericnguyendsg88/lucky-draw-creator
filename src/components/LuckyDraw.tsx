@@ -42,7 +42,7 @@ const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
 const batchSizes: Record<0 | 1 | 2 | 3 | 4, number[]> = {
   4: [17, 18],  // 2 draws: 17 then 18
   3: [10],      // 1 draw: all 10
-  2: [1, 1],    // 2 draws: 1 each
+  2: [2],       // 1 draw: both prizes at once
   1: [1],       // 1 draw: 1
   0: [1],       // 1 draw: 1
 };
@@ -125,7 +125,7 @@ export const LuckyDraw = () => {
   
   const continueDrawing = (numbersToAdd: number[], startIndex: number, place: 0 | 1 | 2 | 3 | 4) => {
     const drawDurationPerNumber = 2500;
-    const pauseBetweenNumbers = 5000;
+    const pauseBetweenNumbers = 2500;
     const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
@@ -200,7 +200,7 @@ export const LuckyDraw = () => {
     for (let i = 0; i < batchSize; i++) {
       let newNumber: number;
       do {
-        newNumber = Math.floor(Math.random() * 1000);
+        newNumber = Math.floor(Math.random() * 250) + 1; // Numbers 1-250
       } while (newDrawnNumbers.has(newNumber));
       numbersToAdd.push(newNumber);
       newDrawnNumbers.add(newNumber);
@@ -357,7 +357,7 @@ export const LuckyDraw = () => {
           >
             Chương Trình Bốc Thăm Trúng Thưởng
           </motion.p>
-          <p className="text-xl md:text-2xl text-blue-100/80 font-bold mt-2">49 Giải Thưởng • Số may mắn từ 0-999</p>
+          <p className="text-xl md:text-2xl text-blue-100/80 font-bold mt-2">49 Giải Thưởng • Số may mắn từ 001-250</p>
         </motion.div>
         
         {/* Special Prize Card - Full Width */}
@@ -428,7 +428,8 @@ export const LuckyDraw = () => {
           </motion.div>
         </motion.div>
         
-        {/* Number Display */}
+        {/* Number Display - Only in focus mode */}
+        {isFocusMode && (
         <motion.div
           className="flex flex-col items-center justify-center mb-8"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -496,34 +497,6 @@ export const LuckyDraw = () => {
                 </AlertDialogContent>
               </AlertDialog>
             )}
-            
-            {/* Global reset button - only on homepage */}
-            {!isFocusMode && history.length > 0 && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="px-6"
-                  >
-                    <RotateCcw className="w-5 h-5 mr-2" />
-                    Làm Lại Tất Cả
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Bạn có chắc chắn muốn làm lại tất cả?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Hành động này sẽ xóa toàn bộ lịch sử bốc thăm và đặt lại tất cả giải thưởng. Không thể hoàn tác sau khi thực hiện.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Hủy</AlertDialogCancel>
-                    <AlertDialogAction onClick={reset}>Xác Nhận Làm Lại</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
           </div>
           
           {/* Back to Home Button */}
@@ -547,6 +520,37 @@ export const LuckyDraw = () => {
             </motion.div>
           )}
         </motion.div>
+        )}
+        
+        {/* Global reset button - only on homepage */}
+        {!isFocusMode && history.length > 0 && (
+          <div className="flex justify-center mb-8">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-6"
+                >
+                  <RotateCcw className="w-5 h-5 mr-2" />
+                  Làm Lại Tất Cả
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn muốn làm lại tất cả?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Hành động này sẽ xóa toàn bộ lịch sử bốc thăm và đặt lại tất cả giải thưởng. Không thể hoàn tác sau khi thực hiện.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                  <AlertDialogAction onClick={reset}>Xác Nhận Làm Lại</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
         
         {/* History */}
         <DrawHistory history={history} onClear={clearHistory} />
