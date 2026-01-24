@@ -43,8 +43,22 @@ const placeSizes = {
   4: "px-5 py-3 text-base md:text-lg", // 4th - Medium
 };
 
+const placeNames = {
+  0: "Đặc Biệt",
+  1: "Nhất",
+  2: "Nhì",
+  3: "Ba",
+  4: "Khuyến Khích",
+};
+
 export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
   if (history.length === 0) return null;
+  
+  // Count prizes by place
+  const prizeCounts = history.reduce((acc, item) => {
+    acc[item.place] = (acc[item.place] || 0) + 1;
+    return acc;
+  }, {} as Record<number, number>);
   
   return (
     <motion.div
@@ -52,24 +66,45 @@ export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="flex items-center justify-center gap-4 mb-6">
-        <h3 
-          className="text-3xl md:text-4xl font-display font-black text-center text-white"
-          style={{
-            textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
-          }}
-        >
-          ✨ LỊCH SỬ BỐC THĂM ✨
-        </h3>
-        <Button
-          onClick={onClear}
-          variant="outline"
-          size="sm"
-          className="border-red-400/40 hover:bg-red-500/20 hover:border-red-400/60 text-red-200"
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Xóa
-        </Button>
+      <div className="flex flex-col items-center gap-4 mb-6">
+        <div className="flex items-center gap-4">
+          <h3 
+            className="text-3xl md:text-4xl font-display font-black text-center text-white"
+            style={{
+              textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
+            }}
+          >
+            ✨ LỊCH SỬ BỐC THĂM ✨
+          </h3>
+          <Button
+            onClick={onClear}
+            variant="outline"
+            size="sm"
+            className="border-red-400/40 hover:bg-red-500/20 hover:border-red-400/60 text-red-200"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Xóa
+          </Button>
+        </div>
+        
+        {/* Prize counts summary */}
+        <div className="flex flex-wrap gap-3 justify-center">
+          {([0, 1, 2, 3, 4] as const).map((place) => {
+            const count = prizeCounts[place] || 0;
+            if (count === 0) return null;
+            return (
+              <div
+                key={place}
+                className={`px-4 py-2 rounded-full border ${placeColors[place]} text-sm font-bold`}
+              >
+                {placeEmojis[place]} {placeNames[place]}: {count}
+              </div>
+            );
+          })}
+          <div className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white text-sm font-bold">
+            Tổng: {history.length}
+          </div>
+        </div>
       </div>
       <div 
         className="flex flex-wrap gap-4 md:gap-5 justify-center max-h-80 overflow-y-auto p-6 md:p-8 rounded-3xl"
