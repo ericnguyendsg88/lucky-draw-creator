@@ -30,19 +30,21 @@ interface PrizeState {
 }
 
 const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
-  4: { total: 48, remaining: 48 },
-  3: { total: 24, remaining: 24 },
-  2: { total: 2, remaining: 2 },
-  1: { total: 1, remaining: 1 },
-  0: { total: 1, remaining: 1 },
+  4: { total: 35, remaining: 35 },  // Giải Khuyến Khích: 35 prizes, 2 draws (17 + 18)
+  3: { total: 10, remaining: 10 },  // Giải Ba: 10 prizes, 1 draw
+  2: { total: 2, remaining: 2 },    // Giải Nhì: 2 prizes, 2 draws (1 each)
+  1: { total: 1, remaining: 1 },    // Giải Nhất: 1 prize
+  0: { total: 1, remaining: 1 },    // Giải Đặc Biệt: 1 prize
 };
 
-const batchSizes: Record<0 | 1 | 2 | 3 | 4, number> = {
-  4: 16,
-  3: 12,
-  2: 1,
-  1: 1,
-  0: 1,
+// Batch sizes for each prize level
+// Giải Khuyến Khích: first draw 17, second draw 18 (handled dynamically)
+const batchSizes: Record<0 | 1 | 2 | 3 | 4, number[]> = {
+  4: [17, 18],  // 2 draws: 17 then 18
+  3: [10],      // 1 draw: all 10
+  2: [1, 1],    // 2 draws: 1 each
+  1: [1],       // 1 draw: 1
+  0: [1],       // 1 draw: 1
 };
 
 export const LuckyDraw = () => {
@@ -52,8 +54,11 @@ export const LuckyDraw = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [history, setHistory] = useState<DrawnNumber[]>([]);
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
-  const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
+const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [drawCounts, setDrawCounts] = useState<Record<0 | 1 | 2 | 3 | 4, number>>({
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0
+  });
   
   const currentPlace = selectedPlace;
   const isComplete = currentPlace === null || prizes[currentPlace].remaining === 0;
@@ -89,7 +94,11 @@ export const LuckyDraw = () => {
     setIsDrawing(true);
     setIsFocusMode(true);
     const place = currentPlace;
-    const batchSize = Math.min(batchSizes[place], prizes[place].remaining);
+    const currentDrawIndex = drawCounts[place];
+    const batchSize = Math.min(
+      batchSizes[place][currentDrawIndex] || batchSizes[place][batchSizes[place].length - 1],
+      prizes[place].remaining
+    );
     // Each number gets 2.5s animation + 5s clear display pause
     const drawDurationPerNumber = 2500; // Slot machine spinning time
     const pauseBetweenNumbers = 5000; // Longer pause to clearly display each number
@@ -141,15 +150,19 @@ export const LuckyDraw = () => {
       }, startTime);
     });
     
-    // Update drawn numbers and check if prize is complete
+    // Update drawn numbers and draw counts
     const totalTime = numbersToAdd.length * totalTimePerNumber;
     setTimeout(() => {
       setDrawnNumbers(newDrawnNumbers);
+      setDrawCounts(prev => ({
+        ...prev,
+        [place]: prev[place] + 1
+      }));
       
       setIsDrawing(false);
       setIsFocusMode(false);
     }, totalTime);
-  }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes]);
+  }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes, drawCounts]);
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
     if (prizes[place].remaining > 0 && !isDrawing) {
@@ -169,6 +182,7 @@ export const LuckyDraw = () => {
     setDrawnNumbers(new Set());
     setSelectedPlace(null);
     setIsFocusMode(false);
+    setDrawCounts({ 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
   };
   
   const clearHistory = () => {
@@ -188,8 +202,12 @@ export const LuckyDraw = () => {
     if (isDrawing) return "Đang Bốc Thăm...";
     if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
     if (prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
-    const placeLabels = { 0: "Đặc Biệt", 1: "Nhất", 2: "Nhì", 3: "Ba", 4: "Tư" };
-    const batchSize = Math.min(batchSizes[currentPlace], prizes[currentPlace].remaining);
+    const placeLabels = { 0: "Đặc Biệt", 1: "Nhất", 2: "Nhì", 3: "Ba", 4: "Khuyến Khích" };
+    const currentDrawIndex = drawCounts[currentPlace];
+    const batchSize = Math.min(
+      batchSizes[currentPlace][currentDrawIndex] || batchSizes[currentPlace][batchSizes[currentPlace].length - 1],
+      prizes[currentPlace].remaining
+    );
     const remaining = prizes[currentPlace].remaining;
     return `Bốc ${batchSize} Giải ${placeLabels[currentPlace]} (Còn ${remaining})`;
   };
@@ -283,7 +301,7 @@ export const LuckyDraw = () => {
           >
             Chương Trình Bốc Thăm Trúng Thưởng
           </motion.p>
-          <p className="text-xl md:text-2xl text-blue-100/80 font-bold mt-2">94 Giải Thưởng • Số may mắn từ 0-999</p>
+          <p className="text-xl md:text-2xl text-blue-100/80 font-bold mt-2">49 Giải Thưởng • Số may mắn từ 0-999</p>
         </motion.div>
         
         {/* Special Prize Card - Full Width */}
