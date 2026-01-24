@@ -151,8 +151,9 @@ export const LuckyDraw = () => {
   };
   
   const continueDrawing = (numbersToAdd: number[], startIndex: number, place: 0 | 1 | 2 | 3 | 4) => {
-    const drawDurationPerNumber = 2500;
-    const pauseBetweenNumbers = 2500;
+    // Giải Đặc Biệt gets longer spin time (10s total = 8s spin + 2s pause)
+    const drawDurationPerNumber = place === 0 ? 8000 : 2500;
+    const pauseBetweenNumbers = place === 0 ? 2000 : 2500;
     const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
