@@ -1,9 +1,12 @@
-// Sound utility using Web Audio API for casino-style sound effects
+// Casino Sound System with multiple sound packs
+
+type SoundPack = 'arcade' | 'vegas' | 'retro' | 'modern';
 
 class SoundManager {
   private audioContext: AudioContext | null = null;
   private lastTickTime: number = 0;
-  private tickInterval: number = 50; // Minimum ms between tick sounds
+  private tickInterval: number = 40;
+  private currentPack: SoundPack = 'vegas';
   
   constructor() {
     if (typeof window !== 'undefined') {
@@ -11,283 +14,386 @@ class SoundManager {
     }
   }
 
-  // Play a click sound
-  playClick() {
-    if (!this.audioContext) return;
-    
-    const oscillator = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
-    const filter = this.audioContext.createBiquadFilter();
-    
-    oscillator.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
-    
-    oscillator.frequency.value = 1200;
-    oscillator.type = 'square';
-    
-    filter.type = 'highpass';
-    filter.frequency.value = 800;
-    
-    gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
-    
-    oscillator.start(this.audioContext.currentTime);
-    oscillator.stop(this.audioContext.currentTime + 0.05);
+  setSoundPack(pack: SoundPack) {
+    this.currentPack = pack;
   }
 
-  // Play casino slot machine tick sound - quick mechanical click
-  playSlotTick() {
+  getSoundPack(): SoundPack {
+    return this.currentPack;
+  }
+
+  private resumeContext() {
+    if (this.audioContext?.state === 'suspended') {
+      this.audioContext.resume();
+    }
+  }
+
+  // Rolling/tick sounds based on pack
+  playRolling() {
     if (!this.audioContext) return;
+    this.resumeContext();
     
     const now = Date.now();
     if (now - this.lastTickTime < this.tickInterval) return;
     this.lastTickTime = now;
-    
-    // Mechanical click with metallic resonance
-    const osc1 = this.audioContext.createOscillator();
-    const osc2 = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
-    const filter = this.audioContext.createBiquadFilter();
-    
-    osc1.connect(filter);
-    osc2.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
-    
-    // High pitched click
-    osc1.frequency.setValueAtTime(2500, this.audioContext.currentTime);
-    osc1.frequency.exponentialRampToValueAtTime(800, this.audioContext.currentTime + 0.02);
-    osc1.type = 'square';
-    
-    // Lower metallic resonance
-    osc2.frequency.value = 400;
-    osc2.type = 'triangle';
-    
-    filter.type = 'bandpass';
-    filter.frequency.value = 2000;
-    filter.Q.value = 3;
-    
-    gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.03);
-    
-    osc1.start(this.audioContext.currentTime);
-    osc1.stop(this.audioContext.currentTime + 0.03);
-    osc2.start(this.audioContext.currentTime);
-    osc2.stop(this.audioContext.currentTime + 0.02);
-  }
 
-  // Play rolling/spinning sound - casino wheel style
-  playRolling() {
-    if (!this.audioContext) return;
-    this.playSlotTick();
-  }
-
-  // Play number landing sound - dramatic reveal
-  playNumberLand() {
-    if (!this.audioContext) return;
-    
-    // Dramatic "thunk" with reverb-like decay
-    const osc1 = this.audioContext.createOscillator();
-    const osc2 = this.audioContext.createOscillator();
-    const osc3 = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
-    const filter = this.audioContext.createBiquadFilter();
-    
-    osc1.connect(filter);
-    osc2.connect(filter);
-    osc3.connect(gainNode);
-    filter.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
-    
-    // Heavy thunk
-    osc1.frequency.setValueAtTime(300, this.audioContext.currentTime);
-    osc1.frequency.exponentialRampToValueAtTime(50, this.audioContext.currentTime + 0.15);
-    osc1.type = 'sine';
-    
-    // Metallic impact
-    osc2.frequency.setValueAtTime(800, this.audioContext.currentTime);
-    osc2.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.1);
-    osc2.type = 'square';
-    
-    // Bright accent
-    osc3.frequency.value = 1200;
-    osc3.type = 'sine';
-    
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(3000, this.audioContext.currentTime);
-    filter.frequency.exponentialRampToValueAtTime(500, this.audioContext.currentTime + 0.1);
-    
-    gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
-    
-    osc1.start(this.audioContext.currentTime);
-    osc1.stop(this.audioContext.currentTime + 0.15);
-    osc2.start(this.audioContext.currentTime);
-    osc2.stop(this.audioContext.currentTime + 0.1);
-    osc3.start(this.audioContext.currentTime);
-    osc3.stop(this.audioContext.currentTime + 0.05);
-  }
-
-  // Play winning fanfare sound - casino jackpot style
-  playWin(intensity: 'small' | 'medium' | 'large' = 'medium') {
-    if (!this.audioContext) return;
-    
-    // Casino bell/chime sounds with harmonics
-    const playChime = (freq: number, delay: number, duration: number = 0.8, volume: number = 0.3) => {
-      setTimeout(() => {
-        const osc = this.audioContext!.createOscillator();
-        const osc2 = this.audioContext!.createOscillator();
-        const gainNode = this.audioContext!.createGain();
-        const filter = this.audioContext!.createBiquadFilter();
-        
-        osc.connect(filter);
-        osc2.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(this.audioContext!.destination);
-        
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        
-        // Add harmonic
-        osc2.frequency.value = freq * 2.5;
-        osc2.type = 'sine';
-        
-        filter.type = 'peaking';
-        filter.frequency.value = freq * 3;
-        filter.Q.value = 5;
-        filter.gain.value = 8;
-        
-        gainNode.gain.setValueAtTime(volume, this.audioContext!.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext!.currentTime + duration);
-        
-        osc.start(this.audioContext!.currentTime);
-        osc.stop(this.audioContext!.currentTime + duration);
-        osc2.start(this.audioContext!.currentTime);
-        osc2.stop(this.audioContext!.currentTime + duration * 0.5);
-      }, delay);
-    };
-    
-    // Play coin sounds for jackpot feel
-    const playCoinDrop = (delay: number) => {
-      setTimeout(() => {
-        const noise = this.audioContext!.createBufferSource();
-        const buffer = this.audioContext!.createBuffer(1, 2205, 44100);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < 2205; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 400);
-        }
-        noise.buffer = buffer;
-        
-        const filter = this.audioContext!.createBiquadFilter();
-        const gainNode = this.audioContext!.createGain();
-        
-        noise.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(this.audioContext!.destination);
-        
-        filter.type = 'bandpass';
-        filter.frequency.value = 8000;
-        filter.Q.value = 3;
-        
-        gainNode.gain.setValueAtTime(0.15, this.audioContext!.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext!.currentTime + 0.08);
-        
-        noise.start(this.audioContext!.currentTime);
-        noise.stop(this.audioContext!.currentTime + 0.08);
-      }, delay);
-    };
-    
-    if (intensity === 'large') {
-      // Big jackpot - ascending fanfare with coin cascade
-      [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98].forEach((freq, i) => {
-        playChime(freq, i * 70, 1.0, 0.35);
-      });
-      // Coin cascade
-      for (let i = 0; i < 12; i++) {
-        playCoinDrop(200 + i * 50);
-      }
-    } else if (intensity === 'medium') {
-      // Medium win - triumphant chord
-      [659.25, 830.61, 1046.50].forEach((freq, i) => {
-        playChime(freq, i * 100, 0.7, 0.3);
-      });
-      // A few coins
-      for (let i = 0; i < 5; i++) {
-        playCoinDrop(250 + i * 80);
-      }
-    } else {
-      // Small win - quick double ding
-      playChime(783.99, 0, 0.5, 0.25);
-      playChime(1046.50, 80, 0.5, 0.25);
-      playCoinDrop(150);
+    switch (this.currentPack) {
+      case 'arcade': this.playArcadeTick(); break;
+      case 'vegas': this.playVegasTick(); break;
+      case 'retro': this.playRetroTick(); break;
+      case 'modern': this.playModernTick(); break;
     }
   }
 
-  // Play continuous rolling sound - exciting casino wheel
-  startContinuousRolling() {
-    if (!this.audioContext) return null;
+  // === ARCADE PACK - 8-bit style ===
+  private playArcadeTick() {
+    const osc = this.audioContext!.createOscillator();
+    const gain = this.audioContext!.createGain();
     
-    // Create exciting mechanical whirring with casino feel
-    const oscillator = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
-    const filter = this.audioContext.createBiquadFilter();
-    const lfo = this.audioContext.createOscillator();
-    const lfoGain = this.audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(this.audioContext!.destination);
     
-    // Tremolo LFO for spinning feel
-    lfo.frequency.value = 25;
-    lfoGain.gain.value = 40;
-    lfo.connect(lfoGain);
-    lfoGain.connect(oscillator.frequency);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(800 + Math.random() * 400, this.audioContext!.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, this.audioContext!.currentTime + 0.03);
     
-    oscillator.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
+    gain.gain.setValueAtTime(0.12, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.03);
     
-    oscillator.type = 'sawtooth';
-    oscillator.frequency.value = 120;
+    osc.start();
+    osc.stop(this.audioContext!.currentTime + 0.03);
+  }
+
+  // === VEGAS PACK - Classic slot machine ===
+  private playVegasTick() {
+    const osc1 = this.audioContext!.createOscillator();
+    const osc2 = this.audioContext!.createOscillator();
+    const gain = this.audioContext!.createGain();
+    const filter = this.audioContext!.createBiquadFilter();
+    
+    osc1.connect(filter);
+    osc2.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioContext!.destination);
+    
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(2000, this.audioContext!.currentTime);
+    osc1.frequency.exponentialRampToValueAtTime(600, this.audioContext!.currentTime + 0.02);
+    
+    osc2.type = 'sine';
+    osc2.frequency.value = 300;
     
     filter.type = 'bandpass';
     filter.frequency.value = 1500;
     filter.Q.value = 2;
     
-    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.08, this.audioContext.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.15, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.025);
     
-    oscillator.start(this.audioContext.currentTime);
-    lfo.start(this.audioContext.currentTime);
+    osc1.start();
+    osc1.stop(this.audioContext!.currentTime + 0.025);
+    osc2.start();
+    osc2.stop(this.audioContext!.currentTime + 0.02);
+  }
+
+  // === RETRO PACK - Mechanical feel ===
+  private playRetroTick() {
+    const noise = this.audioContext!.createBufferSource();
+    const buffer = this.audioContext!.createBuffer(1, 1200, 44100);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < 1200; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 150);
+    }
+    noise.buffer = buffer;
     
-    // Add subtle high-pitched whine for excitement
-    const whine = this.audioContext.createOscillator();
-    const whineGain = this.audioContext.createGain();
-    const whineFilter = this.audioContext.createBiquadFilter();
+    const filter = this.audioContext!.createBiquadFilter();
+    const gain = this.audioContext!.createGain();
     
-    whine.connect(whineFilter);
-    whineFilter.connect(whineGain);
-    whineGain.connect(this.audioContext.destination);
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioContext!.destination);
     
-    whine.type = 'sine';
-    whine.frequency.value = 2000;
+    filter.type = 'bandpass';
+    filter.frequency.value = 3000;
+    filter.Q.value = 5;
     
-    whineFilter.type = 'highpass';
-    whineFilter.frequency.value = 1500;
+    gain.gain.setValueAtTime(0.2, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.03);
     
-    whineGain.gain.setValueAtTime(0, this.audioContext.currentTime);
-    whineGain.gain.linearRampToValueAtTime(0.03, this.audioContext.currentTime + 0.2);
+    noise.start();
+    noise.stop(this.audioContext!.currentTime + 0.03);
+  }
+
+  // === MODERN PACK - Smooth digital ===
+  private playModernTick() {
+    const osc = this.audioContext!.createOscillator();
+    const gain = this.audioContext!.createGain();
+    const filter = this.audioContext!.createBiquadFilter();
     
-    whine.start(this.audioContext.currentTime);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioContext!.destination);
     
-    return {
-      stop: () => {
-        gainNode.gain.linearRampToValueAtTime(0, this.audioContext!.currentTime + 0.2);
-        whineGain.gain.linearRampToValueAtTime(0, this.audioContext!.currentTime + 0.15);
-        oscillator.stop(this.audioContext!.currentTime + 0.25);
-        lfo.stop(this.audioContext!.currentTime + 0.25);
-        whine.stop(this.audioContext!.currentTime + 0.2);
-      }
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1200, this.audioContext!.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, this.audioContext!.currentTime + 0.02);
+    
+    filter.type = 'lowpass';
+    filter.frequency.value = 2000;
+    
+    gain.gain.setValueAtTime(0.1, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.02);
+    
+    osc.start();
+    osc.stop(this.audioContext!.currentTime + 0.02);
+  }
+
+  // Number landing sound
+  playNumberLand() {
+    if (!this.audioContext) return;
+    this.resumeContext();
+
+    switch (this.currentPack) {
+      case 'arcade': this.playArcadeLand(); break;
+      case 'vegas': this.playVegasLand(); break;
+      case 'retro': this.playRetroLand(); break;
+      case 'modern': this.playModernLand(); break;
+    }
+  }
+
+  private playArcadeLand() {
+    const notes = [523, 659, 784];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = this.audioContext!.createOscillator();
+        const gain = this.audioContext!.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext!.destination);
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.1);
+        osc.start();
+        osc.stop(this.audioContext!.currentTime + 0.1);
+      }, i * 30);
+    });
+  }
+
+  private playVegasLand() {
+    // Bell-like chime
+    const osc1 = this.audioContext!.createOscillator();
+    const osc2 = this.audioContext!.createOscillator();
+    const gain = this.audioContext!.createGain();
+    
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(this.audioContext!.destination);
+    
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(880, this.audioContext!.currentTime);
+    
+    osc2.type = 'sine';
+    osc2.frequency.value = 1320;
+    
+    gain.gain.setValueAtTime(0.25, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.3);
+    
+    osc1.start();
+    osc1.stop(this.audioContext!.currentTime + 0.3);
+    osc2.start();
+    osc2.stop(this.audioContext!.currentTime + 0.2);
+  }
+
+  private playRetroLand() {
+    // Mechanical thunk
+    const osc = this.audioContext!.createOscillator();
+    const gain = this.audioContext!.createGain();
+    
+    osc.connect(gain);
+    gain.connect(this.audioContext!.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(200, this.audioContext!.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, this.audioContext!.currentTime + 0.15);
+    
+    gain.gain.setValueAtTime(0.4, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.15);
+    
+    osc.start();
+    osc.stop(this.audioContext!.currentTime + 0.15);
+  }
+
+  private playModernLand() {
+    // Clean digital confirm
+    const osc = this.audioContext!.createOscillator();
+    const gain = this.audioContext!.createGain();
+    const filter = this.audioContext!.createBiquadFilter();
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioContext!.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, this.audioContext!.currentTime);
+    osc.frequency.setValueAtTime(900, this.audioContext!.currentTime + 0.05);
+    
+    filter.type = 'lowpass';
+    filter.frequency.value = 1500;
+    
+    gain.gain.setValueAtTime(0.2, this.audioContext!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.15);
+    
+    osc.start();
+    osc.stop(this.audioContext!.currentTime + 0.15);
+  }
+
+  // Win celebration sound
+  playWin(intensity: 'small' | 'medium' | 'large' = 'medium') {
+    if (!this.audioContext) return;
+    this.resumeContext();
+
+    switch (this.currentPack) {
+      case 'arcade': this.playArcadeWin(intensity); break;
+      case 'vegas': this.playVegasWin(intensity); break;
+      case 'retro': this.playRetroWin(intensity); break;
+      case 'modern': this.playModernWin(intensity); break;
+    }
+  }
+
+  private playArcadeWin(intensity: string) {
+    const baseNotes = intensity === 'large' ? [262, 330, 392, 523, 659, 784, 1047] :
+                      intensity === 'medium' ? [392, 523, 659, 784] : [523, 659];
+    
+    baseNotes.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = this.audioContext!.createOscillator();
+        const gain = this.audioContext!.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext!.destination);
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.12, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.15);
+        osc.start();
+        osc.stop(this.audioContext!.currentTime + 0.15);
+      }, i * 60);
+    });
+  }
+
+  private playVegasWin(intensity: string) {
+    const playChime = (freq: number, delay: number, dur: number = 0.5) => {
+      setTimeout(() => {
+        const osc = this.audioContext!.createOscillator();
+        const osc2 = this.audioContext!.createOscillator();
+        const gain = this.audioContext!.createGain();
+        osc.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.audioContext!.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc2.type = 'sine';
+        osc2.frequency.value = freq * 2;
+        gain.gain.setValueAtTime(0.2, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + dur);
+        osc.start();
+        osc.stop(this.audioContext!.currentTime + dur);
+        osc2.start();
+        osc2.stop(this.audioContext!.currentTime + dur * 0.5);
+      }, delay);
     };
+
+    const playCoin = (delay: number) => {
+      setTimeout(() => {
+        const noise = this.audioContext!.createBufferSource();
+        const buffer = this.audioContext!.createBuffer(1, 2000, 44100);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < 2000; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 300);
+        noise.buffer = buffer;
+        const filter = this.audioContext!.createBiquadFilter();
+        const gain = this.audioContext!.createGain();
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.audioContext!.destination);
+        filter.type = 'highpass';
+        filter.frequency.value = 6000;
+        gain.gain.setValueAtTime(0.1, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.05);
+        noise.start();
+        noise.stop(this.audioContext!.currentTime + 0.05);
+      }, delay);
+    };
+
+    if (intensity === 'large') {
+      [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => playChime(f, i * 50, 0.8));
+      for (let i = 0; i < 10; i++) playCoin(150 + i * 40);
+    } else if (intensity === 'medium') {
+      [659, 831, 1047].forEach((f, i) => playChime(f, i * 80, 0.6));
+      for (let i = 0; i < 4; i++) playCoin(200 + i * 60);
+    } else {
+      playChime(784, 0, 0.4);
+      playChime(1047, 60, 0.4);
+    }
+  }
+
+  private playRetroWin(intensity: string) {
+    const count = intensity === 'large' ? 8 : intensity === 'medium' ? 5 : 3;
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const osc = this.audioContext!.createOscillator();
+        const gain = this.audioContext!.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext!.destination);
+        osc.type = 'triangle';
+        osc.frequency.value = 400 + i * 100;
+        gain.gain.setValueAtTime(0.2, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.2);
+        osc.start();
+        osc.stop(this.audioContext!.currentTime + 0.2);
+      }, i * 100);
+    }
+  }
+
+  private playModernWin(intensity: string) {
+    const freqs = intensity === 'large' ? [400, 500, 600, 800, 1000] :
+                  intensity === 'medium' ? [500, 700, 900] : [600, 800];
+    
+    freqs.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = this.audioContext!.createOscillator();
+        const gain = this.audioContext!.createGain();
+        const filter = this.audioContext!.createBiquadFilter();
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.audioContext!.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        filter.type = 'lowpass';
+        filter.frequency.value = 2000;
+        gain.gain.setValueAtTime(0.15, this.audioContext!.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.25);
+        osc.start();
+        osc.stop(this.audioContext!.currentTime + 0.25);
+      }, i * 80);
+    });
+  }
+
+  // Click sound for UI
+  playClick() {
+    if (!this.audioContext) return;
+    this.resumeContext();
+    
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    osc.type = 'sine';
+    osc.frequency.value = 1000;
+    gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.03);
+    osc.start();
+    osc.stop(this.audioContext.currentTime + 0.03);
   }
 }
 
 export const soundManager = new SoundManager();
+export type { SoundPack };
