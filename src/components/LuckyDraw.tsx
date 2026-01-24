@@ -228,10 +228,13 @@ export const LuckyDraw = () => {
   }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes, drawCounts]);
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
-    if (prizes[place].remaining > 0 && !isDrawing) {
+    // Allow clicking on any prize card (even completed ones) to view history
+    if (!isDrawing) {
       soundManager.playClick();
       setSelectedPlace(place);
       setIsFocusMode(true);
+      // Reset current number to show dashes when entering a new prize session
+      setCurrentNumber(null);
     }
   };
   
