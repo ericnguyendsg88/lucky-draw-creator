@@ -71,7 +71,7 @@ export const LuckyDraw = () => {
   const [pendingNumbers, setPendingNumbers] = useState<number[]>([]);
   const [currentDrawIndex, setCurrentDrawIndex] = useState(0);
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
-  const rollingSoundRef = useRef<{ stop: () => void } | null>(null);
+  
   
   const currentPlace = selectedPlace;
   const isComplete = currentPlace === null || prizes[currentPlace].remaining === 0;
@@ -103,15 +103,12 @@ export const LuckyDraw = () => {
   const clearAllTimeouts = () => {
     drawTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
     drawTimeoutsRef.current = [];
-    rollingSoundRef.current?.stop();
-    rollingSoundRef.current = null;
   };
   
   const pauseDraw = () => {
     if (isDrawing && !isPaused) {
       setIsPaused(true);
       clearAllTimeouts();
-      rollingSoundRef.current?.stop();
       setIsSpinning(false);
     }
   };
@@ -134,10 +131,8 @@ export const LuckyDraw = () => {
       
       const spinTimeout = setTimeout(() => {
         setIsSpinning(true);
-        rollingSoundRef.current = soundManager.startContinuousRolling();
         
         const landTimeout = setTimeout(() => {
-          rollingSoundRef.current?.stop();
           setIsSpinning(false);
           soundManager.playNumberLand();
           setCurrentNumber(num);
