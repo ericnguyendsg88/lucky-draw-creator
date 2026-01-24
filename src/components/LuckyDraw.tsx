@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { PrizeCard } from "./PrizeCard";
@@ -83,6 +83,19 @@ export const LuckyDraw = () => {
   const [soundPack, setSoundPackState] = useState<SoundPack>(soundManager.getSoundPack());
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
   
+  // Warn user before accidental page refresh/close when there's draw history
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (history.length > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [history.length]);
   const handleSoundPackChange = (pack: string) => {
     const newPack = pack as SoundPack;
     soundManager.setSoundPack(newPack);
