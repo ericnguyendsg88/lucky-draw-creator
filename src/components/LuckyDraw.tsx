@@ -47,6 +47,14 @@ const batchSizes: Record<0 | 1 | 2 | 3 | 4, number[]> = {
   0: [1],       // 1 draw: 1
 };
 
+const placeLabels: Record<0 | 1 | 2 | 3 | 4, string> = {
+  0: "Đặc Biệt",
+  1: "Nhất",
+  2: "Nhì",
+  3: "Ba",
+  4: "Khuyến Khích",
+};
+
 export const LuckyDraw = () => {
   const [prizes, setPrizes] = useState(initialPrizes);
   const [currentNumber, setCurrentNumber] = useState<number | null>(null);
@@ -461,7 +469,8 @@ export const LuckyDraw = () => {
               </Button>
             )}
             
-            {history.length > 0 && (
+            {/* Reset button - context aware */}
+            {isFocusMode && selectedPlace !== null && history.some(h => h.place === selectedPlace) && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -470,12 +479,40 @@ export const LuckyDraw = () => {
                     className="px-6"
                   >
                     <RotateCcw className="w-5 h-5 mr-2" />
-                    Làm Lại
+                    Làm Lại Giải Này
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Bạn có chắc chắn muốn làm lại?</AlertDialogTitle>
+                    <AlertDialogTitle>Làm lại Giải {placeLabels[selectedPlace]}?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Hành động này sẽ xóa các số đã bốc cho Giải {placeLabels[selectedPlace]} và cho phép bốc lại. Các giải khác không bị ảnh hưởng.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Hủy</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => resetPrize(selectedPlace)}>Xác Nhận</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+            
+            {/* Global reset button - only on homepage */}
+            {!isFocusMode && history.length > 0 && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="px-6"
+                  >
+                    <RotateCcw className="w-5 h-5 mr-2" />
+                    Làm Lại Tất Cả
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Bạn có chắc chắn muốn làm lại tất cả?</AlertDialogTitle>
                     <AlertDialogDescription>
                       Hành động này sẽ xóa toàn bộ lịch sử bốc thăm và đặt lại tất cả giải thưởng. Không thể hoàn tác sau khi thực hiện.
                     </AlertDialogDescription>
@@ -512,7 +549,7 @@ export const LuckyDraw = () => {
         </motion.div>
         
         {/* History */}
-        <DrawHistory history={history} onClear={clearHistory} onResetPrize={resetPrize} />
+        <DrawHistory history={history} onClear={clearHistory} />
         
         {/* Completion Message */}
         {Object.values(prizes).every(p => p.remaining === 0) && (
