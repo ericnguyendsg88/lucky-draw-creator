@@ -5,7 +5,7 @@ import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
 import { DrawHistory } from "./DrawHistory";
 import { Button } from "./ui/button";
-import { Sparkles, RotateCcw, ArrowLeft } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowLeft, Pause, Play } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,13 +52,18 @@ export const LuckyDraw = () => {
   const [currentNumber, setCurrentNumber] = useState<number | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [history, setHistory] = useState<DrawnNumber[]>([]);
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
-const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [drawCounts, setDrawCounts] = useState<Record<0 | 1 | 2 | 3 | 4, number>>({
     0: 0, 1: 0, 2: 0, 3: 0, 4: 0
   });
+  const [pendingNumbers, setPendingNumbers] = useState<number[]>([]);
+  const [currentDrawIndex, setCurrentDrawIndex] = useState(0);
+  const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const rollingSoundRef = useRef<{ stop: () => void } | null>(null);
   
   const currentPlace = selectedPlace;
   const isComplete = currentPlace === null || prizes[currentPlace].remaining === 0;
@@ -87,22 +92,103 @@ const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(nul
     });
   };
   
+  const clearAllTimeouts = () => {
+    drawTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    drawTimeoutsRef.current = [];
+    rollingSoundRef.current?.stop();
+    rollingSoundRef.current = null;
+  };
+  
+  const pauseDraw = () => {
+    if (isDrawing && !isPaused) {
+      setIsPaused(true);
+      clearAllTimeouts();
+      rollingSoundRef.current?.stop();
+      setIsSpinning(false);
+    }
+  };
+  
+  const resumeDraw = () => {
+    if (isPaused && pendingNumbers.length > 0 && currentPlace !== null) {
+      setIsPaused(false);
+      continueDrawing(pendingNumbers, currentDrawIndex, currentPlace);
+    }
+  };
+  
+  const continueDrawing = (numbersToAdd: number[], startIndex: number, place: 0 | 1 | 2 | 3 | 4) => {
+    const drawDurationPerNumber = 2500;
+    const pauseBetweenNumbers = 5000;
+    const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
+    
+    numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
+      const index = startIndex + relativeIndex;
+      const startTime = relativeIndex * totalTimePerNumber;
+      
+      const spinTimeout = setTimeout(() => {
+        setIsSpinning(true);
+        rollingSoundRef.current = soundManager.startContinuousRolling();
+        
+        const landTimeout = setTimeout(() => {
+          rollingSoundRef.current?.stop();
+          setIsSpinning(false);
+          soundManager.playNumberLand();
+          setCurrentNumber(num);
+          setHistory(prev => [{ number: num, place }, ...prev]);
+          setCurrentDrawIndex(index + 1);
+          
+          setPrizes(prev => ({
+            ...prev,
+            [place]: { ...prev[place], remaining: prev[place].remaining - 1 },
+          }));
+          
+          triggerConfetti(place);
+          if (index === numbersToAdd.length - 1) {
+            const winIntensity = place === 0 ? 'large' : place <= 2 ? 'medium' : 'small';
+            soundManager.playWin(winIntensity);
+          }
+        }, drawDurationPerNumber);
+        
+        drawTimeoutsRef.current.push(landTimeout);
+      }, startTime);
+      
+      drawTimeoutsRef.current.push(spinTimeout);
+    });
+    
+    const remainingNumbers = numbersToAdd.length - startIndex;
+    const totalTime = remainingNumbers * totalTimePerNumber;
+    const finishTimeout = setTimeout(() => {
+      setDrawnNumbers(prev => {
+        const newSet = new Set(prev);
+        numbersToAdd.forEach(n => newSet.add(n));
+        return newSet;
+      });
+      setDrawCounts(prev => ({
+        ...prev,
+        [place]: prev[place] + 1
+      }));
+      
+      setIsDrawing(false);
+      setIsFocusMode(false);
+      setPendingNumbers([]);
+      setCurrentDrawIndex(0);
+    }, totalTime);
+    
+    drawTimeoutsRef.current.push(finishTimeout);
+  };
+  
   const drawNumber = useCallback(() => {
     if (isDrawing || isComplete || currentPlace === null) return;
     
     soundManager.playClick();
     setIsDrawing(true);
     setIsFocusMode(true);
+    setIsPaused(false);
     const place = currentPlace;
-    const currentDrawIndex = drawCounts[place];
+    const currentDrawCountIndex = drawCounts[place];
     const batchSize = Math.min(
-      batchSizes[place][currentDrawIndex] || batchSizes[place][batchSizes[place].length - 1],
+      batchSizes[place][currentDrawCountIndex] || batchSizes[place][batchSizes[place].length - 1],
       prizes[place].remaining
     );
-    // Each number gets 2.5s animation + 5s clear display pause
-    const drawDurationPerNumber = 2500; // Slot machine spinning time
-    const pauseBetweenNumbers = 5000; // Longer pause to clearly display each number
-    const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     // Generate all numbers at once
     const numbersToAdd: number[] = [];
@@ -117,51 +203,9 @@ const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(nul
       newDrawnNumbers.add(newNumber);
     }
     
-    // Draw numbers sequentially
-    numbersToAdd.forEach((num, index) => {
-      const startTime = index * totalTimePerNumber;
-      
-      // Start spinning for this number
-      setTimeout(() => {
-        setIsSpinning(true);
-        const rollingSound = soundManager.startContinuousRolling();
-        
-        // Stop spinning and show the number after animation
-        setTimeout(() => {
-          rollingSound?.stop();
-          setIsSpinning(false);
-          soundManager.playNumberLand();
-          setCurrentNumber(num);
-          setHistory(prev => [{ number: num, place }, ...prev]);
-          
-          // Decrease remaining count for this prize by 1
-          setPrizes(prev => ({
-            ...prev,
-            [place]: { ...prev[place], remaining: prev[place].remaining - 1 },
-          }));
-          
-          // Trigger confetti and win sound for each number
-          triggerConfetti(place);
-          if (index === numbersToAdd.length - 1) {
-            const winIntensity = place === 0 ? 'large' : place <= 2 ? 'medium' : 'small';
-            soundManager.playWin(winIntensity);
-          }
-        }, drawDurationPerNumber);
-      }, startTime);
-    });
-    
-    // Update drawn numbers and draw counts
-    const totalTime = numbersToAdd.length * totalTimePerNumber;
-    setTimeout(() => {
-      setDrawnNumbers(newDrawnNumbers);
-      setDrawCounts(prev => ({
-        ...prev,
-        [place]: prev[place] + 1
-      }));
-      
-      setIsDrawing(false);
-      setIsFocusMode(false);
-    }, totalTime);
+    setPendingNumbers(numbersToAdd);
+    setCurrentDrawIndex(0);
+    continueDrawing(numbersToAdd, 0, place);
   }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes, drawCounts]);
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
@@ -174,8 +218,10 @@ const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(nul
   
   const reset = () => {
     soundManager.playClick();
+    clearAllTimeouts();
     setIsDrawing(false);
     setIsSpinning(false);
+    setIsPaused(false);
     setPrizes(initialPrizes);
     setCurrentNumber(null);
     setHistory([]);
@@ -183,6 +229,8 @@ const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(nul
     setSelectedPlace(null);
     setIsFocusMode(false);
     setDrawCounts({ 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
+    setPendingNumbers([]);
+    setCurrentDrawIndex(0);
   };
   
   const clearHistory = () => {
@@ -199,13 +247,14 @@ const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(nul
   };
   
   const getButtonText = () => {
-    if (isDrawing) return "Đang Bốc Thăm...";
+    if (isPaused) return "Đã Tạm Dừng - Nhấn Tiếp Tục";
+    if (isDrawing) return `Đang Bốc Thăm... (${currentDrawIndex}/${pendingNumbers.length})`;
     if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
     if (prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
     const placeLabels = { 0: "Đặc Biệt", 1: "Nhất", 2: "Nhì", 3: "Ba", 4: "Khuyến Khích" };
-    const currentDrawIndex = drawCounts[currentPlace];
+    const currentDrawCountIndex = drawCounts[currentPlace];
     const batchSize = Math.min(
-      batchSizes[currentPlace][currentDrawIndex] || batchSizes[currentPlace][batchSizes[currentPlace].length - 1],
+      batchSizes[currentPlace][currentDrawCountIndex] || batchSizes[currentPlace][batchSizes[currentPlace].length - 1],
       prizes[currentPlace].remaining
     );
     const remaining = prizes[currentPlace].remaining;
@@ -383,15 +432,35 @@ const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(nul
           
           {/* Draw Button */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Button
-              onClick={drawNumber}
-              disabled={isDrawing || currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
-              className="draw-button text-primary-foreground min-w-[320px] px-8 py-6 text-xl md:text-2xl"
-              size="lg"
-            >
-              <Sparkles className="w-7 h-7 mr-3" />
-              {getButtonText()}
-            </Button>
+            {isDrawing && !isPaused ? (
+              <Button
+                onClick={pauseDraw}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[320px] px-8 py-6 text-xl md:text-2xl"
+                size="lg"
+              >
+                <Pause className="w-7 h-7 mr-3" />
+                Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
+              </Button>
+            ) : isPaused ? (
+              <Button
+                onClick={resumeDraw}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[320px] px-8 py-6 text-xl md:text-2xl"
+                size="lg"
+              >
+                <Play className="w-7 h-7 mr-3" />
+                Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+              </Button>
+            ) : (
+              <Button
+                onClick={drawNumber}
+                disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
+                className="draw-button text-primary-foreground min-w-[320px] px-8 py-6 text-xl md:text-2xl"
+                size="lg"
+              >
+                <Sparkles className="w-7 h-7 mr-3" />
+                {getButtonText()}
+              </Button>
+            )}
             
             {history.length > 0 && (
               <AlertDialog>
