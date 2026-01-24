@@ -157,11 +157,6 @@ export const LuckyDraw = () => {
     const remainingNumbers = numbersToAdd.length - startIndex;
     const totalTime = remainingNumbers * totalTimePerNumber;
     const finishTimeout = setTimeout(() => {
-      setDrawnNumbers(prev => {
-        const newSet = new Set(prev);
-        numbersToAdd.forEach(n => newSet.add(n));
-        return newSet;
-      });
       setDrawCounts(prev => ({
         ...prev,
         [place]: prev[place] + 1
@@ -202,6 +197,9 @@ export const LuckyDraw = () => {
       numbersToAdd.push(newNumber);
       newDrawnNumbers.add(newNumber);
     }
+    
+    // Update drawnNumbers immediately to prevent duplicates across all prizes
+    setDrawnNumbers(newDrawnNumbers);
     
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
