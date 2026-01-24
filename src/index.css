@@ -354,6 +354,35 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    will-change: transform;
+    transition: transform 0.05s ease-out;
+  }
+  
+  .slot-digit-spinning {
+    animation: slotSpin 0.08s ease-in-out infinite;
+  }
+  
+  @keyframes slotSpin {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  
+  .slot-machine-active {
+    animation: machineShake 0.15s ease-in-out infinite;
+  }
+  
+  @keyframes machineShake {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.01); }
+  }
+  
+  .slot-glow-pulse {
+    animation: glowPulse 0.4s ease-in-out infinite;
+  }
+  
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
   }
   
   .slot-machine-frame {
@@ -439,5 +468,46 @@
   @keyframes glow {
     0%, 100% { filter: brightness(1); }
     50% { filter: brightness(1.2); }
+  }
+  
+  /* Optimized floating particles */
+  .floating-particle {
+    animation: particleFloat 4s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+  
+  @keyframes particleFloat {
+    0%, 100% { 
+      transform: translateY(0) translateX(0);
+      opacity: 0.2;
+    }
+    50% { 
+      transform: translateY(-25px) translateX(8px);
+      opacity: 0.5;
+    }
+  }
+  
+  /* Optimized spotlight beams */
+  .spotlight-beam {
+    position: absolute;
+    width: 8rem;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
+    transform: skewX(-20deg);
+    will-change: transform;
+  }
+  
+  .spotlight-beam-1 {
+    animation: spotlightSweep 8s linear infinite;
+  }
+  
+  .spotlight-beam-2 {
+    background: linear-gradient(to right, transparent, rgba(147,197,253,0.15), transparent);
+    animation: spotlightSweep 10s linear infinite 2s;
+  }
+  
+  @keyframes spotlightSweep {
+    0% { transform: translateX(-10vw) skewX(-20deg); }
+    100% { transform: translateX(110vw) skewX(-20deg); }
   }
 }

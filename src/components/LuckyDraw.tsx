@@ -263,59 +263,25 @@ export const LuckyDraw = () => {
   
   return (
     <div className="min-h-screen py-8 px-4 pt-32">
-      {/* Animated floating particles */}
+      {/* CSS-based floating particles for better performance */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
+        {[...Array(12)].map((_, i) => (
+          <div
             key={i}
-            className="absolute w-1 h-1 bg-white/30 rounded-full"
+            className="absolute w-1 h-1 bg-white/30 rounded-full floating-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-              ease: "easeInOut",
+              left: `${(i * 8.33) % 100}%`,
+              top: `${(i * 15) % 100}%`,
+              animationDelay: `${i * 0.3}s`,
             }}
           />
         ))}
       </div>
       
-      {/* Moving spotlight beams */}
+      {/* CSS-based spotlight beams */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
-        <motion.div
-          className="absolute w-32 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
-          style={{ left: '-10%', top: 0, transform: 'skewX(-20deg)' }}
-          animate={{
-            left: ['0%', '110%'],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-        <motion.div
-          className="absolute w-32 h-full bg-gradient-to-r from-transparent via-blue-200/20 to-transparent"
-          style={{ left: '-10%', top: 0, transform: 'skewX(-20deg)' }}
-          animate={{
-            left: ['0%', '110%'],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "linear",
-            delay: 2,
-          }}
-        />
+        <div className="spotlight-beam spotlight-beam-1" />
+        <div className="spotlight-beam spotlight-beam-2" />
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
