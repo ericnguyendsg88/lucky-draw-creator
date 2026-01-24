@@ -231,6 +231,41 @@ export const LuckyDraw = () => {
     setCurrentDrawIndex(0);
   };
   
+  const resetPrize = (place: 0 | 1 | 2 | 3 | 4) => {
+    soundManager.playClick();
+    // Get numbers that were drawn for this prize
+    const numbersToRemove = history
+      .filter(item => item.place === place)
+      .map(item => item.number);
+    
+    // Remove from drawnNumbers set
+    setDrawnNumbers(prev => {
+      const newSet = new Set(prev);
+      numbersToRemove.forEach(n => newSet.delete(n));
+      return newSet;
+    });
+    
+    // Remove from history
+    setHistory(prev => prev.filter(item => item.place !== place));
+    
+    // Reset prize count
+    setPrizes(prev => ({
+      ...prev,
+      [place]: initialPrizes[place]
+    }));
+    
+    // Reset draw count for this prize
+    setDrawCounts(prev => ({
+      ...prev,
+      [place]: 0
+    }));
+    
+    // Clear current number if it was from this prize
+    if (currentNumber !== null && numbersToRemove.includes(currentNumber)) {
+      setCurrentNumber(null);
+    }
+  };
+  
   const clearHistory = () => {
     soundManager.playClick();
     setHistory([]);
@@ -477,7 +512,7 @@ export const LuckyDraw = () => {
         </motion.div>
         
         {/* History */}
-        <DrawHistory history={history} onClear={clearHistory} />
+        <DrawHistory history={history} onClear={clearHistory} onResetPrize={resetPrize} />
         
         {/* Completion Message */}
         {Object.values(prizes).every(p => p.remaining === 0) && (

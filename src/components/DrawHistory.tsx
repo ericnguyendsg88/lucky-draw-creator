@@ -1,6 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, RotateCcw } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 interface DrawnNumber {
   number: number;
@@ -10,6 +21,7 @@ interface DrawnNumber {
 interface DrawHistoryProps {
   history: DrawnNumber[];
   onClear: () => void;
+  onResetPrize: (place: 0 | 1 | 2 | 3 | 4) => void;
 }
 
 const placeColors = {
@@ -28,13 +40,6 @@ const placeEmojis = {
   4: "⭐",
 };
 
-const placeLabels = {
-  1: "1st",
-  2: "2nd",
-  3: "3rd",
-  4: "4th",
-};
-
 const placeSizes = {
   0: "px-6 py-4 text-xl md:text-2xl", // Special - Largest
   1: "px-6 py-4 text-lg md:text-xl",  // 1st - Large
@@ -51,7 +56,7 @@ const placeNames = {
   4: "Khuyến Khích",
 };
 
-export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
+export const DrawHistory = ({ history, onClear, onResetPrize }: DrawHistoryProps) => {
   if (history.length === 0) return null;
   
   // Count prizes by place
@@ -83,11 +88,11 @@ export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
             className="border-red-400/40 hover:bg-red-500/20 hover:border-red-400/60 text-red-200"
           >
             <Trash2 className="w-4 h-4 mr-2" />
-            Xóa
+            Xóa Lịch Sử
           </Button>
         </div>
         
-        {/* Prize counts summary */}
+        {/* Prize counts summary with individual reset buttons */}
         <div className="flex flex-wrap gap-3 justify-center">
           {([0, 1, 2, 3, 4] as const).map((place) => {
             const count = prizeCounts[place] || 0;
@@ -95,9 +100,31 @@ export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
             return (
               <div
                 key={place}
-                className={`px-4 py-2 rounded-full border ${placeColors[place]} text-sm font-bold`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border ${placeColors[place]} text-sm font-bold`}
               >
-                {placeEmojis[place]} {placeNames[place]}: {count}
+                <span>{placeEmojis[place]} {placeNames[place]}: {count}</span>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      className="ml-1 p-1 rounded-full hover:bg-white/20 transition-colors"
+                      title={`Làm lại ${placeNames[place]}`}
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Làm lại Giải {placeNames[place]}?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Hành động này sẽ xóa {count} số đã bốc cho Giải {placeNames[place]} và cho phép bốc lại. Các giải khác không bị ảnh hưởng.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Hủy</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => onResetPrize(place)}>Xác Nhận</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             );
           })}
