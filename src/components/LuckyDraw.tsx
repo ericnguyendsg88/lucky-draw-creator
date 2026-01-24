@@ -278,8 +278,19 @@ export const LuckyDraw = () => {
   };
   
   const goBackHome = () => {
-    if (!isDrawing) {
+    // Allow going back if not drawing OR if paused
+    if (!isDrawing || isPaused) {
       soundManager.playClick();
+      
+      // If paused mid-draw, clean up the pending draw
+      if (isPaused) {
+        clearAllTimeouts();
+        setIsDrawing(false);
+        setIsPaused(false);
+        setPendingNumbers([]);
+        setCurrentDrawIndex(0);
+      }
+      
       setIsFocusMode(false);
       setSelectedPlace(null);
     }
