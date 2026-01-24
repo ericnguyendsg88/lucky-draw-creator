@@ -22,6 +22,7 @@ import { soundManager } from "@/lib/sounds";
 interface DrawnNumber {
   number: number;
   place: 0 | 1 | 2 | 3 | 4;
+  round?: number; // For Giải Khuyến Khích: round 1 or 2
 }
 
 interface PrizeState {
@@ -136,7 +137,9 @@ export const LuckyDraw = () => {
           setIsSpinning(false);
           soundManager.playNumberLand();
           setCurrentNumber(num);
-          setHistory(prev => [{ number: num, place }, ...prev]);
+          // For Giải Khuyến Khích, include round number (1 or 2)
+          const round = place === 4 ? drawCounts[place] + 1 : undefined;
+          setHistory(prev => [{ number: num, place, round }, ...prev]);
           setCurrentDrawIndex(index + 1);
           
           setPrizes(prev => ({

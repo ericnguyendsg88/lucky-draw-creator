@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 interface DrawnNumber {
   number: number;
   place: 0 | 1 | 2 | 3 | 4;
+  round?: number;
 }
 
 interface DrawHistoryProps {
@@ -46,6 +47,35 @@ const placeNames = {
 
 export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
   if (history.length === 0) return null;
+  
+  // Group history by place and round for Giải Khuyến Khích
+  const groupedHistory = () => {
+    const groups: { label: string; place: 0 | 1 | 2 | 3 | 4; round?: number; items: DrawnNumber[] }[] = [];
+    
+    // Giải Khuyến Khích Round 1
+    const kk1 = history.filter(h => h.place === 4 && h.round === 1);
+    if (kk1.length > 0) {
+      groups.push({ label: "Khuyến Khích - Lượt 1", place: 4, round: 1, items: kk1 });
+    }
+    
+    // Giải Khuyến Khích Round 2
+    const kk2 = history.filter(h => h.place === 4 && h.round === 2);
+    if (kk2.length > 0) {
+      groups.push({ label: "Khuyến Khích - Lượt 2", place: 4, round: 2, items: kk2 });
+    }
+    
+    // Other prizes (in order: Ba, Nhì, Nhất, Đặc Biệt)
+    [3, 2, 1, 0].forEach(place => {
+      const items = history.filter(h => h.place === place);
+      if (items.length > 0) {
+        groups.push({ label: placeNames[place as 0 | 1 | 2 | 3 | 4], place: place as 0 | 1 | 2 | 3 | 4, items });
+      }
+    });
+    
+    return groups;
+  };
+  
+  const groups = groupedHistory();
   
   // Count prizes by place
   const prizeCounts = history.reduce((acc, item) => {
@@ -99,36 +129,40 @@ export const DrawHistory = ({ history, onClear }: DrawHistoryProps) => {
           </div>
         </div>
       </div>
-      <div 
-        className="flex flex-wrap gap-4 md:gap-5 justify-center max-h-80 overflow-y-auto p-6 md:p-8 rounded-3xl"
-        style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(15px)',
-          border: '2px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-        }}
-      >
-        <AnimatePresence initial={false}>
-          {history.map((item, index) => (
-            <motion.div
-              key={`${item.number}-${item.place}-${history.length - index}`}
-              className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
-              initial={{ opacity: 0, scale: 0.5, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 260,
-                damping: 20
+      
+      {/* Grouped sections */}
+      <div className="space-y-6">
+        {groups.map((group, groupIndex) => (
+          <div key={`${group.place}-${group.round || 0}`}>
+            <h4 className={`text-lg font-bold mb-3 ${placeColors[group.place].split(' ').find(c => c.startsWith('text-')) || 'text-white'}`}>
+              {placeEmojis[group.place]} {group.label} ({group.items.length})
+            </h4>
+            <div 
+              className="flex flex-wrap gap-3 md:gap-4 justify-start p-4 md:p-6 rounded-2xl"
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
-              layout
-              whileHover={{ scale: item.place === 0 ? 1.15 : 1.12, y: -4 }}
             >
-              <span className={item.place === 0 ? "text-2xl md:text-3xl mr-2" : "text-xl md:text-2xl mr-2"}>{placeEmojis[item.place]}</span>
-              <span className="font-black">{String(item.number).padStart(3, "0")}</span>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              <AnimatePresence initial={false}>
+                {group.items.map((item, index) => (
+                  <motion.div
+                    key={`${item.number}-${item.place}-${item.round}-${index}`}
+                    className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    whileHover={{ scale: 1.08 }}
+                  >
+                    <span className="text-lg mr-1">{placeEmojis[item.place]}</span>
+                    <span className="font-black">{String(item.number).padStart(3, "0")}</span>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+        ))}
       </div>
     </motion.div>
   );
