@@ -119,7 +119,6 @@ export const PrizeCard = ({ place, total, remaining, isActive, isSelected = fals
       <div className="text-2xl md:text-3xl font-display font-black mb-1 relative z-10">
         {total} <span className="text-muted-foreground text-base md:text-lg font-semibold">Giải</span>
       </div>
-      <p className="text-xs text-muted-foreground mb-3 relative z-10">{remaining > 0 ? `còn ${remaining}` : 'hết giải'}</p>
       
       {/* Progress bar */}
       <div className="w-full bg-black/30 rounded-full h-2 overflow-hidden backdrop-blur-sm relative z-10">

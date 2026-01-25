@@ -98,7 +98,6 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     whileHover={{ scale: 1.08 }}
                   >
-                    <span className="text-lg mr-1">{placeEmojis[item.place]}</span>
                     <span className="font-black">{String(item.number).padStart(3, "0")}</span>
                   </motion.div>
                 ))}

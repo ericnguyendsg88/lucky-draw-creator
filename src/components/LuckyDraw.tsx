@@ -5,7 +5,7 @@ import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
 import { PrizeHistory } from "./PrizeHistory";
 import { Button } from "./ui/button";
-import { Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2 } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2, Trophy, Award } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,18 +42,18 @@ interface PrizeState {
 const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
   4: { total: 30, remaining: 30 },  // Giải Khuyến Khích: 30 prizes, 2 draws (15 + 15)
   3: { total: 15, remaining: 15 },  // Giải Ba: 15 prizes, 1 draw
-  2: { total: 2, remaining: 2 },    // Giải Nhì: 2 prizes, 2 draws (1 each)
-  1: { total: 1, remaining: 1 },    // Giải Nhất: 1 prize
+  2: { total: 3, remaining: 3 },    // Combined Nhất+Nhì: 3 numbers drawn, facilitator decides
+  1: { total: 1, remaining: 1 },    // Giải Nhất: included in combined draw
   0: { total: 1, remaining: 1 },    // Giải Đặc Biệt: 1 prize
 };
 
 // Batch sizes for each prize level
-// Giải Khuyến Khích: first draw 17, second draw 18 (handled dynamically)
+// Combined Giải Nhất + Nhì: draw 3 numbers at once
 const batchSizes: Record<0 | 1 | 2 | 3 | 4, number[]> = {
   4: [15, 15],  // 2 draws: 15 then 15
   3: [15],      // 1 draw: all 15
-  2: [2],       // 1 draw: both prizes at once
-  1: [1],       // 1 draw: 1
+  2: [3],       // Combined with prize 1: draw 3 numbers
+  1: [3],       // Combined with prize 2: draw 3 numbers (not used separately)
   0: [1],       // 1 draw: 1
 };
 
@@ -205,16 +205,16 @@ export const LuckyDraw = () => {
     }
     
     // Original logic for other prizes
-    // Custom spin times: Đặc Biệt 10s, Nhất 8s, Nhì 6s, others 5s
+    // Custom spin times: Đặc Biệt 10s, Combined Nhất+Nhì 7s each
     const drawDurations: Record<0 | 1 | 2 | 3 | 4, number> = {
       0: 8000,  // Giải Đặc Biệt: 8s spin + 2s pause = 10s
-      1: 6000,  // Giải Nhất: 6s spin + 2s pause = 8s
-      2: 4000,  // Giải Nhì: 4s spin + 2s pause = 6s
+      1: 3000,  // Combined Nhất+Nhì: 3s spin + 7s pause
+      2: 3000,  // Combined Nhất+Nhì: 3s spin + 7s pause
       3: 2500,  // Giải Ba: default
       4: 2500,  // Giải Khuyến Khích: default
     };
     const drawDurationPerNumber = drawDurations[place];
-    const pauseBetweenNumbers = 2000;
+    const pauseBetweenNumbers = (place === 1 || place === 2) ? 7000 : 2000;
     const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
@@ -233,6 +233,7 @@ export const LuckyDraw = () => {
           setHistory(prev => [{ number: num, place, round }, ...prev]);
           setCurrentDrawIndex(index + 1);
           
+          // Update remaining count
           setPrizes(prev => ({
             ...prev,
             [place]: { ...prev[place], remaining: prev[place].remaining - 1 },
@@ -268,16 +269,20 @@ export const LuckyDraw = () => {
   };
   
   const drawNumber = useCallback(() => {
-    if (isDrawing || isComplete || currentPlace === null) return;
+    if (isDrawing || currentPlace === null) return;
+    
+    // For combined Nhất+Nhì session, check if both are exhausted
+    if (currentPlace === 2 && prizes[1].remaining === 0 && prizes[2].remaining === 0) return;
     
     soundManager.playClick();
     setIsDrawing(true);
     setIsFocusMode(true);
     setIsPaused(false);
     const place = currentPlace;
-    const currentDrawCountIndex = drawCounts[place];
-    const batchSize = Math.min(
-      batchSizes[place][currentDrawCountIndex] || batchSizes[place][batchSizes[place].length - 1],
+    
+    // For combined Nhất+Nhì session, always draw 3 numbers
+    const batchSize = (place === 1 || place === 2) ? 3 : Math.min(
+      batchSizes[place][drawCounts[place]] || batchSizes[place][batchSizes[place].length - 1],
       prizes[place].remaining
     );
     
@@ -300,7 +305,7 @@ export const LuckyDraw = () => {
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
     continueDrawing(numbersToAdd, 0, place);
-  }, [isDrawing, isComplete, drawnNumbers, currentPlace, prizes, drawCounts]);
+  }, [isDrawing, drawnNumbers, currentPlace, prizes, drawCounts]);
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
     // Allow clicking on any prize card (even completed ones) to view history
@@ -332,9 +337,13 @@ export const LuckyDraw = () => {
   
   const resetPrize = (place: 0 | 1 | 2 | 3 | 4) => {
     soundManager.playClick();
-    // Get numbers that were drawn for this prize
+    
+    // For combined Nhất+Nhì session, reset both prizes
+    const placesToReset = (place === 1 || place === 2) ? [1, 2] : [place];
+    
+    // Get numbers that were drawn for these prizes
     const numbersToRemove = history
-      .filter(item => item.place === place)
+      .filter(item => placesToReset.includes(item.place))
       .map(item => item.number);
     
     // Remove from drawnNumbers set
@@ -345,21 +354,27 @@ export const LuckyDraw = () => {
     });
     
     // Remove from history
-    setHistory(prev => prev.filter(item => item.place !== place));
+    setHistory(prev => prev.filter(item => !placesToReset.includes(item.place)));
     
     // Reset prize count
-    setPrizes(prev => ({
-      ...prev,
-      [place]: initialPrizes[place]
-    }));
+    setPrizes(prev => {
+      const updates: any = {};
+      placesToReset.forEach(p => {
+        updates[p] = initialPrizes[p];
+      });
+      return { ...prev, ...updates };
+    });
     
-    // Reset draw count for this prize
-    setDrawCounts(prev => ({
-      ...prev,
-      [place]: 0
-    }));
+    // Reset draw count for these prizes
+    setDrawCounts(prev => {
+      const updates: any = { ...prev };
+      placesToReset.forEach(p => {
+        updates[p] = 0;
+      });
+      return updates;
+    });
     
-    // Clear current number if it was from this prize
+    // Clear current number if it was from these prizes
     if (currentNumber !== null && numbersToRemove.includes(currentNumber)) {
       setCurrentNumber(null);
     }
@@ -393,13 +408,14 @@ export const LuckyDraw = () => {
     if (isPaused) return "Đã Tạm Dừng - Nhấn Tiếp Tục";
     if (isDrawing) return "Đang Bốc Thăm...";
     if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
-    if (prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
-    const placeLabels = { 0: "Đặc Biệt", 1: "Nhất", 2: "Nhì", 3: "Ba", 4: "Khuyến Khích" };
+    if (currentPlace === 2 && prizes[1].remaining === 0 && prizes[2].remaining === 0) return "Giải này đã hết!";
+    if (currentPlace !== 2 && prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
+    const placeLabels = { 0: "Đặc Biệt", 1: "Nhất+Nhì", 2: "Nhất+Nhì", 3: "Ba", 4: "Khuyến Khích" };
     return `Bốc Giải ${placeLabels[currentPlace]}`;
   };
   
   return (
-    <div className="min-h-screen py-8 px-4 pt-32">
+    <div className="min-h-screen py-4 px-4 pt-20">
       {/* CSS-based floating particles for better performance */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         {[...Array(12)].map((_, i) => (
@@ -457,12 +473,12 @@ export const LuckyDraw = () => {
         
         {/* Header */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <motion.h1 
-            className="font-display text-5xl md:text-7xl font-black mb-3 text-white"
+            className="font-display text-4xl md:text-6xl font-black mb-2 text-white"
             style={{
               textShadow: '0 0 40px rgba(150, 200, 255, 0.8), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5)',
               letterSpacing: '0.05em'
@@ -482,7 +498,7 @@ export const LuckyDraw = () => {
         
         {/* Special Prize Card - Full Width */}
         <motion.div 
-          className="mb-4"
+          className="mb-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ 
             opacity: isFocusMode && selectedPlace !== 0 ? 0 : 1, 
@@ -495,35 +511,107 @@ export const LuckyDraw = () => {
           <PrizeCard place={0} total={prizes[0].total} remaining={prizes[0].remaining} isActive={currentPlace === 0} isSelected={selectedPlace === 0} isFocused={isFocusMode && selectedPlace === 0} onClick={() => handlePrizeClick(0)} />
         </motion.div>
         
+        {/* Combined Giải Nhất + Nhì - Single Card */}
+        <motion.div 
+          className="mb-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ 
+            opacity: isFocusMode && selectedPlace !== 1 && selectedPlace !== 2 ? 0 : 1, 
+            y: isFocusMode && selectedPlace !== 1 && selectedPlace !== 2 ? 20 : 0,
+            scale: isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 1.1 : 1,
+            height: isFocusMode && selectedPlace !== 1 && selectedPlace !== 2 ? 0 : 'auto'
+          }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          <motion.div
+            onClick={() => handlePrizeClick(2)}
+            className={`prize-card bg-gradient-to-br from-yellow-500/10 via-slate-100/10 to-transparent relative overflow-hidden cursor-pointer ${
+              (selectedPlace === 1 || selectedPlace === 2) ? 'ring-4 ring-white/60' : ''
+            } ${
+              isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 'ring-8 ring-white/80 shadow-2xl' : ''
+            }`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              scale: (selectedPlace === 1 || selectedPlace === 2) && !isFocusMode ? 1.1 : ((currentPlace === 1 || currentPlace === 2) ? 1.05 : 1)
+            }}
+            transition={{ duration: 0.2, type: "spring", stiffness: 400, damping: 25 }}
+            whileHover={{ scale: isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 1.02 : ((selectedPlace === 1 || selectedPlace === 2) ? 1.12 : ((currentPlace === 1 || currentPlace === 2) ? 1.08 : 1.03)), y: isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 0 : -4 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            {/* Animated background glow */}
+            {((currentPlace === 1 || currentPlace === 2) || (isFocusMode && (selectedPlace === 1 || selectedPlace === 2))) && (
+              <motion.div
+                className="absolute inset-0 rounded-2xl"
+                style={{
+                  background: (isFocusMode && (selectedPlace === 1 || selectedPlace === 2))
+                    ? `radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`
+                    : `radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.2) 0%, transparent 70%)`,
+                  opacity: (isFocusMode && (selectedPlace === 1 || selectedPlace === 2)) ? 0.4 : 0.2,
+                }}
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: (isFocusMode && (selectedPlace === 1 || selectedPlace === 2)) ? [0.4, 0.6, 0.4] : [0.2, 0.3, 0.2],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            )}
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20 py-6 pb-14">
+              {/* Giải Nhất */}
+              <div className="flex flex-col items-center">
+                <motion.div
+                  animate={(currentPlace === 1 || currentPlace === 2) ? { y: [0, -5, 0] } : {}}
+                  transition={{ duration: 0.6, repeat: Infinity }}
+                >
+                  <div className="text-3xl md:text-4xl mb-1">👑</div>
+                  <Trophy className="w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 text-yellow-300" />
+                </motion.div>
+                <h3 className="font-display font-bold text-sm md:text-base mb-1">Giải Nhất</h3>
+                <div className="mb-2">
+                  <div className="text-lg md:text-xl font-black text-yellow-300">10,000,000</div>
+                  <div className="text-xs text-blue-100/60 font-medium">VND</div>
+                </div>
+              </div>
+              
+              {/* Divider */}
+              <div className="hidden md:block w-px h-24 bg-white/20"></div>
+              <div className="md:hidden w-24 h-px bg-white/20"></div>
+              
+              {/* Giải Nhì */}
+              <div className="flex flex-col items-center">
+                <motion.div
+                  animate={(currentPlace === 1 || currentPlace === 2) ? { y: [0, -5, 0] } : {}}
+                  transition={{ duration: 0.6, repeat: Infinity }}
+                >
+                  <div className="text-3xl md:text-4xl mb-1">🥈</div>
+                  <Award className="w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 text-slate-100" />
+                </motion.div>
+                <h3 className="font-display font-bold text-sm md:text-base mb-1">Giải Nhì</h3>
+                <div className="mb-2">
+                  <div className="text-lg md:text-xl font-black text-slate-100">7,000,000</div>
+                  <div className="text-xs text-blue-100/60 font-medium">VND</div>
+                </div>
+              </div>
+              
+              {/* Total Count - Centered Below */}
+              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
+                <div className="text-2xl md:text-3xl font-display font-black">
+                  3 <span className="text-muted-foreground text-base md:text-lg font-semibold">Giải</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+        
         {/* Prize Cards */}
         <motion.div 
-          className={`grid gap-3 md:gap-4 mb-8 transition-all duration-500 ${isFocusMode && selectedPlace !== null && selectedPlace !== 0 ? 'grid-cols-1 place-items-center' : 'grid-cols-2 md:grid-cols-4'}`}
+          className={`grid gap-2 md:gap-3 mb-4 transition-all duration-500 ${isFocusMode && selectedPlace !== null && selectedPlace !== 0 && selectedPlace !== 1 && selectedPlace !== 2 ? 'grid-cols-1 place-items-center' : 'grid-cols-2'}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <motion.div 
-            className="w-full"
-            animate={{
-              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 1 ? 0 : 1,
-              scale: isFocusMode && selectedPlace === 1 ? 1.2 : 1,
-              height: isFocusMode && selectedPlace !== null && selectedPlace !== 1 ? 0 : 'auto'
-            }}
-            transition={{ duration: 0.5 }}
-          >
-            <PrizeCard place={1} total={prizes[1].total} remaining={prizes[1].remaining} isActive={currentPlace === 1} isSelected={selectedPlace === 1} isFocused={isFocusMode && selectedPlace === 1} onClick={() => handlePrizeClick(1)} />
-          </motion.div>
-          <motion.div 
-            className="w-full"
-            animate={{
-              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 2 ? 0 : 1,
-              scale: isFocusMode && selectedPlace === 2 ? 1.2 : 1,
-              height: isFocusMode && selectedPlace !== null && selectedPlace !== 2 ? 0 : 'auto'
-            }}
-            transition={{ duration: 0.5 }}
-          >
-            <PrizeCard place={2} total={prizes[2].total} remaining={prizes[2].remaining} isActive={currentPlace === 2} isSelected={selectedPlace === 2} isFocused={isFocusMode && selectedPlace === 2} onClick={() => handlePrizeClick(2)} />
-          </motion.div>
           <motion.div 
             className="w-full"
             animate={{
@@ -558,12 +646,12 @@ export const LuckyDraw = () => {
         >
           <NumberDisplay number={currentNumber} isDrawing={isSpinning} />
           
-          {/* Draw Button */}
+          {/* Draw Button + Back to Home Button */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
             {isDrawing && !isPaused ? (
               <Button
                 onClick={pauseDraw}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[320px] px-8 py-6 text-xl md:text-2xl"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
                 size="lg"
               >
                 <Pause className="w-7 h-7 mr-3" />
@@ -572,7 +660,7 @@ export const LuckyDraw = () => {
             ) : isPaused ? (
               <Button
                 onClick={resumeDraw}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[320px] px-8 py-6 text-xl md:text-2xl"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
                 size="lg"
               >
                 <Play className="w-7 h-7 mr-3" />
@@ -582,16 +670,32 @@ export const LuckyDraw = () => {
               <Button
                 onClick={drawNumber}
                 disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
-                className="draw-button text-primary-foreground min-w-[320px] px-8 py-6 text-xl md:text-2xl"
+                className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
                 size="lg"
               >
                 <Sparkles className="w-7 h-7 mr-3" />
                 {getButtonText()}
               </Button>
             )}
-            
+            {/* Back to Home Button */}
+            {isFocusMode && (
+              <Button
+                onClick={goBackHome}
+                disabled={isDrawing && !isPaused}
+                variant="outline"
+                size="md"
+                className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Trang Chủ
+              </Button>
+            )}
             {/* Reset button - context aware */}
-            {isFocusMode && selectedPlace !== null && history.some(h => h.place === selectedPlace) && (
+            {isFocusMode && selectedPlace !== null && (
+              (selectedPlace === 1 || selectedPlace === 2) 
+                ? (history.some(h => h.place === 1 || h.place === 2)) 
+                : history.some(h => h.place === selectedPlace)
+            ) && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -605,9 +709,9 @@ export const LuckyDraw = () => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Làm lại Giải {placeLabels[selectedPlace]}?</AlertDialogTitle>
+                    <AlertDialogTitle>Làm lại Giải {(selectedPlace === 1 || selectedPlace === 2) ? "Nhất+Nhì" : placeLabels[selectedPlace]}?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Hành động này sẽ xóa các số đã bốc cho Giải {placeLabels[selectedPlace]} và cho phép bốc lại. Các giải khác không bị ảnh hưởng.
+                      Hành động này sẽ xóa các số đã bốc cho Giải {(selectedPlace === 1 || selectedPlace === 2) ? "Nhất+Nhì" : placeLabels[selectedPlace]} và cho phép bốc lại. Các giải khác không bị ảnh hưởng.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -619,30 +723,19 @@ export const LuckyDraw = () => {
             )}
           </div>
           
-          {/* Back to Home Button */}
-          {isFocusMode && (
-            <motion.div
-              className="mt-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Button
-                onClick={goBackHome}
-                disabled={isDrawing && !isPaused}
-                variant="default"
-                size="lg"
-                className="px-10 py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-xl"
-              >
-                <ArrowLeft className="w-6 h-6 mr-3" />
-                Quay Lại Trang Chủ
-              </Button>
-            </motion.div>
-          )}
-          
           {/* Prize-specific History - only in focus mode */}
           {selectedPlace !== null && (
-            <PrizeHistory history={history} place={selectedPlace} />
+            <>
+              {/* For combined Nhất+Nhì, show both histories */}
+              {(selectedPlace === 1 || selectedPlace === 2) ? (
+                <>
+                  <PrizeHistory history={history} place={1} />
+                  <PrizeHistory history={history} place={2} />
+                </>
+              ) : (
+                <PrizeHistory history={history} place={selectedPlace} />
+              )}
+            </>
           )}
         </motion.div>
         )}
