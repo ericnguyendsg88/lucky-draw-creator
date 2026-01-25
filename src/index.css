@@ -91,7 +91,7 @@
     position: relative;
   }
   
-  /* Overlay for better text readability */
+  /* Overlay for better text readability - optimized */
   body::after {
     content: '';
     position: fixed;
@@ -99,16 +99,7 @@
     background: rgba(0, 0, 0, 0.7);
     pointer-events: none;
     z-index: 0;
-  }
-  
-  /* Static spotlight effects - no animation for performance */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    pointer-events: none;
-    z-index: 1;
+    will-change: auto;
   }
   
   #root {

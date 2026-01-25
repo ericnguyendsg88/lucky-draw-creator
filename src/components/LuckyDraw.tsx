@@ -415,29 +415,7 @@ export const LuckyDraw = () => {
   };
   
   return (
-    <div className="min-h-screen py-4 px-4 pt-20">
-      {/* CSS-based floating particles for better performance */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white/30 rounded-full floating-particle"
-            style={{
-              left: `${(i * 8.33) % 100}%`,
-              top: `${(i * 15) % 100}%`,
-              animationDelay: `${i * 0.3}s`,
-            }}
-          />
-        ))}
-      </div>
-      
-      {/* CSS-based spotlight beams */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
-        <div className="spotlight-beam spotlight-beam-1" />
-        <div className="spotlight-beam spotlight-beam-2" />
-      </div>
-      
-      <div className="max-w-7xl mx-auto relative z-10">
+    <div className="min-h-screen py-4 px-4 pt-20">      <div className="max-w-7xl mx-auto relative z-10">
         {/* Sound Pack Selector - Top Right */}
         <div className="absolute top-0 right-0 z-20">
           <DropdownMenu>
@@ -477,23 +455,15 @@ export const LuckyDraw = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <motion.h1 
+          <h1 
             className="font-display text-4xl md:text-6xl font-black mb-2 text-white"
             style={{
               textShadow: '0 0 40px rgba(150, 200, 255, 0.8), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5)',
               letterSpacing: '0.05em'
             }}
-            animate={{
-              textShadow: [
-                '0 0 40px rgba(150, 200, 255, 0.8), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5)',
-                '0 0 60px rgba(200, 230, 255, 1), 0 0 100px rgba(150, 200, 255, 0.7), 0 4px 8px rgba(0, 0, 0, 0.5)',
-                '0 0 40px rgba(150, 200, 255, 0.8), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5)',
-              ]
-            }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
             LUCKY DRAW
-          </motion.h1>
+          </h1>
         </motion.div>
         
         {/* Special Prize Card - Full Width */}

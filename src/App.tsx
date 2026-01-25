@@ -17,7 +17,11 @@ function BackgroundAdjuster() {
   const [overlayOpacity, setOverlayOpacity] = useState(() => Number(localStorage.getItem('bgOverlayOpacity')) || 70);
 
   useEffect(() => {
-    document.body.style.backgroundImage = `url('/background.jpg')`;
+    // Preload background image
+    const img = new Image();
+    img.src = '/background.webp';
+    
+    document.body.style.backgroundImage = `url('/background.webp')`;
     document.body.style.backgroundSize = `${width}% auto`;
     document.body.style.backgroundPosition = `${posX}% ${posY}%`;
     document.body.style.backgroundRepeat = 'no-repeat';
@@ -30,7 +34,7 @@ function BackgroundAdjuster() {
     if (existingStyle) existingStyle.remove();
     style.innerHTML = `body::after { background: rgba(0, 0, 0, ${overlayOpacity / 100}) !important; }`;
     document.head.appendChild(style);
-  }, [scale, width, posX, posY, overlayOpacity]);
+  }, [width, posX, posY, overlayOpacity]);
 
   const saveSettings = () => {
     localStorage.setItem('bgScale', scale.toString());
