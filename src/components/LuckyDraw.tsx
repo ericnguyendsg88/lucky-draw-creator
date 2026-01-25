@@ -151,6 +151,60 @@ export const LuckyDraw = () => {
   };
   
   const continueDrawing = (numbersToAdd: number[], startIndex: number, place: 0 | 1 | 2 | 3 | 4) => {
+    // For Giải Khuyến Khích (4) and Giải Ba (3): draw all 15 numbers simultaneously
+    if (place === 3 || place === 4) {
+      const drawDuration = 2500; // Spin time
+      
+      // Start spinning
+      setIsSpinning(true);
+      
+      // Land all numbers at once after spin time
+      const landTimeout = setTimeout(() => {
+        setIsSpinning(false);
+        soundManager.playNumberLand();
+        
+        // Add all numbers to history at once
+        const newHistoryItems = numbersToAdd.slice(startIndex).map(num => {
+          const round = place === 4 ? drawCounts[place] + 1 : undefined;
+          return { number: num, place, round };
+        });
+        
+        setHistory(prev => [...newHistoryItems, ...prev]);
+        
+        // Set the last number as current display
+        const lastNumber = numbersToAdd[numbersToAdd.length - 1];
+        setCurrentNumber(lastNumber);
+        setCurrentDrawIndex(numbersToAdd.length);
+        
+        // Update remaining prizes
+        const drawnCount = numbersToAdd.length - startIndex;
+        setPrizes(prev => ({
+          ...prev,
+          [place]: { ...prev[place], remaining: prev[place].remaining - drawnCount },
+        }));
+        
+        triggerConfetti(place);
+        
+        // Play win sound
+        const winIntensity = 'small';
+        soundManager.playWin(winIntensity);
+        
+        // Finish drawing
+        setDrawCounts(prev => ({
+          ...prev,
+          [place]: prev[place] + 1
+        }));
+        
+        setIsDrawing(false);
+        setPendingNumbers([]);
+        setCurrentDrawIndex(0);
+      }, drawDuration);
+      
+      drawTimeoutsRef.current.push(landTimeout);
+      return;
+    }
+    
+    // Original logic for other prizes
     // Custom spin times: Đặc Biệt 10s, Nhất 8s, Nhì 6s, others 5s
     const drawDurations: Record<0 | 1 | 2 | 3 | 4, number> = {
       0: 8000,  // Giải Đặc Biệt: 8s spin + 2s pause = 10s
