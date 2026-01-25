@@ -478,15 +478,6 @@ export const LuckyDraw = () => {
           >
             LUCKY DRAW
           </motion.h1>
-          <motion.p 
-            className="text-lg font-semibold text-blue-200"
-            style={{
-              textShadow: '0 0 20px rgba(150, 200, 255, 0.6)'
-            }}
-          >
-            Chương Trình Bốc Thăm Trúng Thưởng
-          </motion.p>
-          <p className="text-xl md:text-2xl text-blue-100/80 font-bold mt-2">49 Giải Thưởng • Số may mắn từ 001-250</p>
         </motion.div>
         
         {/* Special Prize Card - Full Width */}
