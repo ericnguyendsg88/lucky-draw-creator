@@ -5,7 +5,7 @@ import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
 import { PrizeHistory } from "./PrizeHistory";
 import { Button } from "./ui/button";
-import { Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2, Trophy, Award } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2, Trophy, Award, Settings } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +26,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { soundManager, SoundPack } from "@/lib/sounds";
 
 interface DrawnNumber {
@@ -81,7 +92,35 @@ export const LuckyDraw = () => {
   const [pendingNumbers, setPendingNumbers] = useState<number[]>([]);
   const [currentDrawIndex, setCurrentDrawIndex] = useState(0);
   const [soundPack, setSoundPackState] = useState<SoundPack>(soundManager.getSoundPack());
+  
+  // Initialize maxNumber from localStorage or default to null (not set)
+  const [maxNumber, setMaxNumber] = useState<number | null>(() => {
+    const stored = localStorage.getItem('luckyDrawMaxNumber');
+    return stored ? parseInt(stored) : null;
+  });
+  const [tempMaxNumber, setTempMaxNumber] = useState<string>("");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isRangeSet, setIsRangeSet] = useState<boolean>(() => {
+    return localStorage.getItem('luckyDrawMaxNumber') !== null;
+  });
+  
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  
+  // Force settings dialog open on first load if range not set
+  useEffect(() => {
+    if (!isRangeSet) {
+      setIsSettingsOpen(true);
+      setTempMaxNumber("250"); // Default suggestion
+    }
+  }, [isRangeSet]);
+  
+  // Save maxNumber to localStorage whenever it changes
+  useEffect(() => {
+    if (maxNumber !== null) {
+      localStorage.setItem('luckyDrawMaxNumber', maxNumber.toString());
+      setIsRangeSet(true);
+    }
+  }, [maxNumber]);
   
   // Warn user before accidental page refresh/close when there's draw history
   useEffect(() => {
@@ -276,7 +315,7 @@ export const LuckyDraw = () => {
   };
   
   const drawNumber = useCallback(() => {
-    if (isDrawing || currentPlace === null) return;
+    if (isDrawing || currentPlace === null || maxNumber === null) return;
     
     // For combined Nhất+Nhì session, check if both are exhausted
     if (currentPlace === 2 && prizes[1].remaining === 0 && prizes[2].remaining === 0) return;
@@ -300,7 +339,7 @@ export const LuckyDraw = () => {
     for (let i = 0; i < batchSize; i++) {
       let newNumber: number;
       do {
-        newNumber = Math.floor(Math.random() * 250) + 1; // Numbers 1-250
+        newNumber = Math.floor(Math.random() * maxNumber) + 1; // Numbers 1 to maxNumber
       } while (newDrawnNumbers.has(newNumber));
       numbersToAdd.push(newNumber);
       newDrawnNumbers.add(newNumber);
@@ -312,7 +351,7 @@ export const LuckyDraw = () => {
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
     continueDrawing(numbersToAdd, 0, place);
-  }, [isDrawing, drawnNumbers, currentPlace, prizes, drawCounts]);
+  }, [isDrawing, drawnNumbers, currentPlace, prizes, drawCounts, maxNumber]);
   
   const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
     // Allow clicking on any prize card (even completed ones) to view history
@@ -412,6 +451,7 @@ export const LuckyDraw = () => {
   };
   
   const getButtonText = () => {
+    if (!isRangeSet || maxNumber === null) return "Vui lòng cài đặt phạm vi số trước";
     if (isPaused) return "Đã Tạm Dừng - Nhấn Tiếp Tục";
     if (isDrawing) return "Đang Bốc Thăm...";
     if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
@@ -423,8 +463,8 @@ export const LuckyDraw = () => {
   
   return (
     <div className="min-h-screen py-4 px-4 pt-20">      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Sound Pack Selector - Top Right */}
-        <div className="absolute top-0 right-0 z-20">
+        {/* Sound Pack Selector & Settings - Top Right */}
+        <div className="absolute top-0 right-0 z-20 flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
@@ -454,6 +494,127 @@ export const LuckyDraw = () => {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          
+          {/* Settings Dialog */}
+          <Dialog open={isSettingsOpen} onOpenChange={(open) => {
+            // Prevent closing if range not set
+            if (!open && !isRangeSet) {
+              return;
+            }
+            setIsSettingsOpen(open);
+          }}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon"
+                className={`bg-white/10 border-white/20 hover:bg-white/20 text-white backdrop-blur-sm ${!isRangeSet ? 'animate-pulse ring-2 ring-yellow-400' : ''}`}
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent 
+              className="bg-slate-900/95 border-white/20 backdrop-blur-lg text-white"
+              onInteractOutside={(e) => {
+                // Prevent closing by clicking outside if range not set
+                if (!isRangeSet) {
+                  e.preventDefault();
+                }
+              }}
+              onEscapeKeyDown={(e) => {
+                // Prevent closing with Escape key if range not set
+                if (!isRangeSet) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              <DialogHeader>
+                <DialogTitle className="text-white">
+                  {!isRangeSet ? '⚠️ Cài Đặt Bắt Buộc' : 'Cài Đặt'}
+                </DialogTitle>
+                <DialogDescription className="text-white/70">
+                  {!isRangeSet 
+                    ? 'Vui lòng thiết lập phạm vi số trước khi bắt đầu bốc thăm'
+                    : 'Tùy chỉnh phạm vi số cho bốc thăm'
+                  }
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="maxNumber" className="text-white">
+                    Số lớn nhất (1 - 250) <span className="text-red-400">*</span>
+                  </Label>
+                  <Input
+                    id="maxNumber"
+                    type="number"
+                    min="1"
+                    max="250"
+                    value={tempMaxNumber}
+                    onChange={(e) => setTempMaxNumber(e.target.value)}
+                    className="bg-white/10 border-white/20 text-white"
+                    placeholder="Nhập số từ 1 đến 250"
+                    autoFocus
+                  />
+                  {maxNumber !== null && (
+                    <p className="text-sm text-white/60">
+                      Hiện tại: Số từ 1 đến {maxNumber}
+                    </p>
+                  )}
+                  {!isRangeSet && (
+                    <p className="text-sm text-yellow-400 font-semibold">
+                      ⚠️ Bạn phải thiết lập phạm vi số trước khi tiếp tục
+                    </p>
+                  )}
+                </div>
+              </div>
+              <DialogFooter>
+                {isRangeSet && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setTempMaxNumber(maxNumber?.toString() || "250");
+                      setIsSettingsOpen(false);
+                    }}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    Hủy
+                  </Button>
+                )}
+                <Button
+                  onClick={() => {
+                    const num = parseInt(tempMaxNumber);
+                    if (!isNaN(num) && num >= 1 && num <= 250) {
+                      // Check if reducing the range would invalidate existing drawn numbers
+                      if (maxNumber !== null) {
+                        const hasNumbersOutOfNewRange = Array.from(drawnNumbers).some(n => n > num);
+                        
+                        if (hasNumbersOutOfNewRange) {
+                          const confirmChange = window.confirm(
+                            `Cảnh báo: Có ${Array.from(drawnNumbers).filter(n => n > num).length} số đã bốc vượt quá phạm vi mới (${num}). Thay đổi này sẽ xóa toàn bộ lịch sử bốc thăm. Bạn có chắc chắn muốn tiếp tục?`
+                          );
+                          
+                          if (!confirmChange) {
+                            return;
+                          }
+                          
+                          // Reset everything when changing to a smaller range
+                          reset();
+                        }
+                      }
+                      
+                      setMaxNumber(num);
+                      setIsRangeSet(true);
+                      setIsSettingsOpen(false);
+                    } else {
+                      alert("Vui lòng nhập số từ 1 đến 250");
+                    }
+                  }}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  {!isRangeSet ? 'Bắt Đầu' : 'Lưu'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
         
         {/* Header */}
@@ -650,7 +811,7 @@ export const LuckyDraw = () => {
                 ) : (
                   <Button
                     onClick={drawNumber}
-                    disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
+                    disabled={!isRangeSet || currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
                     className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
                     size="lg"
                   >
@@ -695,7 +856,7 @@ export const LuckyDraw = () => {
                 ) : (
                   <Button
                     onClick={drawNumber}
-                    disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
+                    disabled={!isRangeSet || currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
                     className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
                     size="lg"
                   >
