@@ -215,13 +215,13 @@ export const LuckyDraw = () => {
     // Custom spin times: Đặc Biệt 10s, Combined Nhất+Nhì 7s each
     const drawDurations: Record<0 | 1 | 2 | 3 | 4, number> = {
       0: 8000,  // Giải Đặc Biệt: 8s spin + 2s pause = 10s
-      1: 3000,  // Combined Nhất+Nhì: 3s spin + 7s pause
-      2: 3000,  // Combined Nhất+Nhì: 3s spin + 7s pause
+      1: 3000,  // Combined Nhất+Nhì: 3s spin + 4s pause
+      2: 3000,  // Combined Nhất+Nhì: 3s spin + 4s pause
       3: 2500,  // Giải Ba: default
       4: 2500,  // Giải Khuyến Khích: default
     };
     const drawDurationPerNumber = drawDurations[place];
-    const pauseBetweenNumbers = (place === 1 || place === 2) ? 7000 : 2000;
+    const pauseBetweenNumbers = (place === 1 || place === 2) ? 4000 : 2000;
     const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
     
     numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
@@ -621,45 +621,91 @@ export const LuckyDraw = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <NumberDisplay number={currentNumber} isDrawing={isSpinning} selectedPlace={selectedPlace} isComplete={!isDrawing} />
-          
-          {/* Draw Button */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
-            {isDrawing && !isPaused ? (
-              <Button
-                onClick={pauseDraw}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                size="lg"
-              >
-                <Pause className="w-7 h-7 mr-3" />
-                Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
-              </Button>
-            ) : isPaused ? (
-              <Button
-                onClick={resumeDraw}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                size="lg"
-              >
-                <Play className="w-7 h-7 mr-3" />
-                Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
-              </Button>
-            ) : (
-              <Button
-                onClick={drawNumber}
-                disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
-                className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                size="lg"
-              >
-                <Sparkles className="w-7 h-7 mr-3" />
-                {getButtonText()}
-              </Button>
-            )}
-          </div>
-          
-          {/* Prize-specific History - only in focus mode */}
-          {selectedPlace !== null && (
+          {/* For prizes 3 and 4, show history first */}
+          {selectedPlace !== null && (selectedPlace === 3 || selectedPlace === 4) && (
             <>
-              {/* For combined Nhất+Nhì, show both histories */}
+              {/* Prize-specific History for prizes 3 and 4 */}
+              <PrizeHistory history={history} place={selectedPlace} />
+              
+              {/* Draw Button */}
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
+                {isDrawing && !isPaused ? (
+                  <Button
+                    onClick={pauseDraw}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                    size="lg"
+                  >
+                    <Pause className="w-7 h-7 mr-3" />
+                    Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
+                  </Button>
+                ) : isPaused ? (
+                  <Button
+                    onClick={resumeDraw}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                    size="lg"
+                  >
+                    <Play className="w-7 h-7 mr-3" />
+                    Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={drawNumber}
+                    disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
+                    className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                    size="lg"
+                  >
+                    <Sparkles className="w-7 h-7 mr-3" />
+                    {getButtonText()}
+                  </Button>
+                )}
+              </div>
+              
+              {/* Slot machine below for prizes 3 and 4 */}
+              <div className="mt-8">
+                <NumberDisplay number={currentNumber} isDrawing={isSpinning} selectedPlace={selectedPlace} isComplete={!isDrawing} />
+              </div>
+            </>
+          )}
+          
+          {/* For other prizes, show slot machine first (default order) */}
+          {selectedPlace !== null && selectedPlace !== 3 && selectedPlace !== 4 && (
+            <>
+              <NumberDisplay number={currentNumber} isDrawing={isSpinning} selectedPlace={selectedPlace} isComplete={!isDrawing} />
+              
+              {/* Draw Button */}
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
+                {isDrawing && !isPaused ? (
+                  <Button
+                    onClick={pauseDraw}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                    size="lg"
+                  >
+                    <Pause className="w-7 h-7 mr-3" />
+                    Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
+                  </Button>
+                ) : isPaused ? (
+                  <Button
+                    onClick={resumeDraw}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                    size="lg"
+                  >
+                    <Play className="w-7 h-7 mr-3" />
+                    Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={drawNumber}
+                    disabled={currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
+                    className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                    size="lg"
+                  >
+                    <Sparkles className="w-7 h-7 mr-3" />
+                    {getButtonText()}
+                  </Button>
+                )}
+              </div>
+              
+              {/* Prize-specific History - only in focus mode */}
               {(selectedPlace === 1 || selectedPlace === 2) ? (
                 <>
                   <PrizeHistory history={history} place={1} />
