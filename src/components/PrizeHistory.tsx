@@ -67,12 +67,14 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
       animate={{ opacity: 1, y: 0 }}
     >
       <h3 
-        className={`font-display font-black text-center text-white mb-6 ${isLargerDisplay ? 'text-4xl md:text-5xl' : 'text-2xl md:text-3xl'}`}
+        className={`font-black text-center text-white mb-6 uppercase ${isLargerDisplay ? 'text-4xl md:text-5xl' : 'text-2xl md:text-3xl'}`}
         style={{
+          fontFamily: 'Nunito, sans-serif',
+          fontWeight: '900',
           textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
         }}
       >
-        {placeEmojis[place]} Danh sách trúng thưởng ({prizeHistory.length})
+        {placeEmojis[place]} DANH SÁCH TRÚNG THƯỞNG ({prizeHistory.length})
       </h3>
       
       <div className="space-y-4">
