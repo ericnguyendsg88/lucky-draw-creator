@@ -198,6 +198,13 @@ export const LuckyDraw = () => {
         setIsDrawing(false);
         setPendingNumbers([]);
         setCurrentDrawIndex(0);
+        
+        // Reset slot machine to "- - -" after a brief delay for prizes 3 and 4
+        const resetTimeout = setTimeout(() => {
+          setCurrentNumber(null);
+        }, 2000); // Wait 2 seconds before resetting
+        
+        drawTimeoutsRef.current.push(resetTimeout);
       }, drawDuration);
       
       drawTimeoutsRef.current.push(landTimeout);
@@ -614,9 +621,9 @@ export const LuckyDraw = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <NumberDisplay number={currentNumber} isDrawing={isSpinning} />
+          <NumberDisplay number={currentNumber} isDrawing={isSpinning} selectedPlace={selectedPlace} isComplete={!isDrawing} />
           
-          {/* Draw Button + Back to Home Button */}
+          {/* Draw Button */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
             {isDrawing && !isPaused ? (
               <Button
@@ -647,19 +654,39 @@ export const LuckyDraw = () => {
                 {getButtonText()}
               </Button>
             )}
+          </div>
+          
+          {/* Prize-specific History - only in focus mode */}
+          {selectedPlace !== null && (
+            <>
+              {/* For combined Nhất+Nhì, show both histories */}
+              {(selectedPlace === 1 || selectedPlace === 2) ? (
+                <>
+                  <PrizeHistory history={history} place={1} />
+                  <PrizeHistory history={history} place={2} />
+                </>
+              ) : (
+                <PrizeHistory history={history} place={selectedPlace} />
+              )}
+            </>
+          )}
+          
+          {/* Back to Home and Reset buttons - positioned below history */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-12">
             {/* Back to Home Button */}
             {isFocusMode && (
               <Button
                 onClick={goBackHome}
                 disabled={isDrawing && !isPaused}
                 variant="outline"
-                size="md"
+                size="default"
                 className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Trang Chủ
               </Button>
             )}
+            
             {/* Reset button - context aware */}
             {isFocusMode && selectedPlace !== null && (
               (selectedPlace === 1 || selectedPlace === 2) 
@@ -670,8 +697,8 @@ export const LuckyDraw = () => {
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="outline"
-                    size="lg"
-                    className="px-6"
+                    size="default"
+                    className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg"
                   >
                     <RotateCcw className="w-5 h-5 mr-2" />
                     Làm Lại Giải Này
@@ -692,21 +719,6 @@ export const LuckyDraw = () => {
               </AlertDialog>
             )}
           </div>
-          
-          {/* Prize-specific History - only in focus mode */}
-          {selectedPlace !== null && (
-            <>
-              {/* For combined Nhất+Nhì, show both histories */}
-              {(selectedPlace === 1 || selectedPlace === 2) ? (
-                <>
-                  <PrizeHistory history={history} place={1} />
-                  <PrizeHistory history={history} place={2} />
-                </>
-              ) : (
-                <PrizeHistory history={history} place={selectedPlace} />
-              )}
-            </>
-          )}
         </motion.div>
         )}
         

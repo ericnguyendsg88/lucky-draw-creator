@@ -4,6 +4,8 @@ import { soundManager } from "@/lib/sounds";
 interface NumberDisplayProps {
   number: number | null;
   isDrawing: boolean;
+  selectedPlace?: 0 | 1 | 2 | 3 | 4 | null;
+  isComplete?: boolean;
 }
 
 const SlotDigit = ({ digit, isDrawing }: { digit: string; isDrawing: boolean }) => {
@@ -40,8 +42,11 @@ const SlotDigit = ({ digit, isDrawing }: { digit: string; isDrawing: boolean }) 
   );
 };
 
-export const NumberDisplay = ({ number, isDrawing }: NumberDisplayProps) => {
+export const NumberDisplay = ({ number, isDrawing, selectedPlace, isComplete }: NumberDisplayProps) => {
   const [displayDigits, setDisplayDigits] = useState<string[]>(["-", "-", "-"]);
+  
+  // Check if this is prize 3 or 4 and drawing is complete
+  const shouldBeSmall = isComplete && (selectedPlace === 3 || selectedPlace === 4);
   
   useEffect(() => {
     if (!isDrawing && number !== null) {
@@ -53,7 +58,7 @@ export const NumberDisplay = ({ number, isDrawing }: NumberDisplayProps) => {
   }, [isDrawing, number]);
   
   return (
-    <div className="relative">
+    <div className={`relative ${shouldBeSmall ? 'scale-75' : ''} transition-transform duration-500`}>
       {/* Glow effect */}
       <div className={`absolute inset-0 bg-primary/15 blur-2xl rounded-full transition-opacity duration-200 ${isDrawing ? 'slot-glow-pulse' : 'opacity-20'}`} />
       

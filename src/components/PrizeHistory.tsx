@@ -31,8 +31,8 @@ const placeSizes = {
   0: "px-6 py-4 text-xl md:text-2xl",
   1: "px-6 py-4 text-lg md:text-xl",
   2: "px-5 py-3 text-lg md:text-xl",
-  3: "px-5 py-3 text-base md:text-lg",
-  4: "px-5 py-3 text-base md:text-lg",
+  3: "px-7 py-5 text-2xl md:text-3xl",
+  4: "px-7 py-5 text-2xl md:text-3xl",
 };
 
 const placeNames = {
@@ -49,6 +49,9 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
   
   if (prizeHistory.length === 0) return null;
   
+  // Check if this is prize 3 or 4 for larger display
+  const isLargerDisplay = place === 3 || place === 4;
+  
   // For Giải Khuyến Khích, group by round
   const groups = place === 4 
     ? [
@@ -59,12 +62,12 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
   
   return (
     <motion.div
-      className="mt-8 w-full max-w-4xl mx-auto"
+      className={`mt-8 w-full mx-auto ${isLargerDisplay ? 'max-w-7xl' : 'max-w-4xl'}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
       <h3 
-        className="text-2xl md:text-3xl font-display font-black text-center text-white mb-6"
+        className={`font-display font-black text-center text-white mb-6 ${isLargerDisplay ? 'text-4xl md:text-5xl' : 'text-2xl md:text-3xl'}`}
         style={{
           textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
         }}
@@ -81,7 +84,7 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
               </h4>
             )}
             <div 
-              className="flex flex-wrap gap-3 md:gap-4 justify-center p-4 md:p-6 rounded-2xl"
+              className={`flex flex-wrap justify-center p-4 md:p-6 rounded-2xl ${isLargerDisplay ? 'gap-4 md:gap-5' : 'gap-3 md:gap-4'}`}
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
