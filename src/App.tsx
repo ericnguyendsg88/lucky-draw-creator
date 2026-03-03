@@ -226,9 +226,17 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Show onboarding every NEW browser session; skip if already done this session
-  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingDone());
-  const [drawConfig, setDrawConfig] = useState<DrawConfig>(() => loadConfig() ?? DEFAULT_CONFIG);
+  // Show onboarding only if no saved config exists (first visit) or new session without saved config
+  const savedConfig = loadConfig();
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    // If there's a saved config with prize cards, skip wizard
+    if (savedConfig && savedConfig.prizeCards.length > 0) {
+      markOnboardingDone();
+      return false;
+    }
+    return !isOnboardingDone();
+  });
+  const [drawConfig, setDrawConfig] = useState<DrawConfig>(() => savedConfig ?? DEFAULT_CONFIG);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
