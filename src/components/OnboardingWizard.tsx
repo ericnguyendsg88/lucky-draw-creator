@@ -759,16 +759,42 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
             {/* ── Sticky Live Preview (right column) ── */}
             <div style={{
-                flex: '0 0 240px', position: 'sticky', top: 0, alignSelf: 'flex-start',
-                zIndex: 5,
+                flex: '0 0 260px', position: 'sticky', top: 0, alignSelf: 'flex-start',
+                zIndex: 5, display: 'flex', flexDirection: 'column', gap: 12,
             }}>
+                {/* Title Preview */}
                 <div style={{
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block', fontSize: 12 }}>👁️ Live Preview</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>📝 Title</label>
                     <div style={{
-                        padding: cfg.cardPadding, borderRadius: cfg.cardBorderRadius,
+                        padding: 10, borderRadius: 8,
+                        background: (() => {
+                            const oc = cfg.bgOverlayColor || '#000000';
+                            const r = parseInt(oc.slice(1, 3), 16), g = parseInt(oc.slice(3, 5), 16), b = parseInt(oc.slice(5, 7), 16);
+                            return `rgba(${r},${g},${b},${(cfg.bgOverlayOpacity ?? 70) / 100})`;
+                        })(),
+                        textAlign: 'center',
+                    }}>
+                        <h3 style={{
+                            fontFamily: `'${activeFont}', sans-serif`, fontSize: 18, fontWeight: 900,
+                            color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
+                            textShadow: '0 0 12px rgba(150,200,255,0.4)',
+                        }}>
+                            {cfg.drawTitle || 'LUCKY DRAW'}
+                        </h3>
+                    </div>
+                </div>
+
+                {/* Prize Card Preview */}
+                <div style={{
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                }}>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Prize Card</label>
+                    <div style={{
+                        padding: cfg.cardPadding * 0.6, borderRadius: cfg.cardBorderRadius,
                         background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
                         border: `2px solid ${(previewCard?.accentColor || cfg.accentColor)}40`, textAlign: cfg.cardTextAlign,
                         transition: 'all 0.3s ease',
@@ -776,24 +802,67 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         {elementOrder.map(el => {
                             const cardAccent = previewCard?.accentColor || cfg.accentColor;
                             if (el === 'emoji') return (
-                                <div key="emoji" style={{ fontSize: 28 * (cfg.cardFontSize / 100), marginBottom: 4 }}>
+                                <div key="emoji" style={{ fontSize: 22 * (cfg.cardFontSize / 100), marginBottom: 2 }}>
                                     {previewCard?.emoji ?? '🏆'}
                                 </div>
                             );
                             if (el === 'name') return (
-                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 4 }}>
+                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 14 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 2 }}>
                                     {previewCard?.name ?? 'Grand Prize'}
                                 </div>
                             );
                             if (el === 'number') return (
-                                <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 32 * (cfg.cardFontSize / 100), fontWeight: 900, color: cardAccent, marginBottom: 4 }}>
-                                    5 <span style={{ fontSize: 14 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
+                                <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 22 * (cfg.cardFontSize / 100), fontWeight: 900, color: cardAccent, marginBottom: 2 }}>
+                                    5 <span style={{ fontSize: 10 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
                                 </div>
                             );
                             return null;
                         })}
-                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(0,0,0,0.3)', overflow: 'hidden' }}>
-                            <div style={{ width: '50%', height: '100%', borderRadius: 4, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
+                        <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4 }}>
+                            <div style={{ width: '50%', height: '100%', borderRadius: 3, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Slot Machine Preview */}
+                <div style={{
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                }}>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🎰 Slot Machine</label>
+                    <div style={{
+                        padding: 12, borderRadius: 12, textAlign: 'center',
+                        background: (() => {
+                            const hex = cfg.slotBgColor || '#3b82f6';
+                            const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+                            return `rgba(${r},${g},${b},${(cfg.slotBgOpacity ?? 55) / 100})`;
+                        })(),
+                        border: `2px solid ${cfg.slotBorderColor || '#3b82f6'}b3`,
+                        boxShadow: (() => {
+                            const hex = cfg.slotBgColor || '#3b82f6';
+                            const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+                            return `0 0 20px rgba(${r},${g},${b},${(cfg.slotGlowOpacity ?? 30) / 100})`;
+                        })(),
+                        transition: 'all 0.3s ease',
+                    }}>
+                        <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                            {['0', '4', '2'].map((d, i) => (
+                                <div key={i} style={{
+                                    width: 36, height: 50, borderRadius: 8,
+                                    background: (() => {
+                                        const hex = cfg.slotBgColor || '#3b82f6';
+                                        const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+                                        return `rgba(${r},${g},${b},${Math.min((cfg.slotBgOpacity ?? 55) / 100 * 1.2, 1)})`;
+                                    })(),
+                                    border: `2px solid ${cfg.slotBorderColor || '#3b82f6'}cc`,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontFamily: `'${activeFont}', sans-serif`, fontSize: 22, fontWeight: 900,
+                                    color: cfg.slotDigitColor || '#ffffff',
+                                    textShadow: `0 0 10px ${cfg.slotBgColor || '#3b82f6'}cc`,
+                                }}>
+                                    {d}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
