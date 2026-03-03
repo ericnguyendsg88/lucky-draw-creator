@@ -786,6 +786,168 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
     );
 }
 
+// ─── Step 6 – Card Layout Organizer ──────────────────────────────────────────
+function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
+    const cards = cfg.prizeCards;
+    const [dragIdx, setDragIdx] = useState<number | null>(null);
+    const [overIdx, setOverIdx] = useState<number | null>(null);
+
+    const handleDragStart = (idx: number) => (e: React.DragEvent) => {
+        setDragIdx(idx);
+        e.dataTransfer.effectAllowed = 'move';
+        if (e.currentTarget instanceof HTMLElement) e.currentTarget.style.opacity = '0.5';
+    };
+
+    const handleDragEnd = (e: React.DragEvent) => {
+        if (e.currentTarget instanceof HTMLElement) e.currentTarget.style.opacity = '1';
+        if (dragIdx !== null && overIdx !== null && dragIdx !== overIdx) {
+            const arr = [...cards];
+            const [moved] = arr.splice(dragIdx, 1);
+            arr.splice(overIdx, 0, moved);
+            onChange({ prizeCards: arr.map((c, i) => ({ ...c, id: i })) });
+        }
+        setDragIdx(null);
+        setOverIdx(null);
+    };
+
+    const handleDragOver = (idx: number) => (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setOverIdx(idx);
+    };
+
+    const toggleSpan = (idx: number) => {
+        const card = cards[idx];
+        const newSpan: 1 | 2 = (card.colSpan ?? 1) === 1 ? 2 : 1;
+        onChange({ prizeCards: cards.map((c, i) => i === idx ? { ...c, colSpan: newSpan } : c) });
+    };
+
+    const gridCols = cfg.cardLayout === 'small' ? 4 : cfg.cardLayout === 'large' ? 2 : (cards.length <= 2 ? 2 : cards.length === 3 ? 3 : cards.length === 4 ? 2 : 3);
+
+    return (
+        <div className="onb-step-content">
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 12, textAlign: 'center' }}>
+                Drag cards to reorder · Click resize to make cards wider
+            </div>
+
+            {/* Grid preview */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+                gap: 8,
+                marginBottom: 16,
+            }}>
+                {cards.map((card, idx) => {
+                    const cardAccent = card.accentColor || cfg.accentColor;
+                    const span = card.colSpan ?? 1;
+                    const isDragOver = overIdx === idx && dragIdx !== null && dragIdx !== idx;
+                    return (
+                        <div
+                            key={`layout-${idx}`}
+                            draggable
+                            onDragStart={handleDragStart(idx)}
+                            onDragEnd={handleDragEnd}
+                            onDragOver={handleDragOver(idx)}
+                            onDragEnter={(e) => { e.preventDefault(); setOverIdx(idx); }}
+                            style={{
+                                gridColumn: `span ${Math.min(span, gridCols)}`,
+                                padding: cfg.cardPadding ? cfg.cardPadding * 0.6 : 12,
+                                borderRadius: cfg.cardBorderRadius ?? 16,
+                                background: isDragOver
+                                    ? 'rgba(96,165,250,0.2)'
+                                    : `rgba(20,30,60,${(cfg.cardOpacity ?? 70) / 100})`,
+                                border: isDragOver
+                                    ? `2px solid rgba(96,165,250,0.6)`
+                                    : `2px solid ${cardAccent}60`,
+                                boxShadow: `0 4px 16px rgba(0,0,0,0.3), 0 0 12px ${cardAccent}25`,
+                                cursor: 'grab',
+                                userSelect: 'none',
+                                transition: 'all 0.15s ease',
+                                textAlign: cfg.cardTextAlign ?? 'center',
+                                position: 'relative',
+                                minHeight: 80,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: cfg.cardTextAlign === 'left' ? 'flex-start' : cfg.cardTextAlign === 'right' ? 'flex-end' : 'center',
+                                justifyContent: 'center',
+                                gap: 2,
+                            }}
+                        >
+                            {/* Drag handle */}
+                            <div style={{ position: 'absolute', top: 6, left: 8, opacity: 0.3 }}>
+                                <GripVertical size={14} />
+                            </div>
+
+                            {/* Resize button */}
+                            <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); toggleSpan(idx); }}
+                                style={{
+                                    position: 'absolute', top: 4, right: 4,
+                                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                                    borderRadius: 6, width: 26, height: 26,
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    color: 'white', transition: 'all 0.15s',
+                                }}
+                                title={span === 1 ? 'Make wider' : 'Make normal'}
+                            >
+                                {span === 1 ? <Maximize2 size={12} /> : <Minimize2 size={12} />}
+                            </button>
+
+                            {/* Card content preview */}
+                            {(cfg.cardElementOrder ?? ['emoji', 'name', 'number']).map(el => {
+                                const scale = (cfg.cardFontSize ?? 100) / 100 * 0.7;
+                                if (el === 'emoji') return (
+                                    <div key="emoji" style={{ fontSize: 22 * scale, pointerEvents: 'none' }}>{card.emoji || '🏆'}</div>
+                                );
+                                if (el === 'name') return (
+                                    <div key="name" style={{
+                                        fontSize: 11 * scale, fontWeight: 700, color: 'white',
+                                        fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                                        pointerEvents: 'none', lineHeight: 1.2,
+                                    }}>{card.name}</div>
+                                );
+                                if (el === 'number' && card.showNumber !== false) return (
+                                    <div key="number" style={{
+                                        fontSize: 18 * scale, fontWeight: 900, color: cardAccent,
+                                        fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                                        pointerEvents: 'none',
+                                    }}>
+                                        {card.totalPrizes}
+                                    </div>
+                                );
+                                return null;
+                            })}
+
+                            {/* Progress bar preview */}
+                            <div style={{ width: '80%', height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4, pointerEvents: 'none' }}>
+                                <div style={{ width: '50%', height: '100%', borderRadius: 2, background: cardAccent }} />
+                            </div>
+
+                            {/* Size badge */}
+                            {span === 2 && (
+                                <div style={{
+                                    position: 'absolute', bottom: 4, right: 6,
+                                    fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600,
+                                }}>WIDE</div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Legend */}
+            <div style={{
+                display: 'flex', gap: 16, justifyContent: 'center',
+                fontSize: 11, color: 'rgba(255,255,255,0.4)',
+            }}>
+                <span>🖱️ Drag to reorder</span>
+                <span>↔️ Click ⤢ to resize</span>
+            </div>
+        </div>
+    );
+}
+
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 interface OnboardingWizardProps {
     onComplete: (config: DrawConfig) => void;
