@@ -347,7 +347,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     const [hexInput, setHexInput] = useState(cfg.accentColor);
     const [customFontLoaded, setCustomFontLoaded] = useState(false);
     const [customFontError, setCustomFontError] = useState<string | null>(null);
-    const [emojiInput, setEmojiInput] = useState('');
     const fontFileRef = useRef<HTMLInputElement>(null);
 
     // Load existing custom font on mount
