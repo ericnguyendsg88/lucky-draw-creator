@@ -1150,6 +1150,29 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     <button type="button" onClick={back} className={`onb-btn-back ${step === 0 ? "invisible" : ""}`}>
                         <ChevronLeft size={18} /> Back
                     </button>
+
+                    {/* Preview Layout button – visible on all steps except the Layout step itself */}
+                    {currentRealStep !== 6 && cfg.prizeCards.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={() => setShowPreview(true)}
+                            style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6,
+                                padding: '8px 14px', borderRadius: 10,
+                                background: 'rgba(255,255,255,0.08)',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                color: 'rgba(255,255,255,0.7)',
+                                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                transition: 'all 0.15s',
+                            }}
+                            onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.15)'; }}
+                            onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
+                            title="Preview home screen layout"
+                        >
+                            <Eye size={15} /> Preview
+                        </button>
+                    )}
+
                     <button type="button" onClick={next} className="onb-btn-next">
                         {step < totalSteps - 1 ? (
                             <><span>Next</span> <ChevronRight size={18} /></>
@@ -1158,6 +1181,28 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         )}
                     </button>
                 </div>
+
+                {/* Layout Preview Dialog */}
+                <Dialog open={showPreview} onOpenChange={setShowPreview}>
+                    <DialogContent style={{
+                        background: 'rgba(10,15,30,0.95)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        backdropFilter: 'blur(20px)',
+                        maxWidth: 520,
+                    }}>
+                        <DialogHeader>
+                            <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <LayoutGrid size={18} /> Home Screen Preview
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div style={{ padding: '8px 0' }}>
+                            <LayoutGridPreview cfg={cfg} />
+                        </div>
+                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: 4 }}>
+                            You can customize the layout in the final step
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </motion.div>
         </div>
     );
