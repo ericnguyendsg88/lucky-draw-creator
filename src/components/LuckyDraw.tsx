@@ -600,8 +600,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                       <AlertDialogDescription>Toàn bộ lịch sử bốc thăm sẽ bị xóa. Không thể hoàn tác.</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={reset}>Confirm Reset</AlertDialogAction>
+                      <AlertDialogCancel>Hủy</AlertDialogCancel>
+                      <AlertDialogAction onClick={reset}>Xác Nhận</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
