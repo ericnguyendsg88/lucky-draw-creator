@@ -1376,7 +1376,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
                             title="Preview home screen layout"
                         >
-                            <Eye size={15} /> Preview
+                            <Eye size={15} /> Xem trước
                         </button>
                     )}
 
