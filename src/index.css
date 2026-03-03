@@ -369,10 +369,10 @@
   .history-number {
     @apply px-5 py-3 rounded-xl text-base md:text-lg font-mono font-black;
     background: linear-gradient(135deg, rgba(40, 50, 100, 0.8) 0%, rgba(30, 40, 80, 0.8) 100%);
-    border: 2px solid rgba(100, 150, 255, 0.3);
+    border: 2px solid hsl(var(--primary) / 0.4);
     box-shadow:
       0 6px 16px rgba(0, 0, 0, 0.4),
-      0 0 25px rgba(100, 150, 255, 0.3);
+      0 0 25px hsl(var(--primary) / 0.3);
     transition: all 0.3s ease;
   }
 
