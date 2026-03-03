@@ -552,7 +552,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
                 <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
                 <div style={{ marginTop: 8 }}>
-                    <label className="onb-sublabel" style={{ marginBottom: 6 }}>Text Alignment</label>
+                    
                     <div style={{ display: 'flex', gap: 6 }}>
                         {(['left', 'center', 'right'] as const).map(align => (
                             <button key={align} type="button" onClick={() => onChange({ cardTextAlign: align })}
