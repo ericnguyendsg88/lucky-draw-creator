@@ -16,7 +16,7 @@ import {
   DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { soundManager, SoundPack } from "@/lib/sounds";
-import { DrawConfig, PrizeCardConfig } from "@/lib/drawConfig";
+import { DrawConfig, PrizeCardConfig, EMOJI_SETS } from "@/lib/drawConfig";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
