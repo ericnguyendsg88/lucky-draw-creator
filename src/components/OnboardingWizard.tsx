@@ -838,7 +838,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             );
                             if (el === 'name') return (
                                 <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 14 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 2 }}>
-                                    {previewCard?.name ?? 'Grand Prize'}
+                                    {previewCard?.name ?? 'Giải Đặc Biệt'}
                                 </div>
                             );
                             if (el === 'number') return (
