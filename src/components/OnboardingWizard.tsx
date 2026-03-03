@@ -986,7 +986,7 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
                                     onChange={e => updateCard(i, { drawsPerSession: clamp(Number(e.target.value), 1, max) })}
                                     className="onb-input onb-input-num" />
                                 <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val + 1, 1, max) })}>+</button>
-                                <span className="onb-per-session">winners/press</span>
+                                <span className="onb-per-session">giải/lần bấm</span>
                             </div>
                         </motion.div>
                     );
