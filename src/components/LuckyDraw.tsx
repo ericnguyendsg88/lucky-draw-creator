@@ -76,6 +76,7 @@ interface DynPrizeCardProps {
   onClick: () => void;
   fontFamily: string;
   accentColor: string;
+  cardTextColor?: string;
   cardOpacity: number;
   cardBlur: number;
   cardPadding: number;
@@ -85,7 +86,7 @@ interface DynPrizeCardProps {
   cardElementOrder: ('emoji' | 'name' | 'number')[];
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign, cardElementOrder }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, fontFamily, accentColor, cardTextColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign, cardElementOrder }: DynPrizeCardProps) {
   const fallbackColor = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const emoji = card.emoji || '🏆';
