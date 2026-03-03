@@ -306,6 +306,42 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                         <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { totalPrizes: clamp(card.totalPrizes + 1, 1, 500) })}>+</button>
                                     </div>
                                 </div>
+                                {/* Per-card accent color */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', whiteSpace: 'nowrap' }}>Card Color</label>
+                                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                                        <button type="button" onClick={() => updateCard(i, { accentColor: undefined })}
+                                            style={{
+                                                width: 24, height: 24, borderRadius: '50%',
+                                                background: 'linear-gradient(135deg, #888 50%, #444 50%)',
+                                                border: !card.accentColor ? '2px solid white' : '1px solid rgba(255,255,255,0.2)',
+                                                cursor: 'pointer', fontSize: 10, color: 'white',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            }}
+                                            title="Use global theme color">
+                                            G
+                                        </button>
+                                        {['#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'].map(c => (
+                                            <button key={c} type="button" onClick={() => updateCard(i, { accentColor: c })}
+                                                style={{
+                                                    width: 24, height: 24, borderRadius: '50%', background: c,
+                                                    border: card.accentColor === c ? '2px solid white' : '1px solid rgba(255,255,255,0.15)',
+                                                    cursor: 'pointer', transition: 'all 0.15s',
+                                                    boxShadow: card.accentColor === c ? `0 0 8px ${c}` : 'none',
+                                                }} />
+                                        ))}
+                                        <label style={{
+                                            width: 24, height: 24, borderRadius: '50%',
+                                            background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
+                                            border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer',
+                                            position: 'relative', overflow: 'hidden',
+                                        }}>
+                                            <input type="color" value={card.accentColor || cfg.accentColor}
+                                                onChange={e => updateCard(i, { accentColor: e.target.value })}
+                                                style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                                        </label>
+                                    </div>
+                                </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
                                     <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Show prize count</label>
                                     <button type="button" onClick={() => updateCard(i, { showNumber: !card.showNumber })}
