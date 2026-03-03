@@ -451,7 +451,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
       : prizeCards.length === 4 ? 'grid-cols-2'
         : 'grid-cols-2 md:grid-cols-3';
 
-  const allDone = prizeCards.every(c => prizes[c.id]?.remaining === 0);
+  const allDone = prizeCards.length > 0 && prizeCards.every(c => prizes[c.id]?.remaining === 0);
+  const isFreeDrawMode = prizeCards.length === 0;
 
   return (
     <div className="min-h-screen py-4 px-4 pt-20">
