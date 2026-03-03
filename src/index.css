@@ -244,9 +244,9 @@
   /* Slot Machine Styles - Optimized */
   .slot-machine-container {
     @apply relative rounded-2xl p-6 md:p-10;
-    background: linear-gradient(135deg, rgba(30, 40, 90, 0.9) 0%, rgba(20, 30, 70, 0.9) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.08) 100%);
     border: 2px solid hsl(var(--primary) / 0.4);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 30px hsl(var(--primary) / 0.1);
   }
 
   .slot-digits-wrapper {
