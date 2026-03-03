@@ -860,7 +860,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🎰 Slot Machine</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🎰 Máy Quay Số</label>
                     <div style={{
                         padding: 12, borderRadius: 12, textAlign: 'center',
                         background: (() => {
