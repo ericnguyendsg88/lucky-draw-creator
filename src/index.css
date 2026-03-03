@@ -586,7 +586,7 @@
 
 .onb-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-light)));
   border-radius: 0 2px 2px 0;
 }
 
