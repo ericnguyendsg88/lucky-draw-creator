@@ -753,6 +753,22 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                     <SliderRow label="Glow Intensity" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
                 </div>
+
+                {/* ── Drawn Numbers ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Drawn Numbers</label>
+
+                    <SlotColorRow label="Background Color" value={cfg.drawnNumBgColor || '#1e2650'}
+                        onChange={c => { onChange({ drawnNumBgColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBgColor: c }); }} />
+
+                    <SliderRow label="Background Opacity" value={cfg.drawnNumBgOpacity ?? 80} min={10} max={100} step={5} onChange={v => { onChange({ drawnNumBgOpacity: v }); applyDrawnNumTheme({ ...cfg, drawnNumBgOpacity: v }); }} unit="%" />
+
+                    <SlotColorRow label="Text Color" value={cfg.drawnNumTextColor || '#ffffff'}
+                        onChange={c => { onChange({ drawnNumTextColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumTextColor: c }); }} />
+
+                    <SlotColorRow label="Border Color" value={cfg.drawnNumBorderColor || '#3b82f6'}
+                        onChange={c => { onChange({ drawnNumBorderColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBorderColor: c }); }} />
+                </div>
             </div>
 
             {/* ── Sticky Live Preview (right column) ── */}
