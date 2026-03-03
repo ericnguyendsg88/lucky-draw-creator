@@ -56,12 +56,12 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     setUploadError(null);
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowed.includes(file.type)) {
-      setUploadError('Tập tin không được hỗ trợ. Vui lòng sử dụng định dạng JPEG, PNG, WebP hoặc GIF.');
+      setUploadError('Unsupported format. Please use JPEG, PNG, WebP, or GIF.');
       return;
     }
     if (file.size > BG_IMAGE_MAX_BYTES) {
       const mb = (file.size / 1024 / 1024).toFixed(1);
-      setUploadError(`Tập tin dung lượng ${mb} MB. Tối đa 6 MB cho hình nền.`);
+      setUploadError(`File is ${mb} MB. Max 6 MB for backgrounds.`);
       return;
     }
     const reader = new FileReader();
@@ -71,7 +71,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
         saveBgImage(dataUrl);
         setBgImageUrl(dataUrl);
       } catch {
-        setUploadError('Không thể lưu hình ảnh — bộ nhớ trình duyệt có thể đã đầy. Vui lòng thử hình ảnh nhỏ hơn.');
+        setUploadError('Could not save — browser storage may be full. Try a smaller file.');
       }
     };
     reader.readAsDataURL(file);
@@ -117,7 +117,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        title="Cài Đặt Nền"
+        title="Background Settings"
         style={{
           position: 'fixed', top: 16, right: 16, zIndex: 9999,
           background: 'rgba(0,0,0,0.7)', borderRadius: '50%',
@@ -132,7 +132,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
 
       {isOpen && (
         <div style={panelStyle} className="onb-modal">
-          <div style={{ marginBottom: 16, fontSize: 16, fontWeight: 'bold' }}>Cài Đặt Nền</div>
+          <div style={{ marginBottom: 16, fontSize: 16, fontWeight: 'bold' }}>Background Settings</div>
 
           {/* ── Upload zone ── */}
           <div
@@ -144,7 +144,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
             role="button"
             tabIndex={0}
             onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
-            aria-label="Tải lên ảnh nền"
+            aria-label="Upload background image"
             style={{ marginBottom: 16 }}
           >
             <input
@@ -157,23 +157,23 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
 
             {bgImageUrl ? (
               <div className="onb-upload-preview">
-                <img src={bgImageUrl} alt="Nền hiện tại" className="onb-upload-thumb" />
+                <img src={bgImageUrl} alt="Current background" className="onb-upload-thumb" />
                 <div className="onb-upload-overlay-label">
-                  <span>✅ Đang dùng ảnh tùy chỉnh</span>
-                  <span className="onb-upload-change">Nhấn để thay đổi</span>
+                  <span>✅ Custom image active</span>
+                  <span className="onb-upload-change">Click to change</span>
                 </div>
               </div>
             ) : (
               <div className="onb-upload-empty">
                 <div className="onb-upload-icon">🖼️</div>
                 <div className="onb-upload-title">
-                  {dragOver ? 'Thả tải để bắt đầu' : 'Tải Lên Hình Ảnh Nền'}
+                  {dragOver ? 'Drop to upload' : 'Upload Background Image'}
                 </div>
                 <div className="onb-upload-sub">
-                  Kéo thả vào hoặc <span className="onb-upload-link">nhấn để duyệt file</span>
+                  Drag & drop or <span className="onb-upload-link">click to browse</span>
                 </div>
                 <div className="onb-upload-limits">
-                  JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Tối đa 6 MB
+                  JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Max 6 MB
                 </div>
               </div>
             )}
@@ -189,15 +189,15 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
           {/* Remove button */}
           {bgImageUrl && (
             <button type="button" className="onb-remove-image-btn" onClick={e => { e.stopPropagation(); removeImage(); }} style={{ marginBottom: 16, width: '100%' }}>
-              🗑️ Xóa ảnh của bạn
+              🗑️ Remove image
             </button>
           )}
 
           {[
-            { label: `Độ Rộng: ${width}%`, val: width, set: setWidth, min: 50, max: 200 },
-            { label: `Vị Trí X: ${posX}%`, val: posX, set: setPosX, min: 0, max: 100 },
-            { label: `Vị Trí Y: ${posY}%`, val: posY, set: setPosY, min: 0, max: 100 },
-            { label: `Độ Đen Nền: ${overlayOpacity}%`, val: overlayOpacity, set: setOverlayOpacity, min: 0, max: 100, step: 5 },
+            { label: `Width: ${width}%`, val: width, set: setWidth, min: 50, max: 200 },
+            { label: `Position X: ${posX}%`, val: posX, set: setPosX, min: 0, max: 100 },
+            { label: `Position Y: ${posY}%`, val: posY, set: setPosY, min: 0, max: 100 },
+            { label: `Overlay Darkness: ${overlayOpacity}%`, val: overlayOpacity, set: setOverlayOpacity, min: 0, max: 100, step: 5 },
           ].map(({ label, val, set, min, max, step }) => (
             <div key={label} style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 6 }}>{label}</label>
@@ -209,11 +209,11 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
           <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
             <button onClick={() => setIsOpen(false)}
               style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer' }}>
-              Đóng
+              Close
             </button>
             <button onClick={save}
               style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: '#2563eb', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
-              Lưu
+              Save
             </button>
           </div>
         </div>
@@ -226,17 +226,9 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Show onboarding only if no saved config exists (first visit) or new session without saved config
-  const savedConfig = loadConfig();
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    // If there's a saved config with prize cards, skip wizard
-    if (savedConfig && savedConfig.prizeCards.length > 0) {
-      markOnboardingDone();
-      return false;
-    }
-    return !isOnboardingDone();
-  });
-  const [drawConfig, setDrawConfig] = useState<DrawConfig>(() => savedConfig ?? DEFAULT_CONFIG);
+  // Show onboarding every NEW browser session; skip if already done this session
+  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingDone());
+  const [drawConfig, setDrawConfig] = useState<DrawConfig>(() => loadConfig() ?? DEFAULT_CONFIG);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
@@ -257,11 +249,11 @@ const App = () => {
             <BackgroundAdjuster cfg={drawConfig} onSave={setDrawConfig} />
             <button
               onClick={() => {
-                if (window.confirm("Bạn muốn quay lại trình Cài Đặt Ban Đầu? (Hình nền và thông số bốc thăm sẽ có thể thay đổi)")) {
+                if (window.confirm("Return to the Setup Wizard? (Background and draw settings can be changed)")) {
                   setShowOnboarding(true);
                 }
               }}
-              title="Cài Đặt Ban Đầu (Wizard)"
+              title="Setup Wizard"
               style={{
                 position: 'fixed', top: 16, right: 80, zIndex: 9999,
                 background: 'rgba(0,0,0,0.7)', borderRadius: '50%',

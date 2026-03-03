@@ -414,11 +414,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   };
 
   const getButtonText = () => {
-    if (isPaused) return "Tạm Dừng – Nhấn Tiếp Tục";
-    if (isDrawing) return "Đang Bốc Thăm...";
-    if (selectedCardId === null) return "Chọn một giải thưởng";
-    if (isComplete) return "Giải này đã hết!";
-    return `Bốc ${currentCard?.name ?? ""}`;
+    if (isPaused) return "Paused – Press Continue";
+    if (isDrawing) return "Drawing...";
+    if (selectedCardId === null) return "Select a prize";
+    if (isComplete) return "All drawn!";
+    return `Draw ${currentCard?.name ?? ""}`;
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -444,14 +444,14 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 bg-slate-900/95 border-white/20 backdrop-blur-lg">
-              <DropdownMenuLabel className="text-white/80">Âm Thanh</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-white/80">Sound</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-white/20" />
               <DropdownMenuRadioGroup value={soundPack} onValueChange={handleSoundPackChange}>
                 {[
-                  { value: "arcade", label: "🎮 Arcade – Kiểu 8-bit" },
-                  { value: "vegas", label: "🎰 Vegas – Sòng bài cổ điển" },
-                  { value: "retro", label: "⚙️ Retro – Cơ khí cổ điển" },
-                  { value: "modern", label: "✨ Modern – Hiện đại" },
+                  { value: "arcade", label: "🎮 Arcade – 8-bit style" },
+                  { value: "vegas", label: "🎰 Vegas – Classic casino" },
+                  { value: "retro", label: "⚙️ Retro – Mechanical" },
+                  { value: "modern", label: "✨ Modern – Clean" },
                 ].map(({ value, label }) => (
                   <DropdownMenuRadioItem key={value} value={value}
                     className="text-white focus:bg-white/20 focus:text-white">
@@ -547,14 +547,14 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
                   size="lg">
                   <Pause className="w-7 h-7 mr-3" />
-                  Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
+                  Pause ({currentDrawIndex}/{pendingNumbers.length})
                 </Button>
               ) : isPaused ? (
                 <Button onClick={resumeDraw}
                   className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
                   size="lg">
                   <Play className="w-7 h-7 mr-3" />
-                  Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+                  Continue ({currentDrawIndex}/{pendingNumbers.length})
                 </Button>
               ) : (
                 <Button
@@ -592,7 +592,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 variant="outline"
                 className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                Trang Chủ
+                Home
               </Button>
 
               {history.some(h => h.cardId === selectedCardId) && (
@@ -601,19 +601,19 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                     <Button variant="outline"
                       className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
                       <RotateCcw className="w-5 h-5 mr-2" />
-                      Làm Lại Giải Này
+                      Reset This Prize
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Làm lại {currentCard.name}?</AlertDialogTitle>
+                      <AlertDialogTitle>Reset {currentCard.name}?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Hành động này sẽ xóa các số đã bốc cho {currentCard.name} và cho phép bốc lại.
+                        This will clear all drawn numbers for {currentCard.name} and allow re-drawing.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Hủy</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Xác Nhận</AlertDialogAction>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Confirm</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
@@ -629,19 +629,19 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <AlertDialogTrigger asChild>
                 <Button variant="outline" size="lg" className="px-6">
                   <RotateCcw className="w-5 h-5 mr-2" />
-                  Reset Tất Cả
+                  Reset All
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Bạn có chắc chắn muốn làm lại tất cả?</AlertDialogTitle>
+                  <AlertDialogTitle>Are you sure you want to reset everything?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Hành động này sẽ xóa toàn bộ lịch sử bốc thăm. Không thể hoàn tác.
+                    This will clear all draw history. This cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Hủy</AlertDialogCancel>
-                  <AlertDialogAction onClick={reset}>Xác Nhận Làm Lại</AlertDialogAction>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={reset}>Confirm Reset</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -654,10 +654,10 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}>
             <h2 className="font-display text-3xl font-bold text-gold mb-2">
-              🎉 Đã Bốc Hết Giải Thưởng! 🎉
+              🎉 All Prizes Drawn! 🎉
             </h2>
             <p className="text-muted-foreground">
-              Chúc mừng tất cả {history.length} người trúng thưởng!
+              Congratulations to all {history.length} winners!
             </p>
           </motion.div>
         )}
@@ -683,7 +683,7 @@ function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: num
       animate={{ opacity: 1, y: 0 }}
     >
       <div className={`font-display font-bold text-sm mb-3 ${color.iconColor}`}>
-        Các Mã Trúng Thưởng ({items.length})
+        Winning Numbers ({items.length})
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
         {items.map((item, i) => (
