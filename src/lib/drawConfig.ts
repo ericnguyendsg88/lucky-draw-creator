@@ -5,10 +5,12 @@
 
 export interface PrizeCardConfig {
     id: number;           // 0-based index
-    name: string;        // e.g. "Giải Đặc Biệt"
+    name: string;        // e.g. "Grand Prize"
     totalPrizes: number; // total prizes on this card  (e.g. 30)
     drawSeconds: number; // spin duration in seconds  (e.g. 8)
     drawsPerSession: number; // how many winners drawn at once per session button-press
+    emoji: string;       // emoji for this card (e.g. "🏆")
+    showNumber: boolean; // whether to show the prize count number
 }
 
 export interface DrawConfig {
