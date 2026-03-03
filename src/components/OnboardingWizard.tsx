@@ -136,6 +136,27 @@ function ColorPickerCard({ label, value, onChange }: { label: string; value: str
     );
 }
 
+function SlotColorRow({ label, value, onChange }: { label: string; value: string; onChange: (hex: string) => void }) {
+    const [hex, setHex] = useState(value);
+    const handleHex = (v: string) => {
+        setHex(v);
+        if (/^#[0-9a-fA-F]{6}$/.test(v)) onChange(v);
+    };
+    return (
+        <div style={{ marginBottom: 12 }}>
+            <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4, display: 'block' }}>{label}</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <label style={{ width: 32, height: 32, borderRadius: 8, background: value, border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+                    <input type="color" value={value} onChange={e => { onChange(e.target.value); setHex(e.target.value); }}
+                        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                </label>
+                <input type="text" value={hex} onChange={e => handleHex(e.target.value)}
+                    className="onb-input" style={{ width: 90, fontFamily: 'monospace', fontSize: 12 }} maxLength={7} />
+            </div>
+        </div>
+    );
+}
+
 // ─── Step Indicator ──────────────────────────────────────────────────────────
 function StepIndicator({ steps, currentStep, onStepClick, freeNav }: {
     steps: { icon: any; label: string }[];
