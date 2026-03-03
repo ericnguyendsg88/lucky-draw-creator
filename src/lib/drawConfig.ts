@@ -25,8 +25,8 @@ export interface DrawConfig {
     // style
     fontFamily: string;      // Google Font name for display
     customFontName: string;  // name of uploaded custom font
-    emojiSet: string;        // emoji set key
-    customEmojis: string[];  // user-typed emojis from keyboard
+    emojiSet: string;        // emoji set key (legacy, kept for compat)
+    customEmojis: string[];  // legacy
     accentColor: string;     // hex color for accent
     cardOpacity: number;     // card background opacity 0-100
     cardBlur: number;        // card backdrop blur 0-20
@@ -35,6 +35,9 @@ export interface DrawConfig {
     cardBorderRadius: number;// px border radius
     cardFontSize: number;    // base font size multiplier 50-150%
     cardTextAlign: 'left' | 'center' | 'right';
+    // element visibility / order
+    showPrizeNumber: boolean;  // global toggle for prize count number
+    cardElementOrder: ('emoji' | 'name' | 'number')[]; // order of elements in card
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
