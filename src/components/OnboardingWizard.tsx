@@ -1207,7 +1207,7 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
                                 <div style={{
                                     position: 'absolute', bottom: 4, right: 6,
                                     fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600,
-                                }}>WIDE</div>
+                                }}>RỘNG</div>
                             )}
                         </div>
                     );
