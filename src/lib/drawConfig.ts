@@ -51,6 +51,11 @@ export interface DrawConfig {
     slotDigitColor: string;    // hex for digit text
     slotBorderColor: string;   // hex for frame border
     slotGlowOpacity: number;   // 0-100 glow intensity
+    // drawn numbers display
+    drawnNumBgColor: string;    // hex for drawn number badge background
+    drawnNumTextColor: string;  // hex for drawn number text
+    drawnNumBorderColor: string;// hex for drawn number border
+    drawnNumBgOpacity: number;  // 0-100
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
