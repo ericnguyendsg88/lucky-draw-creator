@@ -43,7 +43,9 @@ import {
     Maximize2,
     Minimize2,
     GripVertical,
+    Eye,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
