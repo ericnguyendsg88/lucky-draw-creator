@@ -12,6 +12,7 @@ export interface PrizeCardConfig {
 }
 
 export interface DrawConfig {
+    drawTitle: string;       // display title for the draw
     maxNumber: number;       // highest ticket number
     prizeCards: PrizeCardConfig[];
     // background
