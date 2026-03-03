@@ -678,7 +678,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Card Text Color ── */}
                 <ColorPickerCard
-                    label="📝 Card Text Color"
+                    label="📝 Màu Chữ Trên Thẻ"
                     value={cfg.cardTextColor || '#ffffff'}
                     onChange={(c) => { onChange({ cardTextColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, c, cfg.bgOverlayColor); }}
                 />
