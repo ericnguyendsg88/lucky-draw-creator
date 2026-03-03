@@ -571,14 +571,10 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     const previewCard = cfg.prizeCards[0];
 
     return (
-        <div className="onb-step-content" style={{ display: 'flex', gap: 16, flexDirection: 'row', flexWrap: 'wrap' }}>
+        <div className="onb-step-content" style={{ display: 'flex', gap: 20, flexWrap: 'nowrap' }}>
 
-            {/* ── Sticky Live Preview (right column on desktop) ── */}
-            <div style={{
-                order: 2, flex: '0 0 auto', width: '100%',
-                position: 'sticky', top: 0, zIndex: 5,
-                paddingBottom: 8,
-            }}>
+            {/* ── Settings (left column) ── */}
+            <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
                 <div style={{
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',

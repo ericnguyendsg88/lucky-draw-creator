@@ -430,7 +430,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 680px;
+  max-width: 900px;
   max-height: 92vh;
   display: flex;
   flex-direction: column;
