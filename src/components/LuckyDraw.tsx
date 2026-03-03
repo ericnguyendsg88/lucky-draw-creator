@@ -694,7 +694,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
                   size="lg">
                   <Pause className="w-7 h-7 mr-3" />
-                  Pause ({currentDrawIndex}/{pendingNumbers.length})
+                  Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
                 </Button>
               ) : isPaused ? (
                 <Button onClick={resumeDraw}
