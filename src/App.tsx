@@ -233,7 +233,7 @@ function SettingsMenu({ onAdjust, onReset }: { onAdjust: () => void; onReset: ()
     <>
       <button
         onClick={() => setOpen(!open)}
-        title="Settings"
+        title="Cài đặt"
         style={{
           position: 'fixed', top: 16, right: 80, zIndex: 9999,
           background: 'rgba(0,0,0,0.7)', borderRadius: '50%',
