@@ -376,6 +376,36 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     continueDrawing(numbersToAdd, 0, selectedCardId);
   }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, maxNumber, prizeCards]);
 
+  // Free draw mode: draw a single number with no prize card
+  const freeDrawNumber = useCallback(() => {
+    if (isDrawing) return;
+    if (drawnNumbers.size >= maxNumber) return; // all numbers exhausted
+
+    soundManager.playClick();
+    setIsDrawing(true);
+    setIsPaused(false);
+
+    let n: number;
+    do { n = Math.floor(Math.random() * maxNumber) + 1; } while (drawnNumbers.has(n));
+
+    const newDrawn = new Set(drawnNumbers);
+    newDrawn.add(n);
+    setDrawnNumbers(newDrawn);
+
+    const spinMs = 3000; // 3 second spin
+    setIsSpinning(true);
+
+    const revealTimeout = setTimeout(() => {
+      setCurrentNumber(n);
+      setIsSpinning(false);
+      setHistory(prev => [...prev, { number: n, cardId: -1 }]);
+      triggerConfetti(0);
+      soundManager.playWin('medium');
+      setIsDrawing(false);
+    }, spinMs);
+    drawTimeoutsRef.current.push(revealTimeout);
+  }, [isDrawing, drawnNumbers, maxNumber]);
+
   const handleCardClick = (cardId: number) => {
     if (!isDrawing) {
       soundManager.playClick();
