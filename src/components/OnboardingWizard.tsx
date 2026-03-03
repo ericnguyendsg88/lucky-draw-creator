@@ -39,6 +39,10 @@ import {
     Upload,
     X,
     Type,
+    LayoutGrid,
+    Maximize2,
+    Minimize2,
+    GripVertical,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
