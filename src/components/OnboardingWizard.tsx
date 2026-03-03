@@ -30,7 +30,6 @@ import {
     Medal,
     Zap,
     Palette,
-    SkipForward,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
