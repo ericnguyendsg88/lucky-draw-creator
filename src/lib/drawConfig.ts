@@ -80,11 +80,11 @@ export function markOnboardingDone(): void {
 // Default configuration (mirrors the original hard-coded values)
 // ---------------------------------------------------------------------------
 export const DEFAULT_PRIZE_CARDS: PrizeCardConfig[] = [
-    { id: 0, name: 'Giải Đặc Biệt', totalPrizes: 1, drawSeconds: 8, drawsPerSession: 1 },
-    { id: 1, name: 'Giải Nhất', totalPrizes: 1, drawSeconds: 6, drawsPerSession: 1 },
-    { id: 2, name: 'Giải Nhì', totalPrizes: 2, drawSeconds: 5, drawsPerSession: 1 },
-    { id: 3, name: 'Giải Ba', totalPrizes: 15, drawSeconds: 3, drawsPerSession: 15 },
-    { id: 4, name: 'Giải Khuyến Khích', totalPrizes: 30, drawSeconds: 3, drawsPerSession: 15 },
+    { id: 0, name: 'Grand Prize', totalPrizes: 1, drawSeconds: 8, drawsPerSession: 1 },
+    { id: 1, name: 'First Prize', totalPrizes: 1, drawSeconds: 6, drawsPerSession: 1 },
+    { id: 2, name: 'Second Prize', totalPrizes: 2, drawSeconds: 5, drawsPerSession: 1 },
+    { id: 3, name: 'Third Prize', totalPrizes: 15, drawSeconds: 3, drawsPerSession: 15 },
+    { id: 4, name: 'Consolation', totalPrizes: 30, drawSeconds: 3, drawsPerSession: 15 },
 ];
 
 export const DEFAULT_CONFIG: DrawConfig = {
