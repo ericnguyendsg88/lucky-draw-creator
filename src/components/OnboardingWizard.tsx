@@ -54,6 +54,7 @@ const ALL_STEP_LABELS = [
     { icon: Palette, label: "Style" },
     { icon: Clock, label: "Timing" },
     { icon: Users, label: "Batch Size" },
+    { icon: LayoutGrid, label: "Layout" },
 ];
 
 const ALL_STEP_TITLES = [
@@ -63,6 +64,7 @@ const ALL_STEP_TITLES = [
     "🎭  Style",
     "⏱️  Timing",
     "🎯  Batch Size",
+    "📐  Card Layout",
 ];
 
 const CARD_COLORS = [
