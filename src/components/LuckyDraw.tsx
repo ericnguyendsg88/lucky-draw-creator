@@ -830,7 +830,7 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
       animate={{ opacity: 1, y: 0 }}
     >
       <div className="font-display font-bold text-sm mb-3" style={{ color: colorHex }}>
-        Winning Numbers ({items.length})
+        Các Số Trúng Thưởng ({items.length})
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
         {items.map((item, i) => (

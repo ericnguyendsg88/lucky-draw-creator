@@ -333,7 +333,7 @@ const App = () => {
             <SettingsMenu
               onAdjust={() => setShowOnboarding(true)}
               onReset={() => {
-                if (window.confirm("⚠️ Reset ALL wizard settings to defaults? This will clear your configuration, custom background, and custom font. Draw history will NOT be affected.")) {
+                if (window.confirm("⚠️ Đặt lại TOÀN BỘ cài đặt về mặc định? Thao tác này sẽ xóa cấu hình, hình nền và font tùy chỉnh. Lịch sử bốc thăm KHÔNG bị ảnh hưởng.")) {
                   // Clear all config from storage
                   localStorage.removeItem('luckyDrawConfig_v2');
                   localStorage.removeItem(BG_IMAGE_KEY);
