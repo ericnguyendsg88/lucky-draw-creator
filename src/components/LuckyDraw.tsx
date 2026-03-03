@@ -94,7 +94,13 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
     <motion.div
       onClick={onClick}
       className={`prize-card ${cssClass} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${color.gradient} relative overflow-hidden cursor-pointer`}
-      style={{ borderColor: color.border, boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${color.glow}` }}
+      style={{
+        borderColor: color.border,
+        boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${color.glow}`,
+        background: `rgba(20, 30, 60, ${cardOpacity / 100})`,
+        backdropFilter: `blur(${cardBlur}px)`,
+        fontFamily: `'${fontFamily}', sans-serif`,
+      }}
       initial={{ opacity: 0, y: 10 }}
       animate={{
         opacity: 1, y: 0,
