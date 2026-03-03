@@ -1219,8 +1219,8 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
                 display: 'flex', gap: 16, justifyContent: 'center',
                 fontSize: 11, color: 'rgba(255,255,255,0.4)',
             }}>
-                <span>🖱️ Drag to reorder</span>
-                <span>↔️ Click ⤢ to resize</span>
+                <span>🖱️ Kéo để sắp xếp</span>
+                <span>↔️ Nhấn ⤢ để thay đổi kích thước</span>
             </div>
         </div>
     );
