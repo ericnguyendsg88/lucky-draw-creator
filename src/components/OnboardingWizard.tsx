@@ -728,9 +728,6 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         <ChevronLeft size={18} /> Quay Lại
                     </button>
 
-                    <button type="button" onClick={skipToEnd} className="onb-btn-skip" title="Bỏ qua và bắt đầu ngay">
-                        <SkipForward size={16} /> Bỏ Qua
-                    </button>
 
                     <button type="button" onClick={next} className="onb-btn-next">
                         {step < TOTAL_STEPS - 1 ? (
