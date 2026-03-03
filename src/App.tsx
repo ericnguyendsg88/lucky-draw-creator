@@ -251,24 +251,25 @@ const App = () => {
         ) : (
           <>
             <BackgroundAdjuster cfg={drawConfig} onSave={setDrawConfig} />
-            <button
-              onClick={() => {
-                if (window.confirm("Return to the Setup Wizard? (Background and draw settings can be changed)")) {
+            <SettingsMenu
+              onAdjust={() => setShowOnboarding(true)}
+              onReset={() => {
+                if (window.confirm("⚠️ Reset ALL wizard settings to defaults? This will clear your configuration, custom background, and custom font. Draw history will NOT be affected.")) {
+                  // Clear all config from storage
+                  localStorage.removeItem('luckyDrawConfig_v2');
+                  localStorage.removeItem(BG_IMAGE_KEY);
+                  localStorage.removeItem(CUSTOM_FONT_KEY);
+                  clearBgImage();
+                  clearCustomFont();
+                  // Reset state
+                  const fresh = { ...DEFAULT_CONFIG };
+                  setDrawConfig(fresh);
+                  applyAccentTheme(fresh.accentColor);
+                  // Reopen wizard
                   setShowOnboarding(true);
                 }
               }}
-              title="Setup Wizard"
-              style={{
-                position: 'fixed', top: 16, right: 80, zIndex: 9999,
-                background: 'rgba(0,0,0,0.7)', borderRadius: '50%',
-                width: 48, height: 48, border: '2px solid rgba(255,255,255,0.3)',
-                color: 'white', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
-              }}
-            >
-              <Wand2 size={24} />
-            </button>
+            />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index drawConfig={drawConfig} />} />
