@@ -114,9 +114,9 @@ export const FONT_OPTIONS = [
 ];
 
 export const EMOJI_SETS: Record<string, { label: string; emojis: string[] }> = {
-    classic: { label: '🏆 Cổ Điển', emojis: ['🏆', '👑', '🥈', '🥉', '⭐', '🎖️', '🎗️', '🏅'] },
-    luxury:  { label: '💎 Sang Trọng', emojis: ['💎', '👑', '🥇', '🎖️', '✨', '🌟', '💫', '⚡'] },
-    party:   { label: '🎉 Lễ Hội', emojis: ['🎉', '🎊', '🎁', '🎀', '🎈', '🎯', '🎪', '🎠'] },
-    nature:  { label: '🌟 Thiên Nhiên', emojis: ['🌟', '🔥', '⚡', '💫', '🌙', '☀️', '🌈', '🍀'] },
-    sports:  { label: '🏀 Thể Thao', emojis: ['🏀', '⚽', '🏆', '🥇', '🏅', '🎯', '🏈', '⚾'] },
+    classic: { label: '🏆 Classic', emojis: ['🏆', '👑', '🥈', '🥉', '⭐', '🎖️', '🎗️', '🏅'] },
+    luxury:  { label: '💎 Luxury', emojis: ['💎', '👑', '🥇', '🎖️', '✨', '🌟', '💫', '⚡'] },
+    party:   { label: '🎉 Party', emojis: ['🎉', '🎊', '🎁', '🎀', '🎈', '🎯', '🎪', '🎠'] },
+    nature:  { label: '🌟 Nature', emojis: ['🌟', '🔥', '⚡', '💫', '🌙', '☀️', '🌈', '🍀'] },
+    sports:  { label: '🏀 Sports', emojis: ['🏀', '⚽', '🏆', '🥇', '🏅', '🎯', '🏈', '⚾'] },
 };
