@@ -34,22 +34,27 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Set up the overlay style element once
   useEffect(() => {
-    // Use custom uploaded image if one exists, otherwise fall back to the default
-    const src = bgImageUrl ?? '/background.webp';
-    document.body.style.backgroundImage = `url('${src}')`;
-    document.body.style.backgroundSize = `${width}% auto`;
-    document.body.style.backgroundPosition = `${posX}% ${posY}%`;
-    document.body.style.backgroundRepeat = 'no-repeat';
-    document.body.style.backgroundAttachment = 'fixed';
-
     const id = 'bg-overlay-style';
-    const existing = document.getElementById(id);
-    if (existing) existing.remove();
-    const style = document.createElement('style');
-    style.id = id;
-    style.innerHTML = `body::after { background: rgba(0,0,0,${overlayOpacity / 100}) !important; }`;
-    document.head.appendChild(style);
+    if (!document.getElementById(id)) {
+      const style = document.createElement('style');
+      style.id = id;
+      style.innerHTML = `body::after { background: rgba(0,0,0,var(--bg-overlay-opacity)) !important; }`;
+      document.head.appendChild(style);
+    }
+  }, []);
+
+  // Update CSS custom properties instantly — no DOM churn
+  useEffect(() => {
+    const src = bgImageUrl ?? '/background.webp';
+    const s = document.body.style;
+    s.backgroundImage = `url('${src}')`;
+    s.backgroundSize = `${width}% auto`;
+    s.backgroundPosition = `${posX}% ${posY}%`;
+    s.backgroundRepeat = 'no-repeat';
+    s.backgroundAttachment = 'fixed';
+    document.documentElement.style.setProperty('--bg-overlay-opacity', String(overlayOpacity / 100));
   }, [width, posX, posY, overlayOpacity, bgImageUrl]);
 
   const processFile = (file: File) => {
