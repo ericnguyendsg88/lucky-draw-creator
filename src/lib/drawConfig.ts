@@ -75,6 +75,28 @@ export function clearBgImage(): void {
     localStorage.removeItem(BG_IMAGE_KEY);
 }
 
+/** Returns the custom font data URL, or null. */
+export function loadCustomFont(): string | null {
+    return localStorage.getItem(CUSTOM_FONT_KEY);
+}
+
+/** Persists a custom font data URL. */
+export function saveCustomFont(dataUrl: string): void {
+    localStorage.setItem(CUSTOM_FONT_KEY, dataUrl);
+}
+
+/** Removes the custom font. */
+export function clearCustomFont(): void {
+    localStorage.removeItem(CUSTOM_FONT_KEY);
+}
+
+/** Register a custom font from a data URL into the document. */
+export async function registerCustomFont(name: string, dataUrl: string): Promise<void> {
+    const font = new FontFace(name, `url(${dataUrl})`);
+    await font.load();
+    document.fonts.add(font);
+}
+
 /** Session flag – true if onboarding was already completed THIS browser session */
 export function isOnboardingDone(): boolean {
     return sessionStorage.getItem(ONBOARDED_KEY) === '1';
