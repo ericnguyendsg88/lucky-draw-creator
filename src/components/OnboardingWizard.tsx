@@ -671,7 +671,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Title / Heading Color ── */}
                 <ColorPickerCard
-                    label="✏️ Title / Heading Color"
+                    label="✏️ Màu Tiêu Đề"
                     value={cfg.titleColor || '#ffffff'}
                     onChange={(c) => { onChange({ titleColor: c }); applyAccentTheme(cfg.accentColor, c, cfg.cardTextColor, cfg.bgOverlayColor); }}
                 />
