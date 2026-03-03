@@ -283,18 +283,18 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="onb-upload-input" onChange={handleFileChange} />
                 {bgImageUrl ? (
                     <div className="onb-upload-preview">
-                        <img src={bgImageUrl} alt="Current background" className="onb-upload-thumb" />
+                        <img src={bgImageUrl} alt="Hình nền hiện tại" className="onb-upload-thumb" />
                         <div className="onb-upload-overlay-label">
-                            <span>✅ Custom image active</span>
-                            <span className="onb-upload-change">Click to change</span>
+                            <span>✅ Đang dùng ảnh tùy chỉnh</span>
+                            <span className="onb-upload-change">Nhấn để thay đổi</span>
                         </div>
                     </div>
                 ) : (
                     <div className="onb-upload-empty">
                         <div className="onb-upload-icon">🖼️</div>
-                        <div className="onb-upload-title">{dragOver ? 'Drop to upload' : 'Upload Background Image'}</div>
-                        <div className="onb-upload-sub">Drag & drop or <span className="onb-upload-link">click to browse</span></div>
-                        <div className="onb-upload-limits">JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Max 6 MB</div>
+                        <div className="onb-upload-title">{dragOver ? 'Thả để tải lên' : 'Tải Ảnh Nền Lên'}</div>
+                        <div className="onb-upload-sub">Kéo thả hoặc <span className="onb-upload-link">nhấn để chọn file</span></div>
+                        <div className="onb-upload-limits">JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Tối đa 6 MB</div>
                     </div>
                 )}
             </div>
