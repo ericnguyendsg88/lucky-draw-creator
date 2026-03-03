@@ -756,7 +756,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Drawn Numbers ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Drawn Numbers</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Số Đã Bốc</label>
 
                     <SlotColorRow label="Background Color" value={cfg.drawnNumBgColor || '#1e2650'}
                         onChange={c => { onChange({ drawnNumBgColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBgColor: c }); }} />
