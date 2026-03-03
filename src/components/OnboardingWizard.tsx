@@ -751,7 +751,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     <SlotColorRow label="Màu viền" value={cfg.slotBorderColor || '#3b82f6'}
                         onChange={c => { onChange({ slotBorderColor: c }); applySlotTheme({ ...cfg, slotBorderColor: c }); }} />
 
-                    <SliderRow label="Glow Intensity" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
+                    <SliderRow label="Độ phát sáng" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
                 </div>
 
                 {/* ── Drawn Numbers ── */}
