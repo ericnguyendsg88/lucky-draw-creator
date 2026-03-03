@@ -5,10 +5,12 @@
 
 export interface PrizeCardConfig {
     id: number;           // 0-based index
-    name: string;        // e.g. "Giải Đặc Biệt"
+    name: string;        // e.g. "Grand Prize"
     totalPrizes: number; // total prizes on this card  (e.g. 30)
     drawSeconds: number; // spin duration in seconds  (e.g. 8)
     drawsPerSession: number; // how many winners drawn at once per session button-press
+    emoji: string;       // emoji for this card (e.g. "🏆")
+    showNumber: boolean; // whether to show the prize count number
 }
 
 export interface DrawConfig {
@@ -23,8 +25,8 @@ export interface DrawConfig {
     // style
     fontFamily: string;      // Google Font name for display
     customFontName: string;  // name of uploaded custom font
-    emojiSet: string;        // emoji set key
-    customEmojis: string[];  // user-typed emojis from keyboard
+    emojiSet: string;        // emoji set key (legacy, kept for compat)
+    customEmojis: string[];  // legacy
     accentColor: string;     // hex color for accent
     cardOpacity: number;     // card background opacity 0-100
     cardBlur: number;        // card backdrop blur 0-20
@@ -33,6 +35,9 @@ export interface DrawConfig {
     cardBorderRadius: number;// px border radius
     cardFontSize: number;    // base font size multiplier 50-150%
     cardTextAlign: 'left' | 'center' | 'right';
+    // element visibility / order
+    showPrizeNumber: boolean;  // global toggle for prize count number
+    cardElementOrder: ('emoji' | 'name' | 'number')[]; // order of elements in card
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
@@ -110,12 +115,19 @@ export function markOnboardingDone(): void {
 // ---------------------------------------------------------------------------
 // Default configuration (mirrors the original hard-coded values)
 // ---------------------------------------------------------------------------
+const DEFAULT_EMOJIS = ['🏆', '👑', '🥈', '🥉', '⭐'];
 export const DEFAULT_PRIZE_CARDS: PrizeCardConfig[] = [
-    { id: 0, name: 'Grand Prize', totalPrizes: 1, drawSeconds: 8, drawsPerSession: 1 },
-    { id: 1, name: 'First Prize', totalPrizes: 1, drawSeconds: 6, drawsPerSession: 1 },
-    { id: 2, name: 'Second Prize', totalPrizes: 2, drawSeconds: 5, drawsPerSession: 1 },
-    { id: 3, name: 'Third Prize', totalPrizes: 15, drawSeconds: 3, drawsPerSession: 15 },
-    { id: 4, name: 'Consolation', totalPrizes: 30, drawSeconds: 3, drawsPerSession: 15 },
+    { id: 0, name: 'Grand Prize', totalPrizes: 1, drawSeconds: 8, drawsPerSession: 1, emoji: '🏆', showNumber: true },
+    { id: 1, name: 'First Prize', totalPrizes: 1, drawSeconds: 6, drawsPerSession: 1, emoji: '👑', showNumber: true },
+    { id: 2, name: 'Second Prize', totalPrizes: 2, drawSeconds: 5, drawsPerSession: 1, emoji: '🥈', showNumber: true },
+    { id: 3, name: 'Third Prize', totalPrizes: 15, drawSeconds: 3, drawsPerSession: 15, emoji: '🥉', showNumber: true },
+    { id: 4, name: 'Consolation', totalPrizes: 30, drawSeconds: 3, drawsPerSession: 15, emoji: '⭐', showNumber: true },
+];
+
+export const COMMON_EMOJIS = [
+    '🏆', '👑', '🥇', '🥈', '🥉', '⭐', '💎', '🎉', '🎊', '🎁',
+    '🎀', '🔥', '⚡', '💫', '🌟', '🎯', '🎪', '🏅', '🎖️', '🎗️',
+    '💰', '💵', '🪙', '🎰', '🍀', '❤️', '💜', '💙', '🧡', '💚',
 ];
 
 export const DEFAULT_CONFIG: DrawConfig = {
@@ -137,6 +149,8 @@ export const DEFAULT_CONFIG: DrawConfig = {
     cardBorderRadius: 16,
     cardFontSize: 100,
     cardTextAlign: 'center',
+    showPrizeNumber: true,
+    cardElementOrder: ['emoji', 'name', 'number'],
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────

@@ -13,6 +13,7 @@ import {
     BG_IMAGE_MAX_BYTES,
     FONT_OPTIONS,
     EMOJI_SETS,
+    COMMON_EMOJIS,
     loadCustomFont,
     saveCustomFont,
     clearCustomFont,
@@ -248,13 +249,15 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     const addCard = () => {
         if (cards.length >= 8) return;
-        onChange({ prizeCards: [...cards, { id: cards.length, name: `Prize ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5 }] });
+        onChange({ prizeCards: [...cards, { id: cards.length, name: `Prize ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5, emoji: COMMON_EMOJIS[cards.length % COMMON_EMOJIS.length], showNumber: true }] });
     };
 
     const removeCard = (i: number) => {
         if (cards.length <= 0) return;
         onChange({ prizeCards: cards.filter((_, idx) => idx !== i).map((c, idx) => ({ ...c, id: idx })) });
     };
+
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState<number | null>(null);
 
     return (
         <div className="onb-step-content">
@@ -266,9 +269,12 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                         <motion.div key={i} layout initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                             className="onb-prize-card" style={{ borderColor: color.border, boxShadow: `0 0 16px ${color.glow}` }}>
                             <div className="onb-prize-card-header">
-                                <div className="onb-prize-card-icon" style={{ color: color.border }}>
-                                    <IconComp size={18} /><span className="onb-card-index">#{i + 1}</span>
-                                </div>
+                                {/* Emoji selector */}
+                                <button type="button" onClick={() => setEmojiPickerOpen(emojiPickerOpen === i ? null : i)}
+                                    style={{ fontSize: 28, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 10, width: 48, height: 48, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    title="Choose emoji">
+                                    {card.emoji || '🏆'}
+                                </button>
                                 <div className="onb-prize-card-fields">
                                     <label className="onb-label">Prize Name</label>
                                     <input type="text" value={card.name} maxLength={30} onChange={e => updateCard(i, { name: e.target.value })}
@@ -278,6 +284,17 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     <Trash2 size={15} />
                                 </button>
                             </div>
+                            {/* Emoji picker grid */}
+                            {emojiPickerOpen === i && (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: '8px 0', borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: 8 }}>
+                                    {COMMON_EMOJIS.map(em => (
+                                        <button key={em} type="button" onClick={() => { updateCard(i, { emoji: em }); setEmojiPickerOpen(null); }}
+                                            style={{ fontSize: 22, width: 36, height: 36, borderRadius: 8, border: card.emoji === em ? '2px solid white' : '1px solid rgba(255,255,255,0.1)', background: card.emoji === em ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {em}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             <div className="onb-prize-card-body">
                                 <div className="onb-field-group">
                                     <label className="onb-label">Total Prizes</label>
@@ -287,6 +304,13 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                             onChange={e => updateCard(i, { totalPrizes: clamp(Number(e.target.value), 1, 500) })} className="onb-input onb-input-num" />
                                         <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { totalPrizes: clamp(card.totalPrizes + 1, 1, 500) })}>+</button>
                                     </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Show prize count</label>
+                                    <button type="button" onClick={() => updateCard(i, { showNumber: !card.showNumber })}
+                                        style={{ width: 40, height: 22, borderRadius: 11, background: card.showNumber !== false ? '#3b82f6' : 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.2s' }}>
+                                        <span style={{ position: 'absolute', top: 2, left: card.showNumber !== false ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: 'white', transition: 'left 0.2s' }} />
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>
@@ -323,7 +347,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     const [hexInput, setHexInput] = useState(cfg.accentColor);
     const [customFontLoaded, setCustomFontLoaded] = useState(false);
     const [customFontError, setCustomFontError] = useState<string | null>(null);
-    const [emojiInput, setEmojiInput] = useState('');
     const fontFileRef = useRef<HTMLInputElement>(null);
 
     // Load existing custom font on mount
@@ -384,24 +407,17 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
         }
     };
 
-    const addCustomEmoji = () => {
-        const trimmed = emojiInput.trim();
-        if (!trimmed) return;
-        // Split into individual characters/emoji - simple approach
-        const chars = Array.from(trimmed).filter(s => s.trim().length > 0);
-        if (chars.length > 0) {
-            const updated = [...cfg.customEmojis, ...chars].slice(0, 20); // max 20
-            onChange({ customEmojis: updated });
-        }
-        setEmojiInput('');
-    };
-
-    const removeCustomEmoji = (idx: number) => {
-        onChange({ customEmojis: cfg.customEmojis.filter((_, i) => i !== idx) });
-    };
-
     const activeFont = cfg.fontFamily;
-    const previewEmojis = cfg.customEmojis.length > 0 ? cfg.customEmojis : (EMOJI_SETS[cfg.emojiSet]?.emojis ?? EMOJI_SETS.classic.emojis);
+    const elementOrder = cfg.cardElementOrder ?? ['emoji', 'name', 'number'];
+
+    const moveElement = (from: number, to: number) => {
+        const arr = [...elementOrder];
+        const [el] = arr.splice(from, 1);
+        arr.splice(to, 0, el);
+        onChange({ cardElementOrder: arr });
+    };
+
+    const previewCard = cfg.prizeCards[0];
 
     return (
         <div className="onb-step-content">
@@ -445,61 +461,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 </div>
             </div>
 
-            {/* ── Emoji Section ── */}
-            <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>😎 Emojis</label>
-
-                {/* Custom emoji input */}
-                <div style={{ marginBottom: 12 }}>
-                    
-                    <div style={{ display: 'flex', gap: 8 }}>
-                        <input
-                            type="text"
-                            value={emojiInput}
-                            onChange={e => setEmojiInput(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addCustomEmoji())}
-                            placeholder="🎉🏆🥇..."
-                            className="onb-input"
-                            style={{ flex: 1, fontSize: 18 }}
-                        />
-                        <button type="button" onClick={addCustomEmoji}
-                            className="onb-num-btn" style={{ width: 40, height: 36 }}>+</button>
-                    </div>
-                    {cfg.customEmojis.length > 0 && (
-                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
-                            {cfg.customEmojis.map((e, i) => (
-                                <button key={i} type="button" onClick={() => removeCustomEmoji(i)}
-                                    style={{
-                                        fontSize: 22, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
-                                        borderRadius: 8, padding: '4px 8px', cursor: 'pointer', position: 'relative',
-                                    }}
-                                    title="Click to remove">
-                                    {e}
-                                    <span style={{ position: 'absolute', top: -4, right: -4, background: '#ef4444', borderRadius: '50%', width: 14, height: 14, fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>×</span>
-                                </button>
-                            ))}
-                            <button type="button" onClick={() => onChange({ customEmojis: [] })}
-                                style={{ fontSize: 11, color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}>
-                                Clear all
-                            </button>
-                        </div>
-                    )}
-                </div>
-
-                {/* Preset emoji sets */}
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {Object.entries(EMOJI_SETS).map(([key, set]) => (
-                        <button key={key} type="button" onClick={() => { onChange({ emojiSet: key, customEmojis: [] }); }}
-                            className={`onb-style-option ${cfg.emojiSet === key && cfg.customEmojis.length === 0 ? 'onb-style-option--active' : ''}`}
-                            style={{ justifyContent: 'flex-start', gap: 12 }}>
-                            <span style={{ fontSize: 14, fontWeight: 600 }}>{set.label}</span>
-                            <span style={{ fontSize: 18, letterSpacing: 4 }}>{set.emojis.slice(0, 5).join(' ')}</span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
             {/* ── Accent Color ── */}
             <div className="onb-card" style={{ marginBottom: 16 }}>
                 <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Accent Color</label>
@@ -523,18 +484,10 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
                     </label>
                 </div>
-                {/* Hex input */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>HEX:</span>
-                    <input
-                        type="text"
-                        value={hexInput}
-                        onChange={e => handleHexChange(e.target.value)}
-                        placeholder="#3b82f6"
-                        className="onb-input"
-                        style={{ width: 120, fontFamily: 'monospace', fontSize: 14 }}
-                        maxLength={7}
-                    />
+                    <input type="text" value={hexInput} onChange={e => handleHexChange(e.target.value)}
+                        placeholder="#3b82f6" className="onb-input" style={{ width: 120, fontFamily: 'monospace', fontSize: 14 }} maxLength={7} />
                     <div style={{ width: 28, height: 28, borderRadius: 6, background: cfg.accentColor, border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }} />
                 </div>
             </div>
@@ -546,7 +499,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
                 <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
                 <div style={{ marginTop: 8 }}>
-                    
                     <div style={{ display: 'flex', gap: 6 }}>
                         {(['left', 'center', 'right'] as const).map(align => (
                             <button key={align} type="button" onClick={() => onChange({ cardTextAlign: align })}
@@ -556,6 +508,35 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             </button>
                         ))}
                     </div>
+                </div>
+            </div>
+
+            {/* ── Element Order ── */}
+            <div className="onb-card" style={{ marginBottom: 16 }}>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {elementOrder.map((el, idx) => (
+                        <div key={el} style={{
+                            display: 'flex', alignItems: 'center', gap: 8,
+                            background: 'rgba(255,255,255,0.06)', borderRadius: 8, padding: '8px 12px',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                        }}>
+                            <span style={{ fontSize: 18 }}>
+                                {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
+                            </span>
+                            <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white' }}>
+                                {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
+                            </span>
+                            <button type="button" disabled={idx === 0} onClick={() => moveElement(idx, idx - 1)}
+                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: idx === 0 ? 'default' : 'pointer', opacity: idx === 0 ? 0.3 : 1, color: 'white', fontSize: 14 }}>
+                                ▲
+                            </button>
+                            <button type="button" disabled={idx === elementOrder.length - 1} onClick={() => moveElement(idx, idx + 1)}
+                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: idx === elementOrder.length - 1 ? 'default' : 'pointer', opacity: idx === elementOrder.length - 1 ? 0.3 : 1, color: 'white', fontSize: 14 }}>
+                                ▼
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -570,54 +551,30 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
             <div className="onb-card">
                 <label className="onb-label" style={{ marginBottom: 10, display: 'block' }}>👁️ Card Preview</label>
                 <div style={{
-                    padding: cfg.cardPadding,
-                    borderRadius: cfg.cardBorderRadius,
-                    background: `rgba(20,30,60,${cfg.cardOpacity / 100})`,
-                    backdropFilter: `blur(${cfg.cardBlur}px)`,
-                    border: `2px solid ${cfg.accentColor}40`,
-                    textAlign: cfg.cardTextAlign,
-                    transition: 'all 0.3s ease',
+                    padding: cfg.cardPadding, borderRadius: cfg.cardBorderRadius,
+                    background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
+                    border: `2px solid ${cfg.accentColor}40`, textAlign: cfg.cardTextAlign, transition: 'all 0.3s ease',
                 }}>
-                    <div style={{
-                        fontSize: 28 * (cfg.cardFontSize / 100),
-                        marginBottom: 4,
-                    }}>
-                        {previewEmojis[0] ?? '🏆'}
-                    </div>
-                    <div style={{
-                        fontFamily: `'${activeFont}', sans-serif`,
-                        fontSize: 20 * (cfg.cardFontSize / 100),
-                        fontWeight: 800,
-                        color: 'white',
-                        marginBottom: 4,
-                    }}>
-                        Grand Prize
-                    </div>
-                    <div style={{
-                        fontFamily: `'${activeFont}', sans-serif`,
-                        fontSize: 32 * (cfg.cardFontSize / 100),
-                        fontWeight: 900,
-                        color: cfg.accentColor,
-                        marginBottom: 4,
-                    }}>
-                        5 <span style={{ fontSize: 14 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
-                    </div>
-                    <div style={{
-                        width: '100%', height: 8, borderRadius: 4,
-                        background: 'rgba(0,0,0,0.3)', overflow: 'hidden',
-                    }}>
-                        <div style={{
-                            width: '50%', height: '100%', borderRadius: 4,
-                            background: cfg.accentColor, transition: 'all 0.3s',
-                        }} />
-                    </div>
-                    <div style={{
-                        fontFamily: `'${activeFont}', sans-serif`,
-                        fontSize: 11 * (cfg.cardFontSize / 100),
-                        color: 'rgba(255,255,255,0.5)',
-                        marginTop: 6,
-                    }}>
-                        Font: {activeFont} · Align: {cfg.cardTextAlign}
+                    {elementOrder.map(el => {
+                        if (el === 'emoji') return (
+                            <div key="emoji" style={{ fontSize: 28 * (cfg.cardFontSize / 100), marginBottom: 4 }}>
+                                {previewCard?.emoji ?? '🏆'}
+                            </div>
+                        );
+                        if (el === 'name') return (
+                            <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: 'white', marginBottom: 4 }}>
+                                {previewCard?.name ?? 'Grand Prize'}
+                            </div>
+                        );
+                        if (el === 'number') return (
+                            <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 32 * (cfg.cardFontSize / 100), fontWeight: 900, color: cfg.accentColor, marginBottom: 4 }}>
+                                5 <span style={{ fontSize: 14 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
+                            </div>
+                        );
+                        return null;
+                    })}
+                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(0,0,0,0.3)', overflow: 'hidden' }}>
+                        <div style={{ width: '50%', height: '100%', borderRadius: 4, background: cfg.accentColor, transition: 'all 0.3s' }} />
                     </div>
                 </div>
             </div>
