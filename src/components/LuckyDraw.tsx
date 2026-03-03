@@ -45,7 +45,10 @@ const CARD_COLORS = [
 ];
 
 const CARD_ICONS = [Trophy, Trophy, Award, Medal, Star, Star, Trophy, Award];
-const CARD_EMOJIS = ["💎", "👑", "🥈", "🥉", "⭐", "🌟", "🎖️", "🎗️"];
+
+function getEmojis(emojiSet: string): string[] {
+  return EMOJI_SETS[emojiSet]?.emojis ?? EMOJI_SETS.classic.emojis;
+}
 
 const CARD_CSS_CLASSES = [
   "prize-card-special",
