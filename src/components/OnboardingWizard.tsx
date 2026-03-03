@@ -434,7 +434,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
             {cards.length < 8 && (
                 <button type="button" className="onb-add-btn" onClick={addCard}>
-                    <Plus size={16} /> Add Prize Card
+                    <Plus size={16} /> Thêm Giải Thưởng
                 </button>
             )}
 
