@@ -541,10 +541,15 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 isFocused
                 onClick={() => { }}
                 emojiSet={drawConfig.emojiSet}
+                customEmojis={drawConfig.customEmojis ?? []}
                 fontFamily={drawConfig.fontFamily}
                 accentColor={drawConfig.accentColor}
                 cardOpacity={drawConfig.cardOpacity}
                 cardBlur={drawConfig.cardBlur}
+                cardPadding={drawConfig.cardPadding ?? 20}
+                cardBorderRadius={drawConfig.cardBorderRadius ?? 16}
+                cardFontSize={drawConfig.cardFontSize ?? 100}
+                cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
               />
             </motion.div>
 
