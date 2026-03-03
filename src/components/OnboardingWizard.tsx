@@ -713,6 +713,48 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     <SliderRow label="Card Blur" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
                 </div>
             </div>
+
+            {/* ── Sticky Live Preview (right column) ── */}
+            <div style={{
+                flex: '0 0 240px', position: 'sticky', top: 0, alignSelf: 'flex-start',
+                zIndex: 5,
+            }}>
+                <div style={{
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block', fontSize: 12 }}>👁️ Live Preview</label>
+                    <div style={{
+                        padding: cfg.cardPadding, borderRadius: cfg.cardBorderRadius,
+                        background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
+                        border: `2px solid ${(previewCard?.accentColor || cfg.accentColor)}40`, textAlign: cfg.cardTextAlign,
+                        transition: 'all 0.3s ease',
+                    }}>
+                        {elementOrder.map(el => {
+                            const cardAccent = previewCard?.accentColor || cfg.accentColor;
+                            if (el === 'emoji') return (
+                                <div key="emoji" style={{ fontSize: 28 * (cfg.cardFontSize / 100), marginBottom: 4 }}>
+                                    {previewCard?.emoji ?? '🏆'}
+                                </div>
+                            );
+                            if (el === 'name') return (
+                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 4 }}>
+                                    {previewCard?.name ?? 'Grand Prize'}
+                                </div>
+                            );
+                            if (el === 'number') return (
+                                <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 32 * (cfg.cardFontSize / 100), fontWeight: 900, color: cardAccent, marginBottom: 4 }}>
+                                    5 <span style={{ fontSize: 14 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
+                                </div>
+                            );
+                            return null;
+                        })}
+                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(0,0,0,0.3)', overflow: 'hidden' }}>
+                            <div style={{ width: '50%', height: '100%', borderRadius: 4, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
