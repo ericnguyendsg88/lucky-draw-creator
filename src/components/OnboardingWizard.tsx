@@ -1066,6 +1066,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [cfg, setCfg] = useState<DrawConfig>(() => ({ ...DEFAULT_CONFIG, ...(loadConfig() ?? {}) }));
     const [direction, setDirection] = useState(1);
     const [showPreview, setShowPreview] = useState(false);
+    const isAdjusting = loadConfig() !== null;
 
     // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
     const hasPrizes = cfg.prizeCards.length > 0;
