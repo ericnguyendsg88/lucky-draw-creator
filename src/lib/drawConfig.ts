@@ -21,15 +21,23 @@ export interface DrawConfig {
     bgOverlayOpacity: number;
     // style
     fontFamily: string;      // Google Font name for display
+    customFontName: string;  // name of uploaded custom font
     emojiSet: string;        // emoji set key
+    customEmojis: string[];  // user-typed emojis from keyboard
     accentColor: string;     // hex color for accent
     cardOpacity: number;     // card background opacity 0-100
     cardBlur: number;        // card backdrop blur 0-20
+    // card layout
+    cardPadding: number;     // px padding inside card
+    cardBorderRadius: number;// px border radius
+    cardFontSize: number;    // base font size multiplier 50-150%
+    cardTextAlign: 'left' | 'center' | 'right';
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
 const ONBOARDED_KEY = 'luckyDrawOnboarded_session';
 export const BG_IMAGE_KEY = 'luckyDrawBgImage';
+export const CUSTOM_FONT_KEY = 'luckyDrawCustomFont';
 
 /** Max file size for custom background uploads: 6 MB.
  *  Base64 encoding adds ~33% overhead → ~8 MB in localStorage.
@@ -67,6 +75,28 @@ export function clearBgImage(): void {
     localStorage.removeItem(BG_IMAGE_KEY);
 }
 
+/** Returns the custom font data URL, or null. */
+export function loadCustomFont(): string | null {
+    return localStorage.getItem(CUSTOM_FONT_KEY);
+}
+
+/** Persists a custom font data URL. */
+export function saveCustomFont(dataUrl: string): void {
+    localStorage.setItem(CUSTOM_FONT_KEY, dataUrl);
+}
+
+/** Removes the custom font. */
+export function clearCustomFont(): void {
+    localStorage.removeItem(CUSTOM_FONT_KEY);
+}
+
+/** Register a custom font from a data URL into the document. */
+export async function registerCustomFont(name: string, dataUrl: string): Promise<void> {
+    const font = new FontFace(name, `url(${dataUrl})`);
+    await font.load();
+    document.fonts.add(font);
+}
+
 /** Session flag – true if onboarding was already completed THIS browser session */
 export function isOnboardingDone(): boolean {
     return sessionStorage.getItem(ONBOARDED_KEY) === '1';
@@ -95,10 +125,16 @@ export const DEFAULT_CONFIG: DrawConfig = {
     bgPosY: 0,
     bgOverlayOpacity: 70,
     fontFamily: 'Orbitron',
+    customFontName: '',
     emojiSet: 'classic',
+    customEmojis: [],
     accentColor: '#3b82f6',
     cardOpacity: 70,
     cardBlur: 12,
+    cardPadding: 20,
+    cardBorderRadius: 16,
+    cardFontSize: 100,
+    cardTextAlign: 'center',
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────

@@ -16,7 +16,7 @@ import {
   DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { soundManager, SoundPack } from "@/lib/sounds";
-import { DrawConfig, PrizeCardConfig, EMOJI_SETS } from "@/lib/drawConfig";
+import { DrawConfig, PrizeCardConfig, EMOJI_SETS, loadCustomFont, registerCustomFont } from "@/lib/drawConfig";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,7 +46,8 @@ const CARD_COLORS = [
 
 const CARD_ICONS = [Trophy, Trophy, Award, Medal, Star, Star, Trophy, Award];
 
-function getEmojis(emojiSet: string): string[] {
+function getEmojis(emojiSet: string, customEmojis?: string[]): string[] {
+  if (customEmojis && customEmojis.length > 0) return customEmojis;
   return EMOJI_SETS[emojiSet]?.emojis ?? EMOJI_SETS.classic.emojis;
 }
 
@@ -76,19 +77,25 @@ interface DynPrizeCardProps {
   isFocused: boolean;
   onClick: () => void;
   emojiSet: string;
+  customEmojis: string[];
   fontFamily: string;
   accentColor: string;
   cardOpacity: number;
   cardBlur: number;
+  cardPadding: number;
+  cardBorderRadius: number;
+  cardFontSize: number;
+  cardTextAlign: 'left' | 'center' | 'right';
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, fontFamily, accentColor, cardOpacity, cardBlur }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, customEmojis, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign }: DynPrizeCardProps) {
   const color = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const IconComp = CARD_ICONS[card.id % CARD_ICONS.length];
-  const emojis = getEmojis(emojiSet);
+  const emojis = getEmojis(emojiSet, customEmojis);
   const emoji = emojis[card.id % emojis.length];
   const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
+  const sizeScale = cardFontSize / 100;
 
   return (
     <motion.div
@@ -100,6 +107,9 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
         background: `rgba(20, 30, 60, ${cardOpacity / 100})`,
         backdropFilter: `blur(${cardBlur}px)`,
         fontFamily: `'${fontFamily}', sans-serif`,
+        padding: cardPadding,
+        borderRadius: cardBorderRadius,
+        textAlign: cardTextAlign,
       }}
       initial={{ opacity: 0, y: 10 }}
       animate={{
@@ -183,6 +193,16 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   const [soundPack, setSoundPackState] = useState<SoundPack>(soundManager.getSoundPack());
 
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+
+  // Load custom font if configured
+  useEffect(() => {
+    if (drawConfig.customFontName) {
+      const stored = loadCustomFont();
+      if (stored) {
+        registerCustomFont(drawConfig.customFontName, stored).catch(() => {});
+      }
+    }
+  }, [drawConfig.customFontName]);
 
   // Re-init when config changes (shouldn't happen during session, but defensive)
   useEffect(() => {
@@ -495,10 +515,15 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   isFocused={false}
                   onClick={() => handleCardClick(card.id)}
                   emojiSet={drawConfig.emojiSet}
+                  customEmojis={drawConfig.customEmojis ?? []}
                   fontFamily={drawConfig.fontFamily}
                   accentColor={drawConfig.accentColor}
                   cardOpacity={drawConfig.cardOpacity}
                   cardBlur={drawConfig.cardBlur}
+                  cardPadding={drawConfig.cardPadding ?? 20}
+                  cardBorderRadius={drawConfig.cardBorderRadius ?? 16}
+                  cardFontSize={drawConfig.cardFontSize ?? 100}
+                  cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
                 />
               </motion.div>
             ))}
@@ -526,10 +551,15 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 isFocused
                 onClick={() => { }}
                 emojiSet={drawConfig.emojiSet}
+                customEmojis={drawConfig.customEmojis ?? []}
                 fontFamily={drawConfig.fontFamily}
                 accentColor={drawConfig.accentColor}
                 cardOpacity={drawConfig.cardOpacity}
                 cardBlur={drawConfig.cardBlur}
+                cardPadding={drawConfig.cardPadding ?? 20}
+                cardBorderRadius={drawConfig.cardBorderRadius ?? 16}
+                cardFontSize={drawConfig.cardFontSize ?? 100}
+                cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
               />
             </motion.div>
 
