@@ -21,10 +21,17 @@ export interface DrawConfig {
     bgOverlayOpacity: number;
     // style
     fontFamily: string;      // Google Font name for display
+    customFontName: string;  // name of uploaded custom font
     emojiSet: string;        // emoji set key
+    customEmojis: string[];  // user-typed emojis from keyboard
     accentColor: string;     // hex color for accent
     cardOpacity: number;     // card background opacity 0-100
     cardBlur: number;        // card backdrop blur 0-20
+    // card layout
+    cardPadding: number;     // px padding inside card
+    cardBorderRadius: number;// px border radius
+    cardFontSize: number;    // base font size multiplier 50-150%
+    cardTextAlign: 'left' | 'center' | 'right';
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
