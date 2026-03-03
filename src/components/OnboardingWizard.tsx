@@ -787,18 +787,34 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     </div>
                 </div>
 
-                {/* Prize Card Preview */}
+                {/* Prize Card Preview — over actual background for blur visibility */}
                 <div style={{
-                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
-                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                    borderRadius: 12, padding: 12, overflow: 'hidden', position: 'relative',
+                    border: '1px solid rgba(255,255,255,0.1)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Prize Card</label>
+                    {/* Background image layer */}
                     <div style={{
-                        padding: cfg.cardPadding * 0.6, borderRadius: cfg.cardBorderRadius,
-                        background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
-                        border: `2px solid ${(previewCard?.accentColor || cfg.accentColor)}40`, textAlign: cfg.cardTextAlign,
-                        transition: 'all 0.3s ease',
-                    }}>
+                        position: 'absolute', inset: 0,
+                        backgroundImage: `url('${loadBgImage() || '/background.webp'}')`,
+                        backgroundSize: 'cover', backgroundPosition: 'center',
+                    }} />
+                    {/* Overlay tint */}
+                    <div style={{
+                        position: 'absolute', inset: 0,
+                        background: (() => {
+                            const oc = cfg.bgOverlayColor || '#000000';
+                            const r = parseInt(oc.slice(1, 3), 16), g = parseInt(oc.slice(3, 5), 16), b = parseInt(oc.slice(5, 7), 16);
+                            return `rgba(${r},${g},${b},${(cfg.bgOverlayOpacity ?? 70) / 100})`;
+                        })(),
+                    }} />
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Prize Card</label>
+                        <div style={{
+                            padding: cfg.cardPadding * 0.6, borderRadius: cfg.cardBorderRadius,
+                            background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
+                            border: `2px solid ${(previewCard?.accentColor || cfg.accentColor)}40`, textAlign: cfg.cardTextAlign,
+                            transition: 'all 0.3s ease',
+                        }}>
                         {elementOrder.map(el => {
                             const cardAccent = previewCard?.accentColor || cfg.accentColor;
                             if (el === 'emoji') return (
@@ -821,6 +837,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4 }}>
                             <div style={{ width: '50%', height: '100%', borderRadius: 3, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
                         </div>
+                    </div>
                     </div>
                 </div>
 
