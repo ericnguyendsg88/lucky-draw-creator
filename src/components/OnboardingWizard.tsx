@@ -796,7 +796,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
                             textShadow: '0 0 12px rgba(150,200,255,0.4)',
                         }}>
-                            {cfg.drawTitle || 'LUCKY DRAW'}
+                            {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                         </h3>
                     </div>
                 </div>
