@@ -12,6 +12,7 @@ export interface PrizeCardConfig {
     emoji: string;       // emoji for this card (e.g. "🏆")
     showNumber: boolean; // whether to show the prize count number
     accentColor?: string; // per-card accent color hex (falls back to global)
+    colSpan?: 1 | 2;     // grid column span on home screen (1=normal, 2=wide)
 }
 
 export interface DrawConfig {

@@ -621,6 +621,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <motion.div key={card.id}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: card.id * 0.04 }}
+                style={{ gridColumn: `span ${card.colSpan ?? 1}` }}
               >
                 <DynPrizeCard
                   card={card}
