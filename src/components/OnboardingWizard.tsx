@@ -369,7 +369,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                             )}
                             <div className="onb-prize-card-body">
                                 <div className="onb-field-group">
-                                    <label className="onb-label">Total Prizes</label>
+                                    <label className="onb-label">Tổng số giải</label>
                                     <div className="onb-number-row">
                                         <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { totalPrizes: clamp(card.totalPrizes - 1, 1, 500) })}>−</button>
                                         <input type="number" min={1} max={500} value={card.totalPrizes}
