@@ -59,7 +59,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     setUploadError(null);
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowed.includes(file.type)) {
-      setUploadError('Unsupported format. Please use JPEG, PNG, WebP, or GIF.');
+      setUploadError('Định dạng không hỗ trợ. Vui lòng dùng JPEG, PNG, WebP hoặc GIF.');
       return;
     }
     if (file.size > BG_IMAGE_MAX_BYTES) {
