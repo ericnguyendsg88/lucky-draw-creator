@@ -106,7 +106,7 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
     );
     if (el === 'name') return (
       <h3 key="name" className="font-display font-bold text-sm md:text-base mb-1 relative z-10 leading-tight px-1"
-        style={{ fontSize: 14 * sizeScale }}>{card.name}</h3>
+        style={{ fontSize: 14 * sizeScale, color: cardTextColor || 'white' }}>{card.name}</h3>
     );
     if (el === 'number' && showNumber) return (
       <div key="number" className="text-2xl md:text-3xl font-display font-black mb-1 relative z-10"
