@@ -814,19 +814,19 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
 interface HistItem { number: number; cardId: number; sessionRound?: number; }
 
-function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: number }) {
+function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string }) {
   const items = history.filter(h => h.cardId === cardId);
   if (items.length === 0) return null;
-  const color = CARD_COLORS[cardId % CARD_COLORS.length];
+  const colorHex = cardAccentColor || accentColor || '#3b82f6';
 
   return (
     <motion.div
       className="w-full mt-6 p-4 rounded-2xl"
-      style={{ background: 'rgba(20,30,70,0.7)', border: `1px solid ${color.border}` }}
+      style={{ background: 'rgba(20,30,70,0.7)', border: `1px solid ${colorHex}99` }}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <div className={`font-display font-bold text-sm mb-3 ${color.iconColor}`}>
+      <div className="font-display font-bold text-sm mb-3" style={{ color: colorHex }}>
         Winning Numbers ({items.length})
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
@@ -834,7 +834,7 @@ function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: num
           <motion.span
             key={i}
             className="history-number"
-            style={{ borderColor: color.border, color: 'white' }}
+            style={{ borderColor: `${colorHex}99`, color: 'white' }}
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
