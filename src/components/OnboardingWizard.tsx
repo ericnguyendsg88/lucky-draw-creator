@@ -36,11 +36,13 @@ import {
     Palette,
     Upload,
     X,
+    Type,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const ALL_STEP_LABELS = [
+    { icon: Type, label: "Title" },
     { icon: Image, label: "Background" },
     { icon: Trophy, label: "Prizes" },
     { icon: Palette, label: "Style" },
@@ -49,11 +51,12 @@ const ALL_STEP_LABELS = [
 ];
 
 const ALL_STEP_TITLES = [
-    "🎨  Background Setup",
+    "✏️  Draw Title",
+    "🎨  Background",
     "🏆  Prize Cards",
-    "🎭  Style & Appearance",
-    "⏱️  Draw Timing",
-    "🎯  Winners Per Draw",
+    "🎭  Style",
+    "⏱️  Timing",
+    "🎯  Batch Size",
 ];
 
 const CARD_COLORS = [
@@ -126,7 +129,41 @@ function StepIndicator({ steps, currentStep, onStepClick }: {
     );
 }
 
-// ─── Step 1 – Background ─────────────────────────────────────────────────────
+// ─── Step 1 – Title ──────────────────────────────────────────────────────────
+function StepTitle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
+    return (
+        <div className="onb-step-content">
+            <div className="onb-card">
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>Draw Title</label>
+                <input
+                    type="text"
+                    value={cfg.drawTitle}
+                    onChange={e => onChange({ drawTitle: e.target.value })}
+                    className="onb-input"
+                    placeholder="e.g. LUCKY DRAW"
+                    maxLength={50}
+                    style={{ fontSize: 18, fontWeight: 700, fontFamily: `'${cfg.fontFamily}', sans-serif` }}
+                />
+            </div>
+            <div style={{
+                marginTop: 20, textAlign: 'center', padding: '24px 16px',
+                background: 'rgba(20,30,60,0.6)', borderRadius: 16,
+                border: '1px solid rgba(255,255,255,0.1)',
+            }}>
+                <h1 style={{
+                    fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                    fontSize: 32, fontWeight: 900, color: 'white',
+                    textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5)',
+                    letterSpacing: '0.05em',
+                }}>
+                    {cfg.drawTitle || 'LUCKY DRAW'}
+                </h1>
+            </div>
+        </div>
+    );
+}
+
+// ─── Step 2 – Background ─────────────────────────────────────────────────────
 function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
     const [bgImageUrl, setBgImageUrl] = useState<string | null>(() => loadBgImage());
     const [dragOver, setDragOver] = useState(false);
@@ -169,7 +206,6 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">Upload your background image or keep the default. You can fine-tune position and size later via the ⚙️ button.</p>
             <div
                 className={`onb-upload-zone ${dragOver ? 'onb-upload-zone--drag' : ''} ${bgImageUrl ? 'onb-upload-zone--has-image' : ''}`}
                 onClick={() => fileInputRef.current?.click()}
@@ -204,7 +240,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     🗑️ Remove image (use default)
                 </button>
             )}
-            <p className="onb-hint">💡 Position, size, and overlay darkness can be adjusted via the ⚙️ button on the main screen.</p>
+            
         </div>
     );
 }
@@ -228,7 +264,6 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">Set up your prize tiers — name and total prizes for each. Remove all cards to skip directly to the draw screen.</p>
             <div className="onb-cards-list">
                 {cards.map((card, i) => {
                     const color = CARD_COLORS[i % CARD_COLORS.length];
@@ -279,7 +314,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
             <div className="onb-field-group onb-max-number">
                 <label className="onb-label">Max Ticket Number <span className="onb-required">*</span></label>
-                <p className="onb-sublabel">Numbers from 1 to ? will be entered into the draw</p>
+                
                 <input type="number" min={1} max={9999} value={cfg.maxNumber}
                     onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), 1, 9999) })}
                     className="onb-input onb-input-max" placeholder="e.g. 250" />
@@ -376,7 +411,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">Customize the look — choose fonts, emojis, accent color, and card layout.</p>
 
             {/* ── Font Section ── */}
             <div className="onb-card" style={{ marginBottom: 16 }}>
@@ -423,7 +457,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* Custom emoji input */}
                 <div style={{ marginBottom: 12 }}>
-                    <label className="onb-sublabel">Type or paste emojis from your keyboard:</label>
+                    
                     <div style={{ display: 'flex', gap: 8 }}>
                         <input
                             type="text"
@@ -459,7 +493,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 </div>
 
                 {/* Preset emoji sets */}
-                <label className="onb-sublabel">Or choose a preset set:</label>
+                
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {Object.entries(EMOJI_SETS).map(([key, set]) => (
                         <button key={key} type="button" onClick={() => { onChange({ emojiSet: key, customEmojis: [] }); }}
@@ -518,7 +552,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
                 <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
                 <div style={{ marginTop: 8 }}>
-                    <label className="onb-sublabel" style={{ marginBottom: 6 }}>Text Alignment</label>
+                    
                     <div style={{ display: 'flex', gap: 6 }}>
                         {(['left', 'center', 'right'] as const).map(align => (
                             <button key={align} type="button" onClick={() => onChange({ cardTextAlign: align })}
@@ -605,7 +639,6 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">How long should the spinner run (in seconds) before revealing the result?</p>
             <div className="onb-cards-list">
                 {cfg.prizeCards.map((card, i) => {
                     const color = CARD_COLORS[i % CARD_COLORS.length];
@@ -624,7 +657,7 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     );
                 })}
             </div>
-            <p className="onb-hint">💡 Tip: 8–10s for top prizes, 2–3s for bulk prizes.</p>
+            
         </div>
     );
 }
@@ -637,7 +670,6 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">How many winners are drawn at once each time you press the draw button?</p>
             <div className="onb-cards-list">
                 {cfg.prizeCards.map((card, i) => {
                     const color = CARD_COLORS[i % CARD_COLORS.length];
@@ -661,7 +693,7 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
                     );
                 })}
             </div>
-            <p className="onb-hint">💡 e.g. 30 prizes, 15/press → press twice to award all.</p>
+            
         </div>
     );
 }
@@ -676,9 +708,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [cfg, setCfg] = useState<DrawConfig>(() => loadConfig() ?? DEFAULT_CONFIG);
     const [direction, setDirection] = useState(1);
 
-    // When no prize cards, only show steps 0 (bg), 1 (prizes), 2 (style) → then finish
+    // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
     const hasPrizes = cfg.prizeCards.length > 0;
-    const activeStepIndices = hasPrizes ? [0, 1, 2, 3, 4] : [0, 1, 2];
+    const activeStepIndices = hasPrizes ? [0, 1, 2, 3, 4, 5] : [0, 1, 2, 3];
     const totalSteps = activeStepIndices.length;
 
     const handleChange = useCallback((partial: Partial<DrawConfig>) => {
@@ -768,7 +800,6 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     <AnimatePresence mode="wait">
                         <motion.div key={`title-${step}`} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}>
                             <h2 className="onb-step-title">{stepTitle}</h2>
-                            <p className="onb-step-subtitle">Step {step + 1} / {totalSteps}</p>
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -778,11 +809,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         <motion.div key={step} custom={direction} variants={variants}
                             initial="enter" animate="center" exit="exit"
                             transition={{ duration: 0.28, ease: "easeInOut" }}>
-                            {currentRealStep === 0 && <StepBackground cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 1 && <StepPrizeCards cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 2 && <StepStyle cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 3 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 4 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 0 && <StepTitle cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 1 && <StepBackground cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 2 && <StepPrizeCards cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 3 && <StepStyle cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 4 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 5 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>

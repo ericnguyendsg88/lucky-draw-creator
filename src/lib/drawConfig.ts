@@ -12,6 +12,7 @@ export interface PrizeCardConfig {
 }
 
 export interface DrawConfig {
+    drawTitle: string;       // display title for the draw
     maxNumber: number;       // highest ticket number
     prizeCards: PrizeCardConfig[];
     // background
@@ -118,6 +119,7 @@ export const DEFAULT_PRIZE_CARDS: PrizeCardConfig[] = [
 ];
 
 export const DEFAULT_CONFIG: DrawConfig = {
+    drawTitle: 'LUCKY DRAW',
     maxNumber: 250,
     prizeCards: DEFAULT_PRIZE_CARDS,
     bgWidth: 100,
