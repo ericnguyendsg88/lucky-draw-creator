@@ -45,6 +45,12 @@ export interface DrawConfig {
     cardElementOrder: ('emoji' | 'name' | 'number')[]; // order of elements in card
     // card grid layout
     cardLayout: 'auto' | 'small' | 'large'; // grid layout style for prize cards
+    // slot machine
+    slotBgColor: string;       // hex for slot machine background
+    slotBgOpacity: number;     // 0-100
+    slotDigitColor: string;    // hex for digit text
+    slotBorderColor: string;   // hex for frame border
+    slotGlowOpacity: number;   // 0-100 glow intensity
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
