@@ -37,6 +37,7 @@ export interface DrawConfig {
 const STORAGE_KEY = 'luckyDrawConfig_v2';
 const ONBOARDED_KEY = 'luckyDrawOnboarded_session';
 export const BG_IMAGE_KEY = 'luckyDrawBgImage';
+export const CUSTOM_FONT_KEY = 'luckyDrawCustomFont';
 
 /** Max file size for custom background uploads: 6 MB.
  *  Base64 encoding adds ~33% overhead → ~8 MB in localStorage.
