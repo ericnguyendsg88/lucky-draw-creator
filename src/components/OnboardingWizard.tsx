@@ -535,33 +535,24 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 </div>
             </div>
 
-            {/* ── Element Order ── */}
+            {/* ── Element Order (drag & drop) ── */}
             <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {elementOrder.map((el, idx) => (
-                        <div key={el} style={{
-                            display: 'flex', alignItems: 'center', gap: 8,
-                            background: 'rgba(255,255,255,0.06)', borderRadius: 8, padding: '8px 12px',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                        }}>
-                            <span style={{ fontSize: 18 }}>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>drag to reorder</span></label>
+                <DragReorderList
+                    items={elementOrder}
+                    onReorder={(newOrder) => onChange({ cardElementOrder: newOrder as ('emoji' | 'name' | 'number')[] })}
+                    renderItem={(el) => (
+                        <>
+                            <span style={{ fontSize: 18, pointerEvents: 'none' }}>
                                 {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
                             </span>
-                            <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white' }}>
+                            <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white', pointerEvents: 'none' }}>
                                 {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
                             </span>
-                            <button type="button" disabled={idx === 0} onClick={() => moveElement(idx, idx - 1)}
-                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: idx === 0 ? 'default' : 'pointer', opacity: idx === 0 ? 0.3 : 1, color: 'white', fontSize: 14 }}>
-                                ▲
-                            </button>
-                            <button type="button" disabled={idx === elementOrder.length - 1} onClick={() => moveElement(idx, idx + 1)}
-                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: idx === elementOrder.length - 1 ? 'default' : 'pointer', opacity: idx === elementOrder.length - 1 ? 0.3 : 1, color: 'white', fontSize: 14 }}>
-                                ▼
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                            <span style={{ fontSize: 16, opacity: 0.3, pointerEvents: 'none' }}>⠿</span>
+                        </>
+                    )}
+                />
             </div>
 
             {/* ── Card Effects ── */}
