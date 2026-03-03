@@ -249,11 +249,11 @@ const App = () => {
             <BackgroundAdjuster cfg={drawConfig} onSave={setDrawConfig} />
             <button
               onClick={() => {
-                if (window.confirm("Bạn muốn quay lại trình Cài Đặt Ban Đầu? (Hình nền và thông số bốc thăm sẽ có thể thay đổi)")) {
+                if (window.confirm("Return to the Setup Wizard? (Background and draw settings can be changed)")) {
                   setShowOnboarding(true);
                 }
               }}
-              title="Cài Đặt Ban Đầu (Wizard)"
+              title="Setup Wizard"
               style={{
                 position: 'fixed', top: 16, right: 80, zIndex: 9999,
                 background: 'rgba(0,0,0,0.7)', borderRadius: '50%',

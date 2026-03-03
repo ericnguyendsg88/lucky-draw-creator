@@ -683,7 +683,7 @@ function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: num
       animate={{ opacity: 1, y: 0 }}
     >
       <div className={`font-display font-bold text-sm mb-3 ${color.iconColor}`}>
-        Các Mã Trúng Thưởng ({items.length})
+        Winning Numbers ({items.length})
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
         {items.map((item, i) => (
