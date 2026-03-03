@@ -411,7 +411,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">Customize the look — choose fonts, emojis, accent color, and card layout.</p>
 
             {/* ── Font Section ── */}
             <div className="onb-card" style={{ marginBottom: 16 }}>
