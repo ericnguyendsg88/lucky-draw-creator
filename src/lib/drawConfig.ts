@@ -11,6 +11,7 @@ export interface PrizeCardConfig {
     drawsPerSession: number; // how many winners drawn at once per session button-press
     emoji: string;       // emoji for this card (e.g. "🏆")
     showNumber: boolean; // whether to show the prize count number
+    accentColor?: string; // per-card accent color hex (falls back to global)
 }
 
 export interface DrawConfig {
