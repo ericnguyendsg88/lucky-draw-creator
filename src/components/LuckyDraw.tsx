@@ -591,7 +591,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" size="lg" className="px-6">
-                      <RotateCcw className="w-5 h-5 mr-2" /> Reset All
+                      <RotateCcw className="w-5 h-5 mr-2" /> Làm Lại
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
