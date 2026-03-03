@@ -29,7 +29,10 @@ export interface DrawConfig {
     customFontName: string;  // name of uploaded custom font
     emojiSet: string;        // emoji set key (legacy, kept for compat)
     customEmojis: string[];  // legacy
-    accentColor: string;     // hex color for accent
+    accentColor: string;     // hex color for accent / primary
+    titleColor: string;      // hex color for draw title / headings
+    cardTextColor: string;   // hex color for card text (names, numbers)
+    bgOverlayColor: string;  // hex color for background overlay tint
     cardOpacity: number;     // card background opacity 0-100
     cardBlur: number;        // card backdrop blur 0-20
     // card layout
