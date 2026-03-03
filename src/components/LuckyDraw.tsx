@@ -528,8 +528,79 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           </h1>
         </motion.div>
 
+        {/* ── Free Draw Mode (no prize cards) ── */}
+        {isFreeDrawMode && (
+          <motion.div className="flex flex-col items-center"
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+
+            <div className="mt-4 mb-6">
+              <NumberDisplay
+                number={currentNumber}
+                isDrawing={isSpinning}
+                selectedPlace={null}
+                isComplete={!isDrawing}
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <Button
+                onClick={freeDrawNumber}
+                disabled={isDrawing || drawnNumbers.size >= maxNumber}
+                className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                size="lg">
+                <Sparkles className="w-7 h-7 mr-3" />
+                {isDrawing ? 'Drawing...' : drawnNumbers.size >= maxNumber ? 'All numbers drawn!' : 'Draw Number'}
+              </Button>
+            </div>
+
+            {/* Drawn numbers history */}
+            {history.length > 0 && (
+              <motion.div className="w-full max-w-2xl mt-8 p-4 rounded-2xl"
+                style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid rgba(96,165,250,0.4)' }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="font-display font-bold text-sm mb-3 text-blue-300">
+                  Drawn Numbers ({history.length} / {maxNumber})
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {history.map((item, i) => (
+                    <motion.span key={i} className="history-number"
+                      style={{ borderColor: 'rgba(96,165,250,0.5)', color: 'white' }}
+                      initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.02 }}>
+                      {String(item.number).padStart(3, '0')}
+                    </motion.span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Reset */}
+            {history.length > 0 && (
+              <div className="flex justify-center mt-6">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="lg" className="px-6">
+                      <RotateCcw className="w-5 h-5 mr-2" /> Reset All
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Reset all drawn numbers?</AlertDialogTitle>
+                      <AlertDialogDescription>This will clear all draw history. This cannot be undone.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={reset}>Confirm Reset</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            )}
+          </motion.div>
+        )}
+
         {/* ── Prize Cards grid ── */}
-        {!isFocusMode && (
+        {!isFreeDrawMode && !isFocusMode && (
           <motion.div
             className={`grid gap-3 mb-6 ${gridCols}`}
             initial={{ opacity: 0, y: 20 }}
