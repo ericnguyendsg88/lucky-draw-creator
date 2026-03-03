@@ -102,6 +102,39 @@ function SliderRow({
     );
 }
 
+function ColorPickerCard({ label, value, onChange }: { label: string; value: string; onChange: (hex: string) => void }) {
+    const [hex, setHex] = useState(value);
+    const handleHex = (v: string) => {
+        setHex(v);
+        if (/^#[0-9a-fA-F]{6}$/.test(v)) onChange(v);
+    };
+    return (
+        <div className="onb-card" style={{ marginBottom: 16 }}>
+            <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>{label}</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <label style={{
+                    width: 36, height: 36, borderRadius: 8, background: value,
+                    border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
+                    position: 'relative', overflow: 'hidden', flexShrink: 0,
+                }}>
+                    <input type="color" value={value} onChange={e => { onChange(e.target.value); setHex(e.target.value); }}
+                        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                </label>
+                <input type="text" value={hex} onChange={e => handleHex(e.target.value)}
+                    className="onb-input" style={{ width: 100, fontFamily: 'monospace', fontSize: 14 }} maxLength={7} />
+                {['#ffffff', '#000000', '#f0f0f0', '#1a1a2e'].map(c => (
+                    <button key={c} type="button" onClick={() => { onChange(c); setHex(c); }}
+                        style={{
+                            width: 24, height: 24, borderRadius: 6, background: c,
+                            border: value === c ? '2px solid hsl(var(--primary))' : '1px solid rgba(255,255,255,0.2)',
+                            cursor: 'pointer',
+                        }} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
 // ─── Step Indicator ──────────────────────────────────────────────────────────
 function StepIndicator({ steps, currentStep, onStepClick }: {
     steps: { icon: any; label: string }[];
