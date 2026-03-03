@@ -286,7 +286,7 @@ function SettingsMenu({ onAdjust, onReset }: { onAdjust: () => void; onReset: ()
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.1)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'none')}
             >
-              <RotateCcw size={18} /> Reset Entire Wizard
+              <RotateCcw size={18} /> Đặt Lại Toàn Bộ
             </button>
           </div>
         </>
