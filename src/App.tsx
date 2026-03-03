@@ -56,12 +56,12 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     setUploadError(null);
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowed.includes(file.type)) {
-      setUploadError('Tập tin không được hỗ trợ. Vui lòng sử dụng định dạng JPEG, PNG, WebP hoặc GIF.');
+      setUploadError('Unsupported format. Please use JPEG, PNG, WebP, or GIF.');
       return;
     }
     if (file.size > BG_IMAGE_MAX_BYTES) {
       const mb = (file.size / 1024 / 1024).toFixed(1);
-      setUploadError(`Tập tin dung lượng ${mb} MB. Tối đa 6 MB cho hình nền.`);
+      setUploadError(`File is ${mb} MB. Max 6 MB for backgrounds.`);
       return;
     }
     const reader = new FileReader();
