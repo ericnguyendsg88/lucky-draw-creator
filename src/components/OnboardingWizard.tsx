@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     DrawConfig,
@@ -43,7 +43,9 @@ import {
     Maximize2,
     Minimize2,
     GripVertical,
+    Eye,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -789,6 +791,73 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
     );
 }
 
+// ─── Layout Grid Preview (reusable) ──────────────────────────────────────────
+function LayoutGridPreview({ cfg }: { cfg: DrawConfig }) {
+    const cards = cfg.prizeCards;
+    if (cards.length === 0) return (
+        <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: 24, fontSize: 13 }}>
+            No prize cards configured yet
+        </div>
+    );
+    const gridCols = cfg.cardLayout === 'small' ? 4 : cfg.cardLayout === 'large' ? 2 : (cards.length <= 2 ? 2 : cards.length === 3 ? 3 : cards.length === 4 ? 2 : 3);
+    return (
+        <div style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+            gap: 8,
+        }}>
+            {cards.map((card, idx) => {
+                const cardAccent = card.accentColor || cfg.accentColor;
+                const span = card.colSpan ?? 1;
+                return (
+                    <div
+                        key={`preview-${idx}`}
+                        style={{
+                            gridColumn: `span ${Math.min(span, gridCols)}`,
+                            padding: cfg.cardPadding ? cfg.cardPadding * 0.6 : 12,
+                            borderRadius: cfg.cardBorderRadius ?? 16,
+                            background: `rgba(20,30,60,${(cfg.cardOpacity ?? 70) / 100})`,
+                            border: `2px solid ${cardAccent}60`,
+                            boxShadow: `0 4px 16px rgba(0,0,0,0.3), 0 0 12px ${cardAccent}25`,
+                            textAlign: cfg.cardTextAlign ?? 'center',
+                            minHeight: 80,
+                            display: 'flex',
+                            flexDirection: 'column' as const,
+                            alignItems: cfg.cardTextAlign === 'left' ? 'flex-start' : cfg.cardTextAlign === 'right' ? 'flex-end' : 'center',
+                            justifyContent: 'center',
+                            gap: 2,
+                        }}
+                    >
+                        {(cfg.cardElementOrder ?? ['emoji', 'name', 'number']).map(el => {
+                            const scale = (cfg.cardFontSize ?? 100) / 100 * 0.7;
+                            if (el === 'emoji') return <div key="emoji" style={{ fontSize: 22 * scale }}>{card.emoji || '🏆'}</div>;
+                            if (el === 'name') return (
+                                <div key="name" style={{
+                                    fontSize: 11 * scale, fontWeight: 700, color: 'white',
+                                    fontFamily: `'${cfg.fontFamily}', sans-serif`, lineHeight: 1.2,
+                                }}>{card.name}</div>
+                            );
+                            if (el === 'number' && card.showNumber !== false) return (
+                                <div key="number" style={{
+                                    fontSize: 18 * scale, fontWeight: 900, color: cardAccent,
+                                    fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                                }}>{card.totalPrizes}</div>
+                            );
+                            return null;
+                        })}
+                        <div style={{ width: '80%', height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4 }}>
+                            <div style={{ width: '50%', height: '100%', borderRadius: 2, background: cardAccent }} />
+                        </div>
+                        {span === 2 && (
+                            <div style={{ position: 'absolute', bottom: 4, right: 6, fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>WIDE</div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 // ─── Step 6 – Card Layout Organizer ──────────────────────────────────────────
 function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
     const cards = cfg.prizeCards;
@@ -960,6 +1029,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [step, setStep] = useState(0);
     const [cfg, setCfg] = useState<DrawConfig>(() => ({ ...DEFAULT_CONFIG, ...(loadConfig() ?? {}) }));
     const [direction, setDirection] = useState(1);
+    const [showPreview, setShowPreview] = useState(false);
 
     // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
     const hasPrizes = cfg.prizeCards.length > 0;
@@ -1080,6 +1150,29 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     <button type="button" onClick={back} className={`onb-btn-back ${step === 0 ? "invisible" : ""}`}>
                         <ChevronLeft size={18} /> Back
                     </button>
+
+                    {/* Preview Layout button – visible on all steps except the Layout step itself */}
+                    {currentRealStep !== 6 && cfg.prizeCards.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={() => setShowPreview(true)}
+                            style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6,
+                                padding: '8px 14px', borderRadius: 10,
+                                background: 'rgba(255,255,255,0.08)',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                color: 'rgba(255,255,255,0.7)',
+                                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                transition: 'all 0.15s',
+                            }}
+                            onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.15)'; }}
+                            onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
+                            title="Preview home screen layout"
+                        >
+                            <Eye size={15} /> Preview
+                        </button>
+                    )}
+
                     <button type="button" onClick={next} className="onb-btn-next">
                         {step < totalSteps - 1 ? (
                             <><span>Next</span> <ChevronRight size={18} /></>
@@ -1088,6 +1181,28 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         )}
                     </button>
                 </div>
+
+                {/* Layout Preview Dialog */}
+                <Dialog open={showPreview} onOpenChange={setShowPreview}>
+                    <DialogContent style={{
+                        background: 'rgba(10,15,30,0.95)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        backdropFilter: 'blur(20px)',
+                        maxWidth: 520,
+                    }}>
+                        <DialogHeader>
+                            <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <LayoutGrid size={18} /> Home Screen Preview
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div style={{ padding: '8px 0' }}>
+                            <LayoutGridPreview cfg={cfg} />
+                        </div>
+                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: 4 }}>
+                            You can customize the layout in the final step
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </motion.div>
         </div>
     );
