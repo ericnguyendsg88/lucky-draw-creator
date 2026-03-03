@@ -766,7 +766,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     <SlotColorRow label="Màu chữ" value={cfg.drawnNumTextColor || '#ffffff'}
                         onChange={c => { onChange({ drawnNumTextColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumTextColor: c }); }} />
 
-                    <SlotColorRow label="Border Color" value={cfg.drawnNumBorderColor || '#3b82f6'}
+                    <SlotColorRow label="Màu viền" value={cfg.drawnNumBorderColor || '#3b82f6'}
                         onChange={c => { onChange({ drawnNumBorderColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBorderColor: c }); }} />
                 </div>
             </div>
