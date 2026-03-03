@@ -358,10 +358,10 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     const addCustomEmoji = () => {
         const trimmed = emojiInput.trim();
         if (!trimmed) return;
-        // Extract individual emojis using segmenter if available, otherwise just split
-        const emojis = [...new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(trimmed)].map(s => s.segment).filter(s => /\p{Emoji}/u.test(s));
-        if (emojis.length > 0) {
-            const updated = [...cfg.customEmojis, ...emojis].slice(0, 20); // max 20
+        // Split into individual characters/emoji - simple approach
+        const chars = Array.from(trimmed).filter(s => s.trim().length > 0);
+        if (chars.length > 0) {
+            const updated = [...cfg.customEmojis, ...chars].slice(0, 20); // max 20
             onChange({ customEmojis: updated });
         }
         setEmojiInput('');
