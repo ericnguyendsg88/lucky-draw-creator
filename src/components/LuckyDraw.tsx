@@ -748,7 +748,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                     <Button variant="outline"
                       className="px-5 py-3 text-base font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm shadow-lg">
                        <RotateCcw className="w-5 h-5 mr-2" />
-                      Reset This Prize
+                      Đặt Lại Giải Này
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
