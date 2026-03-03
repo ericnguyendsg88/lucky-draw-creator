@@ -1055,7 +1055,7 @@ function LayoutGridPreview({ cfg }: { cfg: DrawConfig }) {
                             <div style={{ width: '50%', height: '100%', borderRadius: 2, background: cardAccent }} />
                         </div>
                         {span === 2 && (
-                            <div style={{ position: 'absolute', bottom: 4, right: 6, fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>WIDE</div>
+                            <div style={{ position: 'absolute', bottom: 4, right: 6, fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>RỘNG</div>
                         )}
                     </div>
                 );
