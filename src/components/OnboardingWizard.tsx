@@ -781,7 +781,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>📝 Title</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>📝 Tiêu Đề</label>
                     <div style={{
                         padding: 10, borderRadius: 8,
                         background: (() => {
