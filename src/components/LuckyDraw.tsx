@@ -46,10 +46,8 @@ const CARD_COLORS = [
 
 const CARD_ICONS = [Trophy, Trophy, Award, Medal, Star, Star, Trophy, Award];
 
-function getEmojis(emojiSet: string, customEmojis?: string[]): string[] {
-  if (customEmojis && customEmojis.length > 0) return customEmojis;
-  return EMOJI_SETS[emojiSet]?.emojis ?? EMOJI_SETS.classic.emojis;
-}
+// Icons kept for potential future use
+
 
 const CARD_CSS_CLASSES = [
   "prize-card-special",
