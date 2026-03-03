@@ -654,10 +654,10 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}>
             <h2 className="font-display text-3xl font-bold text-gold mb-2">
-              🎉 Đã Bốc Hết Giải Thưởng! 🎉
+              🎉 All Prizes Drawn! 🎉
             </h2>
             <p className="text-muted-foreground">
-              Chúc mừng tất cả {history.length} người trúng thưởng!
+              Congratulations to all {history.length} winners!
             </p>
           </motion.div>
         )}
