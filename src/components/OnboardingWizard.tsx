@@ -177,13 +177,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
         document.body.style.backgroundPosition = `${cfg.bgPosX}% ${cfg.bgPosY}%`;
         document.body.style.backgroundRepeat = 'no-repeat';
         document.body.style.backgroundAttachment = 'fixed';
-        const id = 'bg-overlay-style';
-        const existing = document.getElementById(id);
-        if (existing) existing.remove();
-        const s = document.createElement('style');
-        s.id = id;
-        s.innerHTML = `body::after { background: rgba(0,0,0,${cfg.bgOverlayOpacity / 100}) !important; }`;
-        document.head.appendChild(s);
+        document.documentElement.style.setProperty('--bg-overlay-opacity', String(cfg.bgOverlayOpacity / 100));
     }, [cfg.bgWidth, cfg.bgPosX, cfg.bgPosY, cfg.bgOverlayOpacity, bgImageUrl]);
 
     const processFile = (file: File) => {
