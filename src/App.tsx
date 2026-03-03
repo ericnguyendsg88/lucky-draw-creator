@@ -117,7 +117,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        title="Cài Đặt Nền"
+        title="Background Settings"
         style={{
           position: 'fixed', top: 16, right: 16, zIndex: 9999,
           background: 'rgba(0,0,0,0.7)', borderRadius: '50%',
