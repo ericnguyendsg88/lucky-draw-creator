@@ -570,7 +570,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid hsl(var(--primary) / 0.4)' }}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
-                  Drawn Numbers ({history.length} / {maxNumber})
+                  Các Số Đã Bốc ({history.length} / {maxNumber})
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {history.map((item, i) => (
