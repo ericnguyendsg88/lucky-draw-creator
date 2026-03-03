@@ -253,7 +253,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
     const processFile = (file: File) => {
         setUploadError(null);
         const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowed.includes(file.type)) { setUploadError('Unsupported format. Please use JPEG, PNG, WebP, or GIF.'); return; }
+        if (!allowed.includes(file.type)) { setUploadError('Định dạng không hỗ trợ. Vui lòng dùng JPEG, PNG, WebP hoặc GIF.'); return; }
         if (file.size > BG_IMAGE_MAX_BYTES) { setUploadError(`File is ${(file.size / 1024 / 1024).toFixed(1)} MB. Max 6 MB.`); return; }
         const reader = new FileReader();
         reader.onload = (e) => {
