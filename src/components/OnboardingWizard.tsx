@@ -342,6 +342,71 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
     );
 }
 
+// ─── Drag & Drop Reorder List ────────────────────────────────────────────────
+function DragReorderList<T extends string>({ items, onReorder, renderItem }: {
+    items: T[];
+    onReorder: (newItems: T[]) => void;
+    renderItem: (item: T, index: number) => React.ReactNode;
+}) {
+    const [dragIdx, setDragIdx] = useState<number | null>(null);
+    const [overIdx, setOverIdx] = useState<number | null>(null);
+
+    const handleDragStart = (idx: number) => (e: React.DragEvent) => {
+        setDragIdx(idx);
+        e.dataTransfer.effectAllowed = 'move';
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.style.opacity = '0.5';
+        }
+    };
+
+    const handleDragEnd = (e: React.DragEvent) => {
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.style.opacity = '1';
+        }
+        if (dragIdx !== null && overIdx !== null && dragIdx !== overIdx) {
+            const arr = [...items];
+            const [moved] = arr.splice(dragIdx, 1);
+            arr.splice(overIdx, 0, moved);
+            onReorder(arr);
+        }
+        setDragIdx(null);
+        setOverIdx(null);
+    };
+
+    const handleDragOver = (idx: number) => (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setOverIdx(idx);
+    };
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {items.map((item, idx) => (
+                <div
+                    key={item}
+                    draggable
+                    onDragStart={handleDragStart(idx)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver(idx)}
+                    onDragEnter={(e) => { e.preventDefault(); setOverIdx(idx); }}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        background: overIdx === idx && dragIdx !== null && dragIdx !== idx
+                            ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.06)',
+                        borderRadius: 8, padding: '10px 12px',
+                        border: overIdx === idx && dragIdx !== null && dragIdx !== idx
+                            ? '1px solid rgba(96,165,250,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                        cursor: 'grab', transition: 'background 0.15s, border-color 0.15s',
+                        userSelect: 'none',
+                    }}
+                >
+                    {renderItem(item, idx)}
+                </div>
+            ))}
+        </div>
+    );
+}
+
 // ─── Step 3 – Style ──────────────────────────────────────────────────────────
 function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
     const ACCENT_PRESETS = ['#3b82f6', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316', '#6366f1', '#14b8a6'];
@@ -535,33 +600,24 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 </div>
             </div>
 
-            {/* ── Element Order ── */}
+            {/* ── Element Order (drag & drop) ── */}
             <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {elementOrder.map((el, idx) => (
-                        <div key={el} style={{
-                            display: 'flex', alignItems: 'center', gap: 8,
-                            background: 'rgba(255,255,255,0.06)', borderRadius: 8, padding: '8px 12px',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                        }}>
-                            <span style={{ fontSize: 18 }}>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>drag to reorder</span></label>
+                <DragReorderList
+                    items={elementOrder}
+                    onReorder={(newOrder) => onChange({ cardElementOrder: newOrder as ('emoji' | 'name' | 'number')[] })}
+                    renderItem={(el) => (
+                        <>
+                            <span style={{ fontSize: 18, pointerEvents: 'none' }}>
                                 {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
                             </span>
-                            <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white' }}>
+                            <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white', pointerEvents: 'none' }}>
                                 {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
                             </span>
-                            <button type="button" disabled={idx === 0} onClick={() => moveElement(idx, idx - 1)}
-                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: idx === 0 ? 'default' : 'pointer', opacity: idx === 0 ? 0.3 : 1, color: 'white', fontSize: 14 }}>
-                                ▲
-                            </button>
-                            <button type="button" disabled={idx === elementOrder.length - 1} onClick={() => moveElement(idx, idx + 1)}
-                                style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: idx === elementOrder.length - 1 ? 'default' : 'pointer', opacity: idx === elementOrder.length - 1 ? 0.3 : 1, color: 'white', fontSize: 14 }}>
-                                ▼
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                            <span style={{ fontSize: 16, opacity: 0.3, pointerEvents: 'none' }}>⠿</span>
+                        </>
+                    )}
+                />
             </div>
 
             {/* ── Card Effects ── */}
