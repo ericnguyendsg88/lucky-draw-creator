@@ -482,7 +482,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
                         position: 'relative', overflow: 'hidden',
                     }}>
-                        <input type="color" value={cfg.accentColor} onChange={e => { onChange({ accentColor: e.target.value }); setHexInput(e.target.value); }}
+                        <input type="color" value={cfg.accentColor} onChange={e => { onChange({ accentColor: e.target.value }); setHexInput(e.target.value); applyAccentTheme(e.target.value); }}
                             style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
                     </label>
                 </div>
