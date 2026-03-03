@@ -574,7 +574,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 <div className="flex flex-wrap gap-2 justify-center">
                   {history.map((item, i) => (
                     <motion.span key={i} className="history-number"
-                      style={{ borderColor: 'rgba(96,165,250,0.5)', color: 'white' }}
+                      style={{ borderColor: 'hsl(var(--primary) / 0.5)', color: 'white' }}
                       initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.02 }}>
                       {String(item.number).padStart(3, '0')}
