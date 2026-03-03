@@ -745,7 +745,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                     <SliderRow label="Độ mờ nền" value={cfg.slotBgOpacity ?? 55} min={10} max={100} step={5} onChange={v => { onChange({ slotBgOpacity: v }); applySlotTheme({ ...cfg, slotBgOpacity: v }); }} unit="%" />
 
-                    <SlotColorRow label="Digit Color" value={cfg.slotDigitColor || '#ffffff'}
+                    <SlotColorRow label="Màu số" value={cfg.slotDigitColor || '#ffffff'}
                         onChange={c => { onChange({ slotDigitColor: c }); applySlotTheme({ ...cfg, slotDigitColor: c }); }} />
 
                     <SlotColorRow label="Border Color" value={cfg.slotBorderColor || '#3b82f6'}
