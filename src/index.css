@@ -504,7 +504,7 @@
 }
 
 .onb-step-line--active {
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.7));
 }
 
 .onb-step-circle {
