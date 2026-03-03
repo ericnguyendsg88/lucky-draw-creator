@@ -337,7 +337,7 @@ const App = () => {
                   // Reset state
                   const fresh = { ...DEFAULT_CONFIG };
                   setDrawConfig(fresh);
-                  applyAccentTheme(fresh.accentColor);
+                  applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor);
                   // Reopen wizard
                   setShowOnboarding(true);
                 }
