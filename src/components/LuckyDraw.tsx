@@ -490,7 +490,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
         >
           <h1 className="text-4xl md:text-6xl font-black mb-2 text-white"
             style={{ fontFamily: `'${drawConfig.fontFamily}', sans-serif`, textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
-            LUCKY DRAW
+            {drawConfig.drawTitle || 'LUCKY DRAW'}
           </h1>
         </motion.div>
 

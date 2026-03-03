@@ -810,11 +810,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         <motion.div key={step} custom={direction} variants={variants}
                             initial="enter" animate="center" exit="exit"
                             transition={{ duration: 0.28, ease: "easeInOut" }}>
-                            {currentRealStep === 0 && <StepBackground cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 1 && <StepPrizeCards cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 2 && <StepStyle cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 3 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
-                            {currentRealStep === 4 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 0 && <StepTitle cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 1 && <StepBackground cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 2 && <StepPrizeCards cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 3 && <StepStyle cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 4 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 5 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
