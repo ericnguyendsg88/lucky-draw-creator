@@ -11,6 +11,8 @@ import {
     saveBgImage,
     clearBgImage,
     BG_IMAGE_MAX_BYTES,
+    FONT_OPTIONS,
+    EMOJI_SETS,
 } from "@/lib/drawConfig";
 import {
     Image,
@@ -27,6 +29,8 @@ import {
     Award,
     Medal,
     Zap,
+    Palette,
+    SkipForward,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -34,11 +38,13 @@ import {
 const STEP_LABELS = [
     { icon: Image, label: "Hình Nền" },
     { icon: Trophy, label: "Giải Thưởng" },
+    { icon: Palette, label: "Giao Diện" },
     { icon: Clock, label: "Thời Gian Quay" },
     { icon: Users, label: "Lượt Rút" },
 ];
 
-const EMOJI_OPTIONS = ["🏆", "👑", "🥇", "🥈", "🥉", "⭐", "💎", "🎖️", "🎗️", "🎁", "🎀", "🎊", "🎉", "🏅", "✨", "🌟", "💫", "⚡", "🔥", "🎯"];
+const TOTAL_STEPS = 5;
+
 const CARD_COLORS = [
     { border: "rgba(236,72,153,0.7)", glow: "rgba(236,72,153,0.3)", gradient: "from-pink-500/20 via-purple-500/10 to-transparent" },
     { border: "rgba(251,191,36,0.7)", glow: "rgba(251,191,36,0.3)", gradient: "from-yellow-400/20 via-yellow-300/10 to-transparent" },
@@ -82,7 +88,7 @@ function SliderRow({
     );
 }
 
-// ─── Step 1 – Background ─────────────────────────────────────────────────────
+// ─── Step 1 – Background (upload only, no position sliders) ──────────────────
 function StepBackground({
     cfg,
     onChange,
@@ -95,7 +101,6 @@ function StepBackground({
     const [uploadError, setUploadError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Apply live to body whenever sliders or image change
     useEffect(() => {
         const src = bgImageUrl ?? '/background.webp';
         document.body.style.backgroundImage = `url('${src}')`;
@@ -115,21 +120,16 @@ function StepBackground({
 
     const processFile = (file: File) => {
         setUploadError(null);
-
-        // Validate type
         const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         if (!allowed.includes(file.type)) {
             setUploadError('Unsupported format. Please use JPEG, PNG, WebP, or GIF.');
             return;
         }
-
-        // Validate size (6 MB raw — becomes ~8 MB in base64)
         if (file.size > BG_IMAGE_MAX_BYTES) {
             const mb = (file.size / 1024 / 1024).toFixed(1);
             setUploadError(`File is ${mb} MB. Maximum allowed is 6 MB for background images.`);
             return;
         }
-
         const reader = new FileReader();
         reader.onload = (e) => {
             const dataUrl = e.target?.result as string;
@@ -146,7 +146,6 @@ function StepBackground({
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) processFile(file);
-        // reset so same file can be re-selected
         e.target.value = '';
     };
 
@@ -166,10 +165,10 @@ function StepBackground({
     return (
         <div className="onb-step-content">
             <p className="onb-step-desc">
-                Tải lên ảnh nền của bạn hoặc giữ nguyên ảnh mặc định. Các thay đổi sẽ được xem trước trực tiếp phía dưới bảng này.
+                Tải lên ảnh nền của bạn hoặc giữ nguyên ảnh mặc định. Bạn có thể chỉnh vị trí và kích thước ảnh nền sau khi hoàn tất.
             </p>
 
-            {/* ── Upload zone ── */}
+            {/* Upload zone */}
             <div
                 className={`onb-upload-zone ${dragOver ? 'onb-upload-zone--drag' : ''} ${bgImageUrl ? 'onb-upload-zone--has-image' : ''}`}
                 onClick={() => fileInputRef.current?.click()}
@@ -188,9 +187,7 @@ function StepBackground({
                     className="onb-upload-input"
                     onChange={handleFileChange}
                 />
-
                 {bgImageUrl ? (
-                    /* Thumbnail preview */
                     <div className="onb-upload-preview">
                         <img src={bgImageUrl} alt="Current background" className="onb-upload-thumb" />
                         <div className="onb-upload-overlay-label">
@@ -199,7 +196,6 @@ function StepBackground({
                         </div>
                     </div>
                 ) : (
-                    /* Empty state */
                     <div className="onb-upload-empty">
                         <div className="onb-upload-icon">🖼️</div>
                         <div className="onb-upload-title">
@@ -215,28 +211,17 @@ function StepBackground({
                 )}
             </div>
 
-            {/* Error message */}
             {uploadError && (
-                <div className="onb-upload-error">
-                    ⚠️ {uploadError}
-                </div>
+                <div className="onb-upload-error">⚠️ {uploadError}</div>
             )}
 
-            {/* Remove button */}
             {bgImageUrl && (
                 <button type="button" className="onb-remove-image-btn" onClick={e => { e.stopPropagation(); removeImage(); }}>
                     🗑️ Xóa ảnh của bạn (sử dụng ảnh mặc định)
                 </button>
             )}
 
-            {/* ── Position sliders ── */}
-            <div className="onb-card" style={{ marginTop: 16 }}>
-                <SliderRow label="Chiều Rộng Ảnh" value={cfg.bgWidth} min={50} max={200} onChange={v => onChange({ bgWidth: v })} unit="%" />
-                <SliderRow label="Vị Trí X" value={cfg.bgPosX} min={0} max={100} onChange={v => onChange({ bgPosX: v })} unit="%" />
-                <SliderRow label="Vị Trí Y" value={cfg.bgPosY} min={0} max={100} onChange={v => onChange({ bgPosY: v })} unit="%" />
-                <SliderRow label="Mức Độ Phủ Đen" value={cfg.bgOverlayOpacity} min={0} max={100} step={5} onChange={v => onChange({ bgOverlayOpacity: v })} unit="%" />
-            </div>
-            <p className="onb-hint">💡 Hình ảnh và thiết lập vị trí sẽ được lưu vào trình duyệt của bạn và dùng cho các phiên sau.</p>
+            <p className="onb-hint">💡 Vị trí, kích thước, và mức độ phủ đen có thể chỉnh bằng nút ⚙️ trên trang chính.</p>
         </div>
     );
 }
@@ -278,7 +263,6 @@ function StepPrizeCards({
         <div className="onb-step-content">
             <p className="onb-step-desc">
                 Thiết lập các mốc giải thưởng — tên giải và tổng số lượng giải của từng mốc.
-                Các giải thưởng sẽ được rút theo thứ tự từ trên xuống dưới.
             </p>
 
             <div className="onb-cards-list">
@@ -366,7 +350,116 @@ function StepPrizeCards({
     );
 }
 
-// ─── Step 3 – Draw Timing ────────────────────────────────────────────────────
+// ─── Step 3 – Style (Font, Emoji Set, Accent Color, Card Opacity/Blur) ──────
+function StepStyle({
+    cfg, onChange,
+}: {
+    cfg: DrawConfig
+    onChange: (partial: Partial<DrawConfig>) => void
+}) {
+    const ACCENT_PRESETS = [
+        '#3b82f6', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6',
+        '#ef4444', '#06b6d4', '#f97316', '#6366f1', '#14b8a6',
+    ];
+
+    return (
+        <div className="onb-step-content">
+            <p className="onb-step-desc">
+                Tùy chỉnh giao diện — chọn font chữ, bộ emoji, màu sắc và hiệu ứng thẻ giải thưởng.
+            </p>
+
+            {/* Font selection */}
+            <div className="onb-card" style={{ marginBottom: 16 }}>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Font Chữ Hiển Thị</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                    {FONT_OPTIONS.map(font => (
+                        <button
+                            key={font.value}
+                            type="button"
+                            onClick={() => onChange({ fontFamily: font.value })}
+                            className={`onb-style-option ${cfg.fontFamily === font.value ? 'onb-style-option--active' : ''}`}
+                            style={{ fontFamily: `'${font.value}', sans-serif` }}
+                        >
+                            <span style={{ fontSize: 16, fontWeight: 700 }}>{font.label}</span>
+                            <span style={{ fontSize: 11, opacity: 0.6 }}>{font.style}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Emoji set */}
+            <div className="onb-card" style={{ marginBottom: 16 }}>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>😎 Bộ Emoji</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {Object.entries(EMOJI_SETS).map(([key, set]) => (
+                        <button
+                            key={key}
+                            type="button"
+                            onClick={() => onChange({ emojiSet: key })}
+                            className={`onb-style-option ${cfg.emojiSet === key ? 'onb-style-option--active' : ''}`}
+                            style={{ justifyContent: 'flex-start', gap: 12 }}
+                        >
+                            <span style={{ fontSize: 14, fontWeight: 600 }}>{set.label}</span>
+                            <span style={{ fontSize: 18, letterSpacing: 4 }}>{set.emojis.slice(0, 5).join(' ')}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Accent color */}
+            <div className="onb-card" style={{ marginBottom: 16 }}>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Màu Chủ Đạo</label>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {ACCENT_PRESETS.map(color => (
+                        <button
+                            key={color}
+                            type="button"
+                            onClick={() => onChange({ accentColor: color })}
+                            style={{
+                                width: 36, height: 36, borderRadius: '50%',
+                                background: color, border: cfg.accentColor === color ? '3px solid white' : '2px solid rgba(255,255,255,0.2)',
+                                cursor: 'pointer', transition: 'all 0.2s',
+                                boxShadow: cfg.accentColor === color ? `0 0 12px ${color}` : 'none',
+                            }}
+                        />
+                    ))}
+                    <label style={{
+                        width: 36, height: 36, borderRadius: '50%',
+                        background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
+                        border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        position: 'relative', overflow: 'hidden',
+                    }}>
+                        <input
+                            type="color"
+                            value={cfg.accentColor}
+                            onChange={e => onChange({ accentColor: e.target.value })}
+                            style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+                        />
+                    </label>
+                </div>
+            </div>
+
+            {/* Card opacity & blur */}
+            <div className="onb-card">
+                <SliderRow label="Độ Trong Suốt Thẻ" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
+                <SliderRow label="Độ Mờ Nền Thẻ" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
+            </div>
+
+            {/* Live preview */}
+            <div style={{ marginTop: 16, padding: 16, borderRadius: 12, background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`, border: `2px solid ${cfg.accentColor}40`, textAlign: 'center' }}>
+                <div style={{ fontFamily: `'${cfg.fontFamily}', sans-serif`, fontSize: 20, fontWeight: 800, color: 'white', marginBottom: 4 }}>
+                    {(EMOJI_SETS[cfg.emojiSet]?.emojis[0] ?? '🏆')} Xem Trước
+                </div>
+                <div style={{ fontFamily: `'${cfg.fontFamily}', sans-serif`, fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>
+                    Font: {cfg.fontFamily} · Màu: <span style={{ color: cfg.accentColor }}>■</span>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ─── Step 4 – Draw Timing ────────────────────────────────────────────────────
 function StepDrawTiming({
     cfg, onChange,
 }: {
@@ -382,7 +475,6 @@ function StepDrawTiming({
         <div className="onb-step-content">
             <p className="onb-step-desc">
                 Lồng quay số sẽ chạy trong bao lâu (tính bằng giây) trước khi hiển thị kết quả?
-                Cài đặt thời gian lâu hơn sẽ tạo thêm hồi hộp cho các giải thưởng quan trọng.
             </p>
             <div className="onb-cards-list">
                 {cfg.prizeCards.map((card, i) => {
@@ -412,12 +504,12 @@ function StepDrawTiming({
                     );
                 })}
             </div>
-            <p className="onb-hint">💡 Gợi ý: Tại mỗi giải thường là 8–10 giây cho giải lớn, 2–3 giây cho các giải có nhiều người trúng.</p>
+            <p className="onb-hint">💡 Gợi ý: 8–10 giây cho giải lớn, 2–3 giây cho giải nhỏ.</p>
         </div>
     );
 }
 
-// ─── Step 4 – Winners Per Session ────────────────────────────────────────────
+// ─── Step 5 – Winners Per Session ────────────────────────────────────────────
 function StepWinnersPerSession({
     cfg, onChange,
 }: {
@@ -432,8 +524,7 @@ function StepWinnersPerSession({
     return (
         <div className="onb-step-content">
             <p className="onb-step-desc">
-                Mỗi lần người quản trò bấm nút "Bốc Thăm", sẽ có bao nhiêu người trúng giải được chọn cùng lúc?
-                Số người trúng mỗi lượt quay không thể lớn hơn tổn số lượng của giải.
+                Mỗi lần bấm nút "Bốc Thăm", bao nhiêu người trúng giải được chọn cùng lúc?
             </p>
             <div className="onb-cards-list">
                 {cfg.prizeCards.map((card, i) => {
@@ -469,7 +560,7 @@ function StepWinnersPerSession({
                     );
                 })}
             </div>
-            <p className="onb-hint">💡 VD: Nếu có tổng số 30 giải và bốc 15 giải mỗi lần, bạn sẽ nhấn nút 2 lần để trao hết các giải này.</p>
+            <p className="onb-hint">💡 VD: 30 giải, bốc 15/lần → nhấn 2 lần để trao hết.</p>
         </div>
     );
 }
@@ -488,22 +579,25 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         setCfg(prev => ({ ...prev, ...partial }));
     }, []);
 
+    const finalize = (config: DrawConfig) => {
+        const finalCfg: DrawConfig = {
+            ...config,
+            prizeCards: config.prizeCards.map(c => ({
+                ...c,
+                drawsPerSession: clamp(c.drawsPerSession, 1, c.totalPrizes),
+            })),
+        };
+        saveConfig(finalCfg);
+        markOnboardingDone();
+        onComplete(finalCfg);
+    };
+
     const next = () => {
-        if (step < 3) {
+        if (step < TOTAL_STEPS - 1) {
             setDirection(1);
             setStep(s => s + 1);
         } else {
-            // Clamp drawsPerSession
-            const finalCfg: DrawConfig = {
-                ...cfg,
-                prizeCards: cfg.prizeCards.map(c => ({
-                    ...c,
-                    drawsPerSession: clamp(c.drawsPerSession, 1, c.totalPrizes),
-                })),
-            };
-            saveConfig(finalCfg);
-            markOnboardingDone();
-            onComplete(finalCfg);
+            finalize(cfg);
         }
     };
 
@@ -514,11 +608,23 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         }
     };
 
+    const skipToEnd = () => {
+        finalize(cfg);
+    };
+
     const variants = {
         enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
         center: { x: 0, opacity: 1 },
         exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
     };
+
+    const stepTitles = [
+        "🎨  Cài Đặt Ảnh Nền",
+        "🏆  Cài Đặt Các Giải Thưởng",
+        "🎭  Giao Diện & Phong Cách",
+        "⏱️  Thời Gian Quay Số",
+        "🎯  Lượt Bốc Thăm",
+    ];
 
     return (
         <div className="onb-overlay">
@@ -541,14 +647,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 transition={{ type: "spring", stiffness: 280, damping: 22 }}
             >
-                {/* ── Header ── */}
+                {/* Header */}
                 <div className="onb-header">
                     <div className="onb-logo">
                         <Sparkles size={22} className="onb-logo-icon" />
                         <span>Lucky Draw Setup</span>
                     </div>
 
-                    {/* Step pills */}
                     <div className="onb-steps">
                         {STEP_LABELS.map((s, i) => {
                             const Icon = s.icon;
@@ -569,16 +674,16 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     </div>
                 </div>
 
-                {/* Step progress bar */}
+                {/* Progress bar */}
                 <div className="onb-progress-bar">
                     <motion.div
                         className="onb-progress-fill"
-                        animate={{ width: `${((step + 1) / 4) * 100}%` }}
+                        animate={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
                     />
                 </div>
 
-                {/* ── Step title ── */}
+                {/* Step title */}
                 <div className="onb-step-header">
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -587,15 +692,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
                         >
-                            <h2 className="onb-step-title">
-                                {["🎨  Cài Đặt Ảnh Nền", "🏆  Cài Đặt Các Giải Thưởng", "⏱️  Thời Gian Quay Số", "🎯  Lượt Bốc Thăm (Làm Tính)"][step]}
-                            </h2>
-                            <p className="onb-step-subtitle">Bước {step + 1} / 4</p>
+                            <h2 className="onb-step-title">{stepTitles[step]}</h2>
+                            <p className="onb-step-subtitle">Bước {step + 1} / {TOTAL_STEPS}</p>
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
-                {/* ── Body ── */}
+                {/* Body */}
                 <div className="onb-body">
                     <AnimatePresence mode="wait" custom={direction}>
                         <motion.div
@@ -609,13 +712,14 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         >
                             {step === 0 && <StepBackground cfg={cfg} onChange={handleChange} />}
                             {step === 1 && <StepPrizeCards cfg={cfg} onChange={handleChange} />}
-                            {step === 2 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
-                            {step === 3 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
+                            {step === 2 && <StepStyle cfg={cfg} onChange={handleChange} />}
+                            {step === 3 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
+                            {step === 4 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
-                {/* ── Footer ── */}
+                {/* Footer */}
                 <div className="onb-footer">
                     <button
                         type="button"
@@ -625,8 +729,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         <ChevronLeft size={18} /> Quay Lại
                     </button>
 
+                    <button type="button" onClick={skipToEnd} className="onb-btn-skip" title="Bỏ qua và bắt đầu ngay">
+                        <SkipForward size={16} /> Bỏ Qua
+                    </button>
+
                     <button type="button" onClick={next} className="onb-btn-next">
-                        {step < 3 ? (
+                        {step < TOTAL_STEPS - 1 ? (
                             <><span>Tiếp Theo</span> <ChevronRight size={18} /></>
                         ) : (
                             <><Zap size={16} /> <span>Bắt Đầu Lucky Draw!</span></>

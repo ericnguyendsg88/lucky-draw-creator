@@ -16,7 +16,7 @@ import {
   DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { soundManager, SoundPack } from "@/lib/sounds";
-import { DrawConfig, PrizeCardConfig } from "@/lib/drawConfig";
+import { DrawConfig, PrizeCardConfig, EMOJI_SETS } from "@/lib/drawConfig";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -45,7 +45,10 @@ const CARD_COLORS = [
 ];
 
 const CARD_ICONS = [Trophy, Trophy, Award, Medal, Star, Star, Trophy, Award];
-const CARD_EMOJIS = ["💎", "👑", "🥈", "🥉", "⭐", "🌟", "🎖️", "🎗️"];
+
+function getEmojis(emojiSet: string): string[] {
+  return EMOJI_SETS[emojiSet]?.emojis ?? EMOJI_SETS.classic.emojis;
+}
 
 const CARD_CSS_CLASSES = [
   "prize-card-special",
@@ -72,20 +75,32 @@ interface DynPrizeCardProps {
   isSelected: boolean;
   isFocused: boolean;
   onClick: () => void;
+  emojiSet: string;
+  fontFamily: string;
+  accentColor: string;
+  cardOpacity: number;
+  cardBlur: number;
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, fontFamily, accentColor, cardOpacity, cardBlur }: DynPrizeCardProps) {
   const color = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const IconComp = CARD_ICONS[card.id % CARD_ICONS.length];
-  const emoji = CARD_EMOJIS[card.id % CARD_EMOJIS.length];
+  const emojis = getEmojis(emojiSet);
+  const emoji = emojis[card.id % emojis.length];
   const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
 
   return (
     <motion.div
       onClick={onClick}
       className={`prize-card ${cssClass} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${color.gradient} relative overflow-hidden cursor-pointer`}
-      style={{ borderColor: color.border, boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${color.glow}` }}
+      style={{
+        borderColor: color.border,
+        boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${color.glow}`,
+        background: `rgba(20, 30, 60, ${cardOpacity / 100})`,
+        backdropFilter: `blur(${cardBlur}px)`,
+        fontFamily: `'${fontFamily}', sans-serif`,
+      }}
       initial={{ opacity: 0, y: 10 }}
       animate={{
         opacity: 1, y: 0,
@@ -453,8 +468,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="font-display text-4xl md:text-6xl font-black mb-2 text-white"
-            style={{ textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
+          <h1 className="text-4xl md:text-6xl font-black mb-2 text-white"
+            style={{ fontFamily: `'${drawConfig.fontFamily}', sans-serif`, textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
             LUCKY DRAW
           </h1>
         </motion.div>
@@ -479,6 +494,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   isSelected={selectedCardId === card.id}
                   isFocused={false}
                   onClick={() => handleCardClick(card.id)}
+                  emojiSet={drawConfig.emojiSet}
+                  fontFamily={drawConfig.fontFamily}
+                  accentColor={drawConfig.accentColor}
+                  cardOpacity={drawConfig.cardOpacity}
+                  cardBlur={drawConfig.cardBlur}
                 />
               </motion.div>
             ))}
@@ -505,6 +525,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 isSelected
                 isFocused
                 onClick={() => { }}
+                emojiSet={drawConfig.emojiSet}
+                fontFamily={drawConfig.fontFamily}
+                accentColor={drawConfig.accentColor}
+                cardOpacity={drawConfig.cardOpacity}
+                cardBlur={drawConfig.cardBlur}
               />
             </motion.div>
 
