@@ -148,7 +148,7 @@ function StepIndicator({ steps, currentStep, onStepClick, freeNav }: {
                 const Icon = s.icon;
                 const isDone = i < currentStep;
                 const isActive = i === currentStep;
-                const isClickable = i <= currentStep;
+                const isClickable = freeNav || i <= currentStep;
                 return (
                     <div key={i} className="onb-step-indicator-item">
                         {i > 0 && (
