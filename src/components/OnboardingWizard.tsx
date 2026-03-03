@@ -1167,7 +1167,7 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
                                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     color: 'white', transition: 'all 0.15s',
                                 }}
-                                title={span === 1 ? 'Make wider' : 'Make normal'}
+                                title={span === 1 ? 'Mở rộng' : 'Thu nhỏ'}
                             >
                                 {span === 1 ? <Maximize2 size={12} /> : <Minimize2 size={12} />}
                             </button>
