@@ -1355,7 +1355,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
                 <div className="onb-footer">
                     <button type="button" onClick={back} className={`onb-btn-back ${step === 0 ? "invisible" : ""}`}>
-                        <ChevronLeft size={18} /> Back
+                        <ChevronLeft size={18} /> Quay Lại
                     </button>
 
                     {/* Preview Layout button – visible on all steps except the Layout step itself */}
