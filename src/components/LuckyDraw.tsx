@@ -566,15 +566,15 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             {/* Drawn numbers history */}
             {history.length > 0 && (
               <motion.div className="w-full max-w-2xl mt-8 p-4 rounded-2xl"
-                style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid rgba(96,165,250,0.4)' }}
+                style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid hsl(var(--primary) / 0.4)' }}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="font-display font-bold text-sm mb-3 text-blue-300">
+                <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
                   Drawn Numbers ({history.length} / {maxNumber})
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {history.map((item, i) => (
                     <motion.span key={i} className="history-number"
-                      style={{ borderColor: 'rgba(96,165,250,0.5)', color: 'white' }}
+                      style={{ borderColor: 'hsl(var(--primary) / 0.5)', color: 'white' }}
                       initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.02 }}>
                       {String(item.number).padStart(3, '0')}
@@ -680,7 +680,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             {/* History for multi-draw cards first, then slot machine */}
             {currentCard.drawsPerSession > 1 && (
               <div className="w-full mb-4">
-                <PrizeHistoryDyn history={history} cardId={selectedCardId} />
+                <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
             )}
 
@@ -725,7 +725,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             {/* History for single-draw cards */}
             {currentCard.drawsPerSession === 1 && (
               <div className="w-full mt-4">
-                <PrizeHistoryDyn history={history} cardId={selectedCardId} />
+                <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
             )}
 
@@ -734,7 +734,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <Button onClick={goBackHome}
                 disabled={isDrawing && !isPaused}
                 variant="outline"
-                className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
+                className="px-5 py-3 text-base font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm shadow-lg">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Home
               </Button>
@@ -743,8 +743,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline"
-                      className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
-                      <RotateCcw className="w-5 h-5 mr-2" />
+                      className="px-5 py-3 text-base font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm shadow-lg">
+                       <RotateCcw className="w-5 h-5 mr-2" />
                       Reset This Prize
                     </Button>
                   </AlertDialogTrigger>
@@ -814,19 +814,19 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
 interface HistItem { number: number; cardId: number; sessionRound?: number; }
 
-function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: number }) {
+function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string }) {
   const items = history.filter(h => h.cardId === cardId);
   if (items.length === 0) return null;
-  const color = CARD_COLORS[cardId % CARD_COLORS.length];
+  const colorHex = cardAccentColor || accentColor || '#3b82f6';
 
   return (
     <motion.div
       className="w-full mt-6 p-4 rounded-2xl"
-      style={{ background: 'rgba(20,30,70,0.7)', border: `1px solid ${color.border}` }}
+      style={{ background: 'rgba(20,30,70,0.7)', border: `1px solid ${colorHex}99` }}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <div className={`font-display font-bold text-sm mb-3 ${color.iconColor}`}>
+      <div className="font-display font-bold text-sm mb-3" style={{ color: colorHex }}>
         Winning Numbers ({items.length})
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
@@ -834,7 +834,7 @@ function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: num
           <motion.span
             key={i}
             className="history-number"
-            style={{ borderColor: color.border, color: 'white' }}
+            style={{ borderColor: `${colorHex}99`, color: 'white' }}
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
