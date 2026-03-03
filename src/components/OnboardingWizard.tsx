@@ -523,175 +523,190 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     const previewCard = cfg.prizeCards[0];
 
     return (
-        <div className="onb-step-content">
+        <div className="onb-step-content" style={{ display: 'flex', gap: 16, flexDirection: 'row', flexWrap: 'wrap' }}>
 
-            {/* ── Font Section ── */}
-            <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Display Font</label>
-
-                {/* Upload custom font */}
-                <div style={{ marginBottom: 12 }}>
-                    <input ref={fontFileRef} type="file" accept=".ttf,.otf,.woff,.woff2" style={{ display: 'none' }} onChange={handleFontUpload} />
-                    {cfg.customFontName ? (
-                        <div className="onb-style-option onb-style-option--active" style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <span style={{ fontFamily: `'${cfg.customFontName}', sans-serif`, fontWeight: 700 }}>
-                                ✅ {cfg.customFontName}
-                            </span>
-                            <button type="button" onClick={removeCustomFont} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}>
-                                <X size={16} />
-                            </button>
-                        </div>
-                    ) : (
-                        <button type="button" onClick={() => fontFileRef.current?.click()}
-                            className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }}>
-                            <Upload size={16} />
-                            <span>Upload Custom Font (.ttf, .otf, .woff)</span>
-                        </button>
-                    )}
-                    {customFontError && <div className="onb-upload-error" style={{ marginTop: 6 }}>⚠️ {customFontError}</div>}
-                </div>
-
-                {/* Preset fonts */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-                    {FONT_OPTIONS.map(font => (
-                        <button key={font.value} type="button" onClick={() => onChange({ fontFamily: font.value, customFontName: '' })}
-                            className={`onb-style-option ${cfg.fontFamily === font.value && !cfg.customFontName ? 'onb-style-option--active' : ''}`}
-                            style={{ fontFamily: `'${font.value}', sans-serif` }}>
-                            <span style={{ fontSize: 16, fontWeight: 700 }}>{font.label}</span>
-                            <span style={{ fontSize: 11, opacity: 0.6 }}>{font.style}</span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* ── Accent Color ── */}
-            <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Primary Theme Color</label>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
-                    {ACCENT_PRESETS.map(color => (
-                        <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color); }}
-                            style={{
-                                width: 36, height: 36, borderRadius: '50%', background: color,
-                                border: cfg.accentColor === color ? '3px solid white' : '2px solid rgba(255,255,255,0.2)',
-                                cursor: 'pointer', transition: 'all 0.2s',
-                                boxShadow: cfg.accentColor === color ? `0 0 12px ${color}` : 'none',
-                            }} />
-                    ))}
-                    <label style={{
-                        width: 36, height: 36, borderRadius: '50%',
-                        background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
-                        border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
-                        position: 'relative', overflow: 'hidden',
-                    }}>
-                        <input type="color" value={cfg.accentColor} onChange={e => { onChange({ accentColor: e.target.value }); setHexInput(e.target.value); applyAccentTheme(e.target.value); }}
-                            style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
-                    </label>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>HEX:</span>
-                    <input type="text" value={hexInput} onChange={e => handleHexChange(e.target.value)}
-                        placeholder="#3b82f6" className="onb-input" style={{ width: 120, fontFamily: 'monospace', fontSize: 14 }} maxLength={7} />
-                    <div style={{ width: 28, height: 28, borderRadius: 6, background: cfg.accentColor, border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }} />
-                </div>
-            </div>
-
-            {/* ── Card Grid Layout (only when 2+ cards) ── */}
-            {cfg.prizeCards.length >= 2 && (
-                <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🏠 Home Screen Card Layout</label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                        {([
-                            { value: 'auto', label: 'Auto', desc: 'Fits screen', preview: '⚡' },
-                            { value: 'small', label: 'Small', desc: 'Compact grid', preview: '▪▪▪' },
-                            { value: 'large', label: 'Large', desc: 'Big cards', preview: '◼◼' },
-                        ] as const).map(opt => (
-                            <button key={opt.value} type="button" onClick={() => onChange({ cardLayout: opt.value })}
-                                className={`onb-style-option ${cfg.cardLayout === opt.value ? 'onb-style-option--active' : ''}`}
-                                style={{ flexDirection: 'column', gap: 2, padding: '10px 8px' }}>
-                                <span style={{ fontSize: 20 }}>{opt.preview}</span>
-                                <span style={{ fontSize: 13, fontWeight: 700 }}>{opt.label}</span>
-                                <span style={{ fontSize: 10, opacity: 0.6 }}>{opt.desc}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* ── Card Layout (sizing) ── */}
-            <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Card Styling</label>
-                <SliderRow label="Card Padding" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
-                <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
-                <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
-                <div style={{ marginTop: 8 }}>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                        {(['left', 'center', 'right'] as const).map(align => (
-                            <button key={align} type="button" onClick={() => onChange({ cardTextAlign: align })}
-                                className={`onb-style-option ${cfg.cardTextAlign === align ? 'onb-style-option--active' : ''}`}
-                                style={{ flex: 1, textTransform: 'capitalize', padding: '8px 12px' }}>
-                                {align}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Element Order (drag & drop) ── */}
-            <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>drag to reorder</span></label>
-                <DragReorderList
-                    items={elementOrder}
-                    onReorder={(newOrder) => onChange({ cardElementOrder: newOrder as ('emoji' | 'name' | 'number')[] })}
-                    renderItem={(el) => (
-                        <>
-                            <span style={{ fontSize: 18, pointerEvents: 'none' }}>
-                                {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
-                            </span>
-                            <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white', pointerEvents: 'none' }}>
-                                {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
-                            </span>
-                            <span style={{ fontSize: 16, opacity: 0.3, pointerEvents: 'none' }}>⠿</span>
-                        </>
-                    )}
-                />
-            </div>
-
-            {/* ── Card Effects ── */}
-            <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>✨ Card Effects</label>
-                <SliderRow label="Card Opacity" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
-                <SliderRow label="Card Blur" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
-            </div>
-
-            {/* ── Live Preview ── */}
-            <div className="onb-card">
-                <label className="onb-label" style={{ marginBottom: 10, display: 'block' }}>👁️ Card Preview</label>
+            {/* ── Sticky Live Preview (right column on desktop) ── */}
+            <div style={{
+                order: 2, flex: '0 0 auto', width: '100%',
+                position: 'sticky', top: 0, zIndex: 5,
+                paddingBottom: 8,
+            }}>
                 <div style={{
-                    padding: cfg.cardPadding, borderRadius: cfg.cardBorderRadius,
-                    background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
-                    border: `2px solid ${cfg.accentColor}40`, textAlign: cfg.cardTextAlign, transition: 'all 0.3s ease',
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    {elementOrder.map(el => {
-                        if (el === 'emoji') return (
-                            <div key="emoji" style={{ fontSize: 28 * (cfg.cardFontSize / 100), marginBottom: 4 }}>
-                                {previewCard?.emoji ?? '🏆'}
-                            </div>
-                        );
-                        if (el === 'name') return (
-                            <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: 'white', marginBottom: 4 }}>
-                                {previewCard?.name ?? 'Grand Prize'}
-                            </div>
-                        );
-                        if (el === 'number') return (
-                            <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 32 * (cfg.cardFontSize / 100), fontWeight: 900, color: cfg.accentColor, marginBottom: 4 }}>
-                                5 <span style={{ fontSize: 14 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
-                            </div>
-                        );
-                        return null;
-                    })}
-                    <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(0,0,0,0.3)', overflow: 'hidden' }}>
-                        <div style={{ width: '50%', height: '100%', borderRadius: 4, background: cfg.accentColor, transition: 'all 0.3s' }} />
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block', fontSize: 12 }}>👁️ Live Preview</label>
+                    <div style={{
+                        padding: cfg.cardPadding, borderRadius: cfg.cardBorderRadius,
+                        background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
+                        border: `2px solid ${(previewCard?.accentColor || cfg.accentColor)}40`, textAlign: cfg.cardTextAlign,
+                        transition: 'all 0.3s ease',
+                    }}>
+                        {elementOrder.map(el => {
+                            const cardAccent = previewCard?.accentColor || cfg.accentColor;
+                            if (el === 'emoji') return (
+                                <div key="emoji" style={{ fontSize: 28 * (cfg.cardFontSize / 100), marginBottom: 4 }}>
+                                    {previewCard?.emoji ?? '🏆'}
+                                </div>
+                            );
+                            if (el === 'name') return (
+                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: 'white', marginBottom: 4 }}>
+                                    {previewCard?.name ?? 'Grand Prize'}
+                                </div>
+                            );
+                            if (el === 'number') return (
+                                <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 32 * (cfg.cardFontSize / 100), fontWeight: 900, color: cardAccent, marginBottom: 4 }}>
+                                    5 <span style={{ fontSize: 14 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
+                                </div>
+                            );
+                            return null;
+                        })}
+                        <div style={{ width: '100%', height: 8, borderRadius: 4, background: 'rgba(0,0,0,0.3)', overflow: 'hidden' }}>
+                            <div style={{ width: '50%', height: '100%', borderRadius: 4, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            {/* ── Settings (left column) ── */}
+            <div style={{ order: 1, flex: 1, minWidth: 0, width: '100%' }}>
+
+                {/* ── Font Section ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Display Font</label>
+
+                    {/* Upload custom font */}
+                    <div style={{ marginBottom: 12 }}>
+                        <input ref={fontFileRef} type="file" accept=".ttf,.otf,.woff,.woff2" style={{ display: 'none' }} onChange={handleFontUpload} />
+                        {cfg.customFontName ? (
+                            <div className="onb-style-option onb-style-option--active" style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <span style={{ fontFamily: `'${cfg.customFontName}', sans-serif`, fontWeight: 700 }}>
+                                    ✅ {cfg.customFontName}
+                                </span>
+                                <button type="button" onClick={removeCustomFont} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}>
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        ) : (
+                            <button type="button" onClick={() => fontFileRef.current?.click()}
+                                className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }}>
+                                <Upload size={16} />
+                                <span>Upload Custom Font (.ttf, .otf, .woff)</span>
+                            </button>
+                        )}
+                        {customFontError && <div className="onb-upload-error" style={{ marginTop: 6 }}>⚠️ {customFontError}</div>}
+                    </div>
+
+                    {/* Preset fonts */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                        {FONT_OPTIONS.map(font => (
+                            <button key={font.value} type="button" onClick={() => onChange({ fontFamily: font.value, customFontName: '' })}
+                                className={`onb-style-option ${cfg.fontFamily === font.value && !cfg.customFontName ? 'onb-style-option--active' : ''}`}
+                                style={{ fontFamily: `'${font.value}', sans-serif` }}>
+                                <span style={{ fontSize: 16, fontWeight: 700 }}>{font.label}</span>
+                                <span style={{ fontSize: 11, opacity: 0.6 }}>{font.style}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* ── Accent Color ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Primary Theme Color</label>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                        {ACCENT_PRESETS.map(color => (
+                            <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color); }}
+                                style={{
+                                    width: 36, height: 36, borderRadius: '50%', background: color,
+                                    border: cfg.accentColor === color ? '3px solid white' : '2px solid rgba(255,255,255,0.2)',
+                                    cursor: 'pointer', transition: 'all 0.2s',
+                                    boxShadow: cfg.accentColor === color ? `0 0 12px ${color}` : 'none',
+                                }} />
+                        ))}
+                        <label style={{
+                            width: 36, height: 36, borderRadius: '50%',
+                            background: 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
+                            border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
+                            position: 'relative', overflow: 'hidden',
+                        }}>
+                            <input type="color" value={cfg.accentColor} onChange={e => { onChange({ accentColor: e.target.value }); setHexInput(e.target.value); applyAccentTheme(e.target.value); }}
+                                style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                        </label>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>HEX:</span>
+                        <input type="text" value={hexInput} onChange={e => handleHexChange(e.target.value)}
+                            placeholder="#3b82f6" className="onb-input" style={{ width: 120, fontFamily: 'monospace', fontSize: 14 }} maxLength={7} />
+                        <div style={{ width: 28, height: 28, borderRadius: 6, background: cfg.accentColor, border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                    </div>
+                </div>
+
+                {/* ── Card Grid Layout (only when 2+ cards) ── */}
+                {cfg.prizeCards.length >= 2 && (
+                    <div className="onb-card" style={{ marginBottom: 16 }}>
+                        <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🏠 Home Screen Card Layout</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                            {([
+                                { value: 'auto', label: 'Auto', desc: 'Fits screen', preview: '⚡' },
+                                { value: 'small', label: 'Small', desc: 'Compact grid', preview: '▪▪▪' },
+                                { value: 'large', label: 'Large', desc: 'Big cards', preview: '◼◼' },
+                            ] as const).map(opt => (
+                                <button key={opt.value} type="button" onClick={() => onChange({ cardLayout: opt.value })}
+                                    className={`onb-style-option ${cfg.cardLayout === opt.value ? 'onb-style-option--active' : ''}`}
+                                    style={{ flexDirection: 'column', gap: 2, padding: '10px 8px' }}>
+                                    <span style={{ fontSize: 20 }}>{opt.preview}</span>
+                                    <span style={{ fontSize: 13, fontWeight: 700 }}>{opt.label}</span>
+                                    <span style={{ fontSize: 10, opacity: 0.6 }}>{opt.desc}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* ── Card Layout (sizing) ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Card Styling</label>
+                    <SliderRow label="Card Padding" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
+                    <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
+                    <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
+                    <div style={{ marginTop: 8 }}>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                            {(['left', 'center', 'right'] as const).map(align => (
+                                <button key={align} type="button" onClick={() => onChange({ cardTextAlign: align })}
+                                    className={`onb-style-option ${cfg.cardTextAlign === align ? 'onb-style-option--active' : ''}`}
+                                    style={{ flex: 1, textTransform: 'capitalize', padding: '8px 12px' }}>
+                                    {align}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── Element Order (drag & drop) ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>drag to reorder</span></label>
+                    <DragReorderList
+                        items={elementOrder}
+                        onReorder={(newOrder) => onChange({ cardElementOrder: newOrder as ('emoji' | 'name' | 'number')[] })}
+                        renderItem={(el) => (
+                            <>
+                                <span style={{ fontSize: 18, pointerEvents: 'none' }}>
+                                    {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
+                                </span>
+                                <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white', pointerEvents: 'none' }}>
+                                    {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
+                                </span>
+                                <span style={{ fontSize: 16, opacity: 0.3, pointerEvents: 'none' }}>⠿</span>
+                            </>
+                        )}
+                    />
+                </div>
+
+                {/* ── Card Effects ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>✨ Card Effects</label>
+                    <SliderRow label="Card Opacity" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
+                    <SliderRow label="Card Blur" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
                 </div>
             </div>
         </div>
