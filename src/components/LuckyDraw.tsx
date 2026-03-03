@@ -781,9 +781,9 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure you want to reset everything?</AlertDialogTitle>
+                  <AlertDialogTitle>Bạn có chắc muốn đặt lại toàn bộ?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will clear all draw history. This cannot be undone.
+                    Toàn bộ lịch sử bốc thăm sẽ bị xóa. Không thể hoàn tác.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
