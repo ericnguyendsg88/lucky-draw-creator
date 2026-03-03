@@ -307,7 +307,8 @@ const App = () => {
   useEffect(() => {
     applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
     applySlotTheme(drawConfig);
-  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.slotBgColor, drawConfig.slotBgOpacity, drawConfig.slotDigitColor, drawConfig.slotBorderColor, drawConfig.slotGlowOpacity]);
+    applyDrawnNumTheme(drawConfig);
+  }, [drawConfig]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
