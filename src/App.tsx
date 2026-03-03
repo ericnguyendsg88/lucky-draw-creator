@@ -305,7 +305,8 @@ const App = () => {
   // Apply accent theme on mount and config changes
   useEffect(() => {
     applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
-  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor]);
+    applySlotTheme(drawConfig);
+  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.slotBgColor, drawConfig.slotBgOpacity, drawConfig.slotDigitColor, drawConfig.slotBorderColor, drawConfig.slotGlowOpacity]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
