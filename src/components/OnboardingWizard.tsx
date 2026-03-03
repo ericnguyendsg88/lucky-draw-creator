@@ -557,7 +557,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     onChange({ fontFamily: fontName, customFontName: fontName });
                     setCustomFontLoaded(true);
                 } catch {
-                    setCustomFontError('Failed to load font. The file may be corrupted.');
+                    setCustomFontError('Không thể tải font. File có thể bị hỏng.');
                 }
             };
             reader.readAsDataURL(file);
