@@ -639,7 +639,6 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">How long should the spinner run (in seconds) before revealing the result?</p>
             <div className="onb-cards-list">
                 {cfg.prizeCards.map((card, i) => {
                     const color = CARD_COLORS[i % CARD_COLORS.length];
