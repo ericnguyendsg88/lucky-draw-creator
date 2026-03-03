@@ -88,13 +88,14 @@ interface DynPrizeCardProps {
   cardTextAlign: 'left' | 'center' | 'right';
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, fontFamily, accentColor, cardOpacity, cardBlur }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, customEmojis, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign }: DynPrizeCardProps) {
   const color = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const IconComp = CARD_ICONS[card.id % CARD_ICONS.length];
-  const emojis = getEmojis(emojiSet);
+  const emojis = getEmojis(emojiSet, customEmojis);
   const emoji = emojis[card.id % emojis.length];
   const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
+  const sizeScale = cardFontSize / 100;
 
   return (
     <motion.div
