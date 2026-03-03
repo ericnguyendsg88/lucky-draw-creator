@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useEffect, useState, useRef } from 'react';
-import { Settings, Wand2 } from 'lucide-react';
+import { Settings, Wand2, RotateCcw, X } from 'lucide-react';
 import { OnboardingWizard } from "@/components/OnboardingWizard";
 import {
   DrawConfig,
