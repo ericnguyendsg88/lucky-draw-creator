@@ -277,10 +277,8 @@
     font-family: 'Orbitron', sans-serif;
     @apply absolute inset-0 flex items-center justify-center;
     @apply text-4xl md:text-7xl font-black;
-    background: linear-gradient(180deg, hsl(var(--primary-dark, var(--primary))) 0%, hsl(var(--primary)) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: white;
+    text-shadow: 0 0 20px hsl(var(--primary) / 0.8), 0 0 40px hsl(var(--primary) / 0.4);
   }
 
   .slot-digit-spinning {
