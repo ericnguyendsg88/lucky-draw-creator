@@ -414,7 +414,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Show prize count</label>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Hiện số giải</label>
                                     <button type="button" onClick={() => updateCard(i, { showNumber: !card.showNumber })}
                                         style={{ width: 40, height: 22, borderRadius: 11, background: card.showNumber !== false ? 'var(--accent-color-hex, #3b82f6)' : 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.2s' }}>
                                         <span style={{ position: 'absolute', top: 2, left: card.showNumber !== false ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: 'white', transition: 'left 0.2s' }} />
