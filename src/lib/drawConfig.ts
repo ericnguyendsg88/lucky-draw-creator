@@ -210,6 +210,11 @@ export const DEFAULT_CONFIG: DrawConfig = {
     showPrizeNumber: true,
     cardElementOrder: ['emoji', 'name', 'number'],
     cardLayout: 'auto',
+    slotBgColor: '#3b82f6',
+    slotBgOpacity: 55,
+    slotDigitColor: '#ffffff',
+    slotBorderColor: '#3b82f6',
+    slotGlowOpacity: 30,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
