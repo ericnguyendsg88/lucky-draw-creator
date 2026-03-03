@@ -800,7 +800,6 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     <AnimatePresence mode="wait">
                         <motion.div key={`title-${step}`} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}>
                             <h2 className="onb-step-title">{stepTitle}</h2>
-                            <p className="onb-step-subtitle">Step {step + 1} / {totalSteps}</p>
                         </motion.div>
                     </AnimatePresence>
                 </div>
