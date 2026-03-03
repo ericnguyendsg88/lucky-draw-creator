@@ -34,17 +34,6 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Set up the overlay style element once
-  useEffect(() => {
-    const id = 'bg-overlay-style';
-    if (!document.getElementById(id)) {
-      const style = document.createElement('style');
-      style.id = id;
-      style.innerHTML = `body::after { background: rgba(0,0,0,var(--bg-overlay-opacity)) !important; }`;
-      document.head.appendChild(style);
-    }
-  }, []);
-
   // Update CSS custom properties instantly — no DOM churn
   useEffect(() => {
     const src = bgImageUrl ?? '/background.webp';
