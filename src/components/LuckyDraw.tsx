@@ -494,6 +494,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   isSelected={selectedCardId === card.id}
                   isFocused={false}
                   onClick={() => handleCardClick(card.id)}
+                  emojiSet={drawConfig.emojiSet}
+                  fontFamily={drawConfig.fontFamily}
+                  accentColor={drawConfig.accentColor}
+                  cardOpacity={drawConfig.cardOpacity}
+                  cardBlur={drawConfig.cardBlur}
                 />
               </motion.div>
             ))}
