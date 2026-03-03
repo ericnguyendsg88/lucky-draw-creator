@@ -308,7 +308,7 @@ const App = () => {
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
-    applyAccentTheme(cfg.accentColor);
+    applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor);
     markOnboardingDone();
     setShowOnboarding(false);
   };
