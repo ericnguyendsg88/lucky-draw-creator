@@ -136,6 +136,27 @@ function ColorPickerCard({ label, value, onChange }: { label: string; value: str
     );
 }
 
+function SlotColorRow({ label, value, onChange }: { label: string; value: string; onChange: (hex: string) => void }) {
+    const [hex, setHex] = useState(value);
+    const handleHex = (v: string) => {
+        setHex(v);
+        if (/^#[0-9a-fA-F]{6}$/.test(v)) onChange(v);
+    };
+    return (
+        <div style={{ marginBottom: 12 }}>
+            <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4, display: 'block' }}>{label}</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <label style={{ width: 32, height: 32, borderRadius: 8, background: value, border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+                    <input type="color" value={value} onChange={e => { onChange(e.target.value); setHex(e.target.value); }}
+                        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                </label>
+                <input type="text" value={hex} onChange={e => handleHex(e.target.value)}
+                    className="onb-input" style={{ width: 90, fontFamily: 'monospace', fontSize: 12 }} maxLength={7} />
+            </div>
+        </div>
+    );
+}
+
 // ─── Step Indicator ──────────────────────────────────────────────────────────
 function StepIndicator({ steps, currentStep, onStepClick, freeNav }: {
     steps: { icon: any; label: string }[];
@@ -718,40 +739,16 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎰 Slot Machine</label>
 
-                    <div style={{ marginBottom: 12 }}>
-                        <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4, display: 'block' }}>Background Color</label>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <label style={{ width: 32, height: 32, borderRadius: 8, background: cfg.slotBgColor || '#3b82f6', border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-                                <input type="color" value={cfg.slotBgColor || '#3b82f6'} onChange={e => { onChange({ slotBgColor: e.target.value }); applySlotTheme({ ...cfg, slotBgColor: e.target.value }); }}
-                                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
-                            </label>
-                            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{cfg.slotBgColor || '#3b82f6'}</span>
-                        </div>
-                    </div>
+                    <SlotColorRow label="Background Color" value={cfg.slotBgColor || '#3b82f6'}
+                        onChange={c => { onChange({ slotBgColor: c }); applySlotTheme({ ...cfg, slotBgColor: c }); }} />
 
                     <SliderRow label="Background Opacity" value={cfg.slotBgOpacity ?? 55} min={10} max={100} step={5} onChange={v => { onChange({ slotBgOpacity: v }); applySlotTheme({ ...cfg, slotBgOpacity: v }); }} unit="%" />
 
-                    <div style={{ marginBottom: 12 }}>
-                        <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4, display: 'block' }}>Digit Color</label>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <label style={{ width: 32, height: 32, borderRadius: 8, background: cfg.slotDigitColor || '#ffffff', border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-                                <input type="color" value={cfg.slotDigitColor || '#ffffff'} onChange={e => { onChange({ slotDigitColor: e.target.value }); applySlotTheme({ ...cfg, slotDigitColor: e.target.value }); }}
-                                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
-                            </label>
-                            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{cfg.slotDigitColor || '#ffffff'}</span>
-                        </div>
-                    </div>
+                    <SlotColorRow label="Digit Color" value={cfg.slotDigitColor || '#ffffff'}
+                        onChange={c => { onChange({ slotDigitColor: c }); applySlotTheme({ ...cfg, slotDigitColor: c }); }} />
 
-                    <div style={{ marginBottom: 12 }}>
-                        <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4, display: 'block' }}>Border Color</label>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <label style={{ width: 32, height: 32, borderRadius: 8, background: cfg.slotBorderColor || '#3b82f6', border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-                                <input type="color" value={cfg.slotBorderColor || '#3b82f6'} onChange={e => { onChange({ slotBorderColor: e.target.value }); applySlotTheme({ ...cfg, slotBorderColor: e.target.value }); }}
-                                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
-                            </label>
-                            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{cfg.slotBorderColor || '#3b82f6'}</span>
-                        </div>
-                    </div>
+                    <SlotColorRow label="Border Color" value={cfg.slotBorderColor || '#3b82f6'}
+                        onChange={c => { onChange({ slotBorderColor: c }); applySlotTheme({ ...cfg, slotBorderColor: c }); }} />
 
                     <SliderRow label="Glow Intensity" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
                 </div>
