@@ -1068,6 +1068,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             {currentRealStep === 3 && <StepStyle cfg={cfg} onChange={handleChange} />}
                             {currentRealStep === 4 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
                             {currentRealStep === 5 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 6 && <StepLayout cfg={cfg} onChange={handleChange} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
