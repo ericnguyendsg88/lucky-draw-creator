@@ -94,4 +94,29 @@ export const DEFAULT_CONFIG: DrawConfig = {
     bgPosX: 50,
     bgPosY: 0,
     bgOverlayOpacity: 70,
+    fontFamily: 'Orbitron',
+    emojiSet: 'classic',
+    accentColor: '#3b82f6',
+    cardOpacity: 70,
+    cardBlur: 12,
+};
+
+// ─── Style options ──────────────────────────────────────────────────────────
+export const FONT_OPTIONS = [
+    { value: 'Orbitron', label: 'Orbitron', style: 'futuristic' },
+    { value: 'Montserrat', label: 'Montserrat', style: 'modern' },
+    { value: 'Bebas Neue', label: 'Bebas Neue', style: 'bold' },
+    { value: 'Rajdhani', label: 'Rajdhani', style: 'tech' },
+    { value: 'Playfair Display', label: 'Playfair Display', style: 'elegant' },
+    { value: 'Nunito', label: 'Nunito', style: 'playful' },
+    { value: 'Roboto Mono', label: 'Roboto Mono', style: 'mono' },
+    { value: 'Poppins', label: 'Poppins', style: 'clean' },
+];
+
+export const EMOJI_SETS: Record<string, { label: string; emojis: string[] }> = {
+    classic: { label: '🏆 Cổ Điển', emojis: ['🏆', '👑', '🥈', '🥉', '⭐', '🎖️', '🎗️', '🏅'] },
+    luxury:  { label: '💎 Sang Trọng', emojis: ['💎', '👑', '🥇', '🎖️', '✨', '🌟', '💫', '⚡'] },
+    party:   { label: '🎉 Lễ Hội', emojis: ['🎉', '🎊', '🎁', '🎀', '🎈', '🎯', '🎪', '🎠'] },
+    nature:  { label: '🌟 Thiên Nhiên', emojis: ['🌟', '🔥', '⚡', '💫', '🌙', '☀️', '🌈', '🍀'] },
+    sports:  { label: '🏀 Thể Thao', emojis: ['🏀', '⚽', '🏆', '🥇', '🏅', '🎯', '🏈', '⚾'] },
 };
