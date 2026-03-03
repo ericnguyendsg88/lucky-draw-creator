@@ -640,7 +640,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Primary Theme Color ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Primary Theme Color</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Màu Chủ Đạo</label>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                         {ACCENT_PRESETS.map(color => (
                             <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor); }}
