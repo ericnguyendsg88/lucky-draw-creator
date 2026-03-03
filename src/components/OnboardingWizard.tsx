@@ -264,7 +264,6 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">Set up your prize tiers — name and total prizes for each. Remove all cards to skip directly to the draw screen.</p>
             <div className="onb-cards-list">
                 {cards.map((card, i) => {
                     const color = CARD_COLORS[i % CARD_COLORS.length];
