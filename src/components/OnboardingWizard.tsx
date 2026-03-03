@@ -731,9 +731,9 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Card Effects ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>✨ Card Effects</label>
-                    <SliderRow label="Card Opacity" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
-                    <SliderRow label="Card Blur" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>✨ Hiệu Ứng Thẻ</label>
+                    <SliderRow label="Độ mờ nền thẻ" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
+                    <SliderRow label="Độ mờ kính" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
                 </div>
 
                 {/* ── Slot Machine ── */}
