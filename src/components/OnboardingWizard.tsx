@@ -693,7 +693,7 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
                     );
                 })}
             </div>
-            <p className="onb-hint">💡 e.g. 30 prizes, 15/press → press twice to award all.</p>
+            
         </div>
     );
 }
