@@ -318,7 +318,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     const addCard = () => {
         if (cards.length >= 8) return;
-        onChange({ prizeCards: [...cards, { id: cards.length, name: `Prize ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5, emoji: COMMON_EMOJIS[cards.length % COMMON_EMOJIS.length], showNumber: true }] });
+        onChange({ prizeCards: [...cards, { id: cards.length, name: `Giải ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5, emoji: COMMON_EMOJIS[cards.length % COMMON_EMOJIS.length], showNumber: true }] });
     };
 
     const removeCard = (i: number) => {
