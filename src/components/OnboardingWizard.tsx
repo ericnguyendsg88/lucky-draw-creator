@@ -597,7 +597,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                                 </div>
                             );
                             if (el === 'name') return (
-                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: 'white', marginBottom: 4 }}>
+                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 20 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 4 }}>
                                     {previewCard?.name ?? 'Grand Prize'}
                                 </div>
                             );
