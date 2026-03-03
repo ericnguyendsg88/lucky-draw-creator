@@ -240,7 +240,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     🗑️ Remove image (use default)
                 </button>
             )}
-            <p className="onb-hint">💡 Position, size, and overlay darkness can be adjusted via the ⚙️ button on the main screen.</p>
+            
         </div>
     );
 }
