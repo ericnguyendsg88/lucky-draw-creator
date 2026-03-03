@@ -52,23 +52,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const ALL_STEP_LABELS = [
-    { icon: Type, label: "Title" },
-    { icon: Image, label: "Background" },
-    { icon: Trophy, label: "Prizes" },
-    { icon: Palette, label: "Style" },
-    { icon: Clock, label: "Timing" },
-    { icon: Users, label: "Batch Size" },
-    { icon: LayoutGrid, label: "Layout" },
+    { icon: Type, label: "Tiêu đề" },
+    { icon: Image, label: "Hình nền" },
+    { icon: Trophy, label: "Giải thưởng" },
+    { icon: Palette, label: "Giao diện" },
+    { icon: Clock, label: "Thời gian" },
+    { icon: Users, label: "Số lượt" },
+    { icon: LayoutGrid, label: "Bố cục" },
 ];
 
 const ALL_STEP_TITLES = [
-    "✏️  Draw Title",
-    "🎨  Background",
-    "🏆  Prize Cards",
-    "🎭  Style",
-    "⏱️  Timing",
-    "🎯  Batch Size",
-    "📐  Card Layout",
+    "✏️  Tiêu Đề Chương Trình",
+    "🎨  Hình Nền",
+    "🏆  Cơ Cấu Giải Thưởng",
+    "🎭  Giao Diện",
+    "⏱️  Thời Gian Quay",
+    "🎯  Số Lượt Quay",
+    "📐  Bố Cục Thẻ Giải",
 ];
 
 const CARD_COLORS = [
