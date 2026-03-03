@@ -76,6 +76,7 @@ interface DynPrizeCardProps {
   onClick: () => void;
   fontFamily: string;
   accentColor: string;
+  cardTextColor?: string;
   cardOpacity: number;
   cardBlur: number;
   cardPadding: number;
@@ -85,7 +86,7 @@ interface DynPrizeCardProps {
   cardElementOrder: ('emoji' | 'name' | 'number')[];
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign, cardElementOrder }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, fontFamily, accentColor, cardTextColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign, cardElementOrder }: DynPrizeCardProps) {
   const fallbackColor = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const emoji = card.emoji || '🏆';
@@ -105,7 +106,7 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
     );
     if (el === 'name') return (
       <h3 key="name" className="font-display font-bold text-sm md:text-base mb-1 relative z-10 leading-tight px-1"
-        style={{ fontSize: 14 * sizeScale }}>{card.name}</h3>
+        style={{ fontSize: 14 * sizeScale, color: cardTextColor || 'white' }}>{card.name}</h3>
     );
     if (el === 'number' && showNumber) return (
       <div key="number" className="text-2xl md:text-3xl font-display font-black mb-1 relative z-10"
@@ -532,8 +533,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl md:text-6xl font-black mb-2 text-white"
-            style={{ fontFamily: `'${drawConfig.fontFamily}', sans-serif`, textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
+          <h1 className="text-4xl md:text-6xl font-black mb-2"
+            style={{ fontFamily: `'${drawConfig.fontFamily}', sans-serif`, color: drawConfig.titleColor || '#ffffff', textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
             {drawConfig.drawTitle || 'LUCKY DRAW'}
           </h1>
         </motion.div>
@@ -632,6 +633,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   onClick={() => handleCardClick(card.id)}
                   fontFamily={drawConfig.fontFamily}
                   accentColor={drawConfig.accentColor}
+                  cardTextColor={drawConfig.cardTextColor}
                   cardOpacity={drawConfig.cardOpacity}
                   cardBlur={drawConfig.cardBlur}
                   cardPadding={drawConfig.cardPadding ?? 20}
@@ -667,6 +669,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 onClick={() => { }}
                 fontFamily={drawConfig.fontFamily}
                 accentColor={drawConfig.accentColor}
+                cardTextColor={drawConfig.cardTextColor}
                 cardOpacity={drawConfig.cardOpacity}
                 cardBlur={drawConfig.cardBlur}
                 cardPadding={drawConfig.cardPadding ?? 20}

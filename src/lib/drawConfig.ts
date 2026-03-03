@@ -29,7 +29,10 @@ export interface DrawConfig {
     customFontName: string;  // name of uploaded custom font
     emojiSet: string;        // emoji set key (legacy, kept for compat)
     customEmojis: string[];  // legacy
-    accentColor: string;     // hex color for accent
+    accentColor: string;     // hex color for accent / primary
+    titleColor: string;      // hex color for draw title / headings
+    cardTextColor: string;   // hex color for card text (names, numbers)
+    bgOverlayColor: string;  // hex color for background overlay tint
     cardOpacity: number;     // card background opacity 0-100
     cardBlur: number;        // card backdrop blur 0-20
     // card layout
@@ -139,7 +142,7 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
 }
 
 /** Apply the accent color as the site-wide primary theme by setting CSS custom properties. */
-export function applyAccentTheme(accentHex: string): void {
+export function applyAccentTheme(accentHex: string, titleHex?: string, cardTextHex?: string, bgOverlayHex?: string): void {
     const { h, s, l } = hexToHsl(accentHex);
     const hsl = `${h} ${s}% ${l}%`;
     const root = document.documentElement.style;
@@ -150,6 +153,12 @@ export function applyAccentTheme(accentHex: string): void {
     root.setProperty('--primary-light', `${h} ${s}% ${Math.min(l + 12, 90)}%`);
     // darker variant
     root.setProperty('--primary-dark', `${h} ${s}% ${Math.max(l - 10, 10)}%`);
+    // title color
+    if (titleHex) root.setProperty('--title-color', titleHex);
+    // card text color
+    if (cardTextHex) root.setProperty('--card-text-color', cardTextHex);
+    // background overlay color
+    if (bgOverlayHex) root.setProperty('--bg-overlay-color', bgOverlayHex);
 }
 
 // ---------------------------------------------------------------------------
@@ -183,6 +192,9 @@ export const DEFAULT_CONFIG: DrawConfig = {
     emojiSet: 'classic',
     customEmojis: [],
     accentColor: '#3b82f6',
+    titleColor: '#ffffff',
+    cardTextColor: '#ffffff',
+    bgOverlayColor: '#000000',
     cardOpacity: 70,
     cardBlur: 12,
     cardPadding: 20,

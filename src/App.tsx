@@ -48,7 +48,10 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     s.backgroundRepeat = 'no-repeat';
     s.backgroundAttachment = 'fixed';
     document.documentElement.style.setProperty('--bg-overlay-opacity', String(overlayOpacity / 100));
-  }, [width, posX, posY, overlayOpacity, bgImageUrl]);
+    const overlayColor = cfg.bgOverlayColor || '#000000';
+    const r = parseInt(overlayColor.slice(1, 3), 16), g = parseInt(overlayColor.slice(3, 5), 16), b = parseInt(overlayColor.slice(5, 7), 16);
+    document.documentElement.style.setProperty('--bg-overlay-computed', `rgba(${r},${g},${b},${overlayOpacity / 100})`);
+  }, [width, posX, posY, overlayOpacity, bgImageUrl, cfg.bgOverlayColor]);
 
   const processFile = (file: File) => {
     setUploadError(null);
@@ -300,12 +303,12 @@ const App = () => {
 
   // Apply accent theme on mount and config changes
   useEffect(() => {
-    applyAccentTheme(drawConfig.accentColor);
-  }, [drawConfig.accentColor]);
+    applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
+  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
-    applyAccentTheme(cfg.accentColor);
+    applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor);
     markOnboardingDone();
     setShowOnboarding(false);
   };
@@ -334,7 +337,7 @@ const App = () => {
                   // Reset state
                   const fresh = { ...DEFAULT_CONFIG };
                   setDrawConfig(fresh);
-                  applyAccentTheme(fresh.accentColor);
+                  applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor);
                   // Reopen wizard
                   setShowOnboarding(true);
                 }
