@@ -566,9 +566,9 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             {/* Drawn numbers history */}
             {history.length > 0 && (
               <motion.div className="w-full max-w-2xl mt-8 p-4 rounded-2xl"
-                style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid rgba(96,165,250,0.4)' }}
+                style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid hsl(var(--primary) / 0.4)' }}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="font-display font-bold text-sm mb-3 text-blue-300">
+                <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
                   Drawn Numbers ({history.length} / {maxNumber})
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
