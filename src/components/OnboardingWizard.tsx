@@ -405,6 +405,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
         setHexInput(val);
         if (/^#[0-9a-fA-F]{6}$/.test(val)) {
             onChange({ accentColor: val });
+            applyAccentTheme(val);
         }
     };
 
