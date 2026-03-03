@@ -1382,9 +1382,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
                     <button type="button" onClick={next} className="onb-btn-next">
                         {step < totalSteps - 1 ? (
-                            <><span>Next</span> <ChevronRight size={18} /></>
+                            <><span>Tiếp Theo</span> <ChevronRight size={18} /></>
                         ) : (
-                            <><Zap size={16} /> <span>Start Lucky Draw!</span></>
+                            <><Zap size={16} /> <span>Bắt Đầu Bốc Thăm!</span></>
                         )}
                     </button>
                 </div>
