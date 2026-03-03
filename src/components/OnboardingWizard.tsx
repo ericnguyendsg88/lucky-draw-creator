@@ -670,7 +670,6 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">How many winners are drawn at once each time you press the draw button?</p>
             <div className="onb-cards-list">
                 {cfg.prizeCards.map((card, i) => {
                     const color = CARD_COLORS[i % CARD_COLORS.length];
