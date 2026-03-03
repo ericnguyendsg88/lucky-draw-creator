@@ -153,6 +153,7 @@ export const DEFAULT_CONFIG: DrawConfig = {
     cardTextAlign: 'center',
     showPrizeNumber: true,
     cardElementOrder: ['emoji', 'name', 'number'],
+    cardLayout: 'auto',
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
