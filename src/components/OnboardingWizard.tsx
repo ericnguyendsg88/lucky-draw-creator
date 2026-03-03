@@ -692,10 +692,10 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Card Layout (sizing) ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Card Styling</label>
-                    <SliderRow label="Card Padding" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
-                    <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
-                    <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Kiểu Dáng Thẻ</label>
+                    <SliderRow label="Khoảng cách trong" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
+                    <SliderRow label="Bo góc" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
+                    <SliderRow label="Cỡ chữ" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
                     <div style={{ marginTop: 8 }}>
                         <div style={{ display: 'flex', gap: 6 }}>
                             {(['left', 'center', 'right'] as const).map(align => (
