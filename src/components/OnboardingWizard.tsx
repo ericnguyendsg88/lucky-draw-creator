@@ -601,7 +601,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Font Section ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Display Font</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Phông Chữ</label>
 
                     {/* Upload custom font */}
                     <div style={{ marginBottom: 12 }}>
