@@ -125,10 +125,16 @@ export const DEFAULT_CONFIG: DrawConfig = {
     bgPosY: 0,
     bgOverlayOpacity: 70,
     fontFamily: 'Orbitron',
+    customFontName: '',
     emojiSet: 'classic',
+    customEmojis: [],
     accentColor: '#3b82f6',
     cardOpacity: 70,
     cardBlur: 12,
+    cardPadding: 20,
+    cardBorderRadius: 16,
+    cardFontSize: 100,
+    cardTextAlign: 'center',
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
