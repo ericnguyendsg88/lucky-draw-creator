@@ -18,7 +18,10 @@ import {
   loadBgImage,
   saveBgImage,
   clearBgImage,
+  clearCustomFont,
   BG_IMAGE_MAX_BYTES,
+  BG_IMAGE_KEY,
+  CUSTOM_FONT_KEY,
   applyAccentTheme,
 } from "@/lib/drawConfig";
 
