@@ -657,7 +657,7 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     );
                 })}
             </div>
-            <p className="onb-hint">💡 Tip: 8–10s for top prizes, 2–3s for bulk prizes.</p>
+            
         </div>
     );
 }
