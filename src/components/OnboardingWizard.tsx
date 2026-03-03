@@ -136,10 +136,11 @@ function ColorPickerCard({ label, value, onChange }: { label: string; value: str
 }
 
 // ─── Step Indicator ──────────────────────────────────────────────────────────
-function StepIndicator({ steps, currentStep, onStepClick }: {
+function StepIndicator({ steps, currentStep, onStepClick, freeNav }: {
     steps: { icon: any; label: string }[];
     currentStep: number;
     onStepClick: (i: number) => void;
+    freeNav?: boolean;
 }) {
     return (
         <div className="onb-step-indicator">
