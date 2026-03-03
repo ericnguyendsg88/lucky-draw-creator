@@ -738,7 +738,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Slot Machine ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎰 Slot Machine</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎰 Máy Quay Số</label>
 
                     <SlotColorRow label="Background Color" value={cfg.slotBgColor || '#3b82f6'}
                         onChange={c => { onChange({ slotBgColor: c }); applySlotTheme({ ...cfg, slotBgColor: c }); }} />
