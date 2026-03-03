@@ -624,12 +624,12 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     </div>
                 </div>
 
-                {/* ── Accent Color ── */}
+                {/* ── Primary Theme Color ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Primary Theme Color</label>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                         {ACCENT_PRESETS.map(color => (
-                            <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color); }}
+                            <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor); }}
                                 style={{
                                     width: 36, height: 36, borderRadius: '50%', background: color,
                                     border: cfg.accentColor === color ? '3px solid white' : '2px solid rgba(255,255,255,0.2)',
@@ -643,7 +643,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
                             position: 'relative', overflow: 'hidden',
                         }}>
-                            <input type="color" value={cfg.accentColor} onChange={e => { onChange({ accentColor: e.target.value }); setHexInput(e.target.value); applyAccentTheme(e.target.value); }}
+                            <input type="color" value={cfg.accentColor} onChange={e => { onChange({ accentColor: e.target.value }); setHexInput(e.target.value); applyAccentTheme(e.target.value, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor); }}
                                 style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
                         </label>
                     </div>
@@ -655,6 +655,26 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     </div>
                 </div>
 
+                {/* ── Title / Heading Color ── */}
+                <ColorPickerCard
+                    label="✏️ Title / Heading Color"
+                    value={cfg.titleColor || '#ffffff'}
+                    onChange={(c) => { onChange({ titleColor: c }); applyAccentTheme(cfg.accentColor, c, cfg.cardTextColor, cfg.bgOverlayColor); }}
+                />
+
+                {/* ── Card Text Color ── */}
+                <ColorPickerCard
+                    label="📝 Card Text Color"
+                    value={cfg.cardTextColor || '#ffffff'}
+                    onChange={(c) => { onChange({ cardTextColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, c, cfg.bgOverlayColor); }}
+                />
+
+                {/* ── Background Overlay Tint ── */}
+                <ColorPickerCard
+                    label="🌗 Background Overlay Tint"
+                    value={cfg.bgOverlayColor || '#000000'}
+                    onChange={(c) => { onChange({ bgOverlayColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, c); }}
+                />
 
                 {/* ── Card Layout (sizing) ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
