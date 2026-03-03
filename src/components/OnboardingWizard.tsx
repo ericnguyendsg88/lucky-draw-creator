@@ -259,7 +259,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
         reader.onload = (e) => {
             const dataUrl = e.target?.result as string;
             try { saveBgImage(dataUrl); setBgImageUrl(dataUrl); }
-            catch { setUploadError('Could not save — browser storage may be full.'); }
+            catch { setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy.'); }
         };
         reader.readAsDataURL(file);
     };
