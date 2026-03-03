@@ -157,10 +157,10 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
 
             {bgImageUrl ? (
               <div className="onb-upload-preview">
-                <img src={bgImageUrl} alt="Nền hiện tại" className="onb-upload-thumb" />
+                <img src={bgImageUrl} alt="Current background" className="onb-upload-thumb" />
                 <div className="onb-upload-overlay-label">
-                  <span>✅ Đang dùng ảnh tùy chỉnh</span>
-                  <span className="onb-upload-change">Nhấn để thay đổi</span>
+                  <span>✅ Custom image active</span>
+                  <span className="onb-upload-change">Click to change</span>
                 </div>
               </div>
             ) : (
