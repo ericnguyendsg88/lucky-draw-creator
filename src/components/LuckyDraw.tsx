@@ -669,6 +669,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 onClick={() => { }}
                 fontFamily={drawConfig.fontFamily}
                 accentColor={drawConfig.accentColor}
+                cardTextColor={drawConfig.cardTextColor}
                 cardOpacity={drawConfig.cardOpacity}
                 cardBlur={drawConfig.cardBlur}
                 cardPadding={drawConfig.cardPadding ?? 20}
