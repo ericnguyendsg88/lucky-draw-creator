@@ -493,7 +493,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 </div>
 
                 {/* Preset emoji sets */}
-                <label className="onb-sublabel">Or choose a preset set:</label>
+                
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {Object.entries(EMOJI_SETS).map(([key, set]) => (
                         <button key={key} type="button" onClick={() => { onChange({ emojiSet: key, customEmojis: [] }); }}
