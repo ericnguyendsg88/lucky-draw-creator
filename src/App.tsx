@@ -144,7 +144,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
             role="button"
             tabIndex={0}
             onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
-            aria-label="Tải lên ảnh nền"
+            aria-label="Upload background image"
             style={{ marginBottom: 16 }}
           >
             <input
