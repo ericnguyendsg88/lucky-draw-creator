@@ -739,7 +739,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 variant="outline"
                 className="px-5 py-3 text-base font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm shadow-lg">
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                Home
+                Trang Chủ
               </Button>
 
               {history.some(h => h.cardId === selectedCardId) && (
