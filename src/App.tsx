@@ -189,7 +189,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
           {/* Remove button */}
           {bgImageUrl && (
             <button type="button" className="onb-remove-image-btn" onClick={e => { e.stopPropagation(); removeImage(); }} style={{ marginBottom: 16, width: '100%' }}>
-              🗑️ Xóa ảnh của bạn
+              🗑️ Remove image
             </button>
           )}
 
