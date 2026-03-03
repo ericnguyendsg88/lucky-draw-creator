@@ -176,7 +176,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
                   Kéo thả hoặc <span className="onb-upload-link">nhấn để chọn file</span>
                 </div>
                 <div className="onb-upload-limits">
-                  JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Max 6 MB
+                  JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Tối đa 6 MB
                 </div>
               </div>
             )}
