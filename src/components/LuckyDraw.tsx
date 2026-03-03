@@ -86,13 +86,18 @@ interface DynPrizeCardProps {
 }
 
 function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign, cardElementOrder }: DynPrizeCardProps) {
-  const color = CARD_COLORS[card.id % CARD_COLORS.length];
+  const fallbackColor = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const emoji = card.emoji || '🏆';
   const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
   const sizeScale = cardFontSize / 100;
   const showNumber = card.showNumber !== false;
   const order = cardElementOrder ?? ['emoji', 'name', 'number'];
+
+  // Per-card color: use card.accentColor if set, otherwise fall back to global accentColor
+  const cardColor = card.accentColor || accentColor;
+  const borderColor = `${cardColor}99`; // 60% opacity
+  const glowColor = `${cardColor}40`;   // 25% opacity
 
   const renderElement = (el: string) => {
     if (el === 'emoji') return (
@@ -103,8 +108,8 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
         style={{ fontSize: 14 * sizeScale }}>{card.name}</h3>
     );
     if (el === 'number' && showNumber) return (
-      <div key="number" className={`text-2xl md:text-3xl font-display font-black mb-1 relative z-10 ${color.iconColor}`}
-        style={{ fontSize: 28 * sizeScale }}>
+      <div key="number" className="text-2xl md:text-3xl font-display font-black mb-1 relative z-10"
+        style={{ fontSize: 28 * sizeScale, color: cardColor }}>
         {prizeState.remaining}
         <span className="text-muted-foreground text-sm md:text-base font-semibold ml-1" style={{ fontSize: 12 * sizeScale }}>/ {prizeState.total}</span>
       </div>
@@ -115,10 +120,10 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
   return (
     <motion.div
       onClick={onClick}
-      className={`prize-card ${cssClass} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${color.gradient} relative overflow-hidden cursor-pointer`}
+      className={`prize-card ${cssClass} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} relative overflow-hidden cursor-pointer`}
       style={{
-        borderColor: color.border,
-        boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${color.glow}`,
+        borderColor: borderColor,
+        boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${glowColor}`,
         background: `rgba(20, 30, 60, ${cardOpacity / 100})`,
         backdropFilter: `blur(${cardBlur}px)`,
         fontFamily: `'${fontFamily}', sans-serif`,
@@ -142,7 +147,7 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
           style={{
             background: isFocused
               ? `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)`
-              : `radial-gradient(circle at 50% 50%, ${color.glow} 0%, transparent 70%)`,
+              : `radial-gradient(circle at 50% 50%, ${glowColor} 0%, transparent 70%)`,
           }}
           animate={{ scale: [1, 1.2, 1], opacity: isFocused ? [0.4, 0.6, 0.4] : [0.2, 0.35, 0.2] }}
           transition={{ duration: 2, repeat: Infinity }}
@@ -156,11 +161,11 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
       {/* Progress bar */}
       <div className="w-full bg-black/30 rounded-full h-2 overflow-hidden backdrop-blur-sm relative z-10">
         <motion.div
-          className={`h-full rounded-full ${color.iconColor} bg-current`}
+          className="h-full rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{ boxShadow: `0 0 8px currentColor` }}
+          style={{ background: cardColor, boxShadow: `0 0 8px ${cardColor}` }}
         />
       </div>
     </motion.div>
