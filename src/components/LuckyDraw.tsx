@@ -107,6 +107,9 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
         background: `rgba(20, 30, 60, ${cardOpacity / 100})`,
         backdropFilter: `blur(${cardBlur}px)`,
         fontFamily: `'${fontFamily}', sans-serif`,
+        padding: cardPadding,
+        borderRadius: cardBorderRadius,
+        textAlign: cardTextAlign,
       }}
       initial={{ opacity: 0, y: 10 }}
       animate={{
