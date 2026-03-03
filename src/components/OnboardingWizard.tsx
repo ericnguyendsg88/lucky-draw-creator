@@ -822,7 +822,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         })(),
                     }} />
                     <div style={{ position: 'relative', zIndex: 1 }}>
-                        <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Prize Card</label>
+                        <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Thẻ Giải</label>
                         <div style={{
                             padding: cfg.cardPadding * 0.6, borderRadius: cfg.cardBorderRadius,
                             background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
