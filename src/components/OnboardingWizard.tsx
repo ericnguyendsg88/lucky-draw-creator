@@ -978,7 +978,7 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
                         <motion.div key={i} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
                             className="onb-winners-row" style={{ borderColor: color.border }}>
                             <div className="onb-timing-name" style={{ color: color.border }}>
-                                {card.name}<span className="onb-card-total"> (Total: {card.totalPrizes})</span>
+                                {card.name}<span className="onb-card-total"> (Tổng: {card.totalPrizes})</span>
                             </div>
                             <div className="onb-number-row">
                                 <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val - 1, 1, max) })}>−</button>
