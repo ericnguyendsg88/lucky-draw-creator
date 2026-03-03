@@ -960,7 +960,10 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
     // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
     const hasPrizes = cfg.prizeCards.length > 0;
-    const activeStepIndices = hasPrizes ? [0, 1, 2, 3, 4, 5] : [0, 1, 2, 3];
+    const hasMultipleCards = cfg.prizeCards.length >= 2;
+    const activeStepIndices = hasPrizes
+        ? (hasMultipleCards ? [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 3, 4, 5])
+        : [0, 1, 2, 3];
     const totalSteps = activeStepIndices.length;
 
     const handleChange = useCallback((partial: Partial<DrawConfig>) => {
