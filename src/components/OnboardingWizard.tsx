@@ -201,13 +201,13 @@ function StepTitle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     return (
         <div className="onb-step-content">
             <div className="onb-card">
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>Draw Title</label>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>Tên chương trình</label>
                 <input
                     type="text"
                     value={cfg.drawTitle}
                     onChange={e => onChange({ drawTitle: e.target.value })}
                     className="onb-input"
-                    placeholder="e.g. LUCKY DRAW"
+                    placeholder="VD: BỐC THĂM MAY MẮN"
                     maxLength={50}
                     style={{ fontSize: 18, fontWeight: 700, fontFamily: `'${cfg.fontFamily}', sans-serif` }}
                 />
@@ -223,7 +223,7 @@ function StepTitle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5)',
                     letterSpacing: '0.05em',
                 }}>
-                    {cfg.drawTitle || 'LUCKY DRAW'}
+                    {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                 </h1>
             </div>
         </div>
