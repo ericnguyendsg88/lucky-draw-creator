@@ -350,7 +350,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                 <div className="onb-prize-card-fields">
                                     <label className="onb-label">Tên giải</label>
                                     <input type="text" value={card.name} maxLength={30} onChange={e => updateCard(i, { name: e.target.value })}
-                                        className="onb-input onb-input-name" placeholder="e.g. Grand Prize" />
+                                        className="onb-input onb-input-name" placeholder="VD: Giải Đặc Biệt" />
                                 </div>
                                 <button type="button" onClick={() => removeCard(i)} className="onb-remove-btn" title="Remove this prize">
                                     <Trash2 size={15} />
