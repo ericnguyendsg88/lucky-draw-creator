@@ -562,7 +562,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
             };
             reader.readAsDataURL(file);
         } catch {
-            setCustomFontError('Failed to read font file.');
+            setCustomFontError('Không thể đọc file font.');
         }
         e.target.value = '';
     };
