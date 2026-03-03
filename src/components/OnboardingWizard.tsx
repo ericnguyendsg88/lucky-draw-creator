@@ -740,7 +740,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎰 Máy Quay Số</label>
 
-                    <SlotColorRow label="Background Color" value={cfg.slotBgColor || '#3b82f6'}
+                    <SlotColorRow label="Màu nền" value={cfg.slotBgColor || '#3b82f6'}
                         onChange={c => { onChange({ slotBgColor: c }); applySlotTheme({ ...cfg, slotBgColor: c }); }} />
 
                     <SliderRow label="Background Opacity" value={cfg.slotBgOpacity ?? 55} min={10} max={100} step={5} onChange={v => { onChange({ slotBgOpacity: v }); applySlotTheme({ ...cfg, slotBgOpacity: v }); }} unit="%" />
