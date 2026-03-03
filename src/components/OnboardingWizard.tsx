@@ -301,7 +301,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
             {uploadError && <div className="onb-upload-error">⚠️ {uploadError}</div>}
             {bgImageUrl && (
                 <button type="button" className="onb-remove-image-btn" onClick={e => { e.stopPropagation(); removeImage(); }}>
-                    🗑️ Remove image (use default)
+                    🗑️ Xóa ảnh (dùng mặc định)
                 </button>
             )}
             
