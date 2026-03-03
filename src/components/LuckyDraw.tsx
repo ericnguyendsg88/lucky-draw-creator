@@ -444,7 +444,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 bg-slate-900/95 border-white/20 backdrop-blur-lg">
-              <DropdownMenuLabel className="text-white/80">Âm Thanh</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-white/80">Sound</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-white/20" />
               <DropdownMenuRadioGroup value={soundPack} onValueChange={handleSoundPackChange}>
                 {[
