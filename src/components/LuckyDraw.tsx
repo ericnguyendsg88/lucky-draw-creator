@@ -513,10 +513,10 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <DropdownMenuSeparator className="bg-white/20" />
               <DropdownMenuRadioGroup value={soundPack} onValueChange={handleSoundPackChange}>
                 {[
-                  { value: "arcade", label: "🎮 Arcade – 8-bit style" },
-                  { value: "vegas", label: "🎰 Vegas – Classic casino" },
-                  { value: "retro", label: "⚙️ Retro – Mechanical" },
-                  { value: "modern", label: "✨ Modern – Clean" },
+                  { value: "arcade", label: "🎮 Arcade – Phong cách 8-bit" },
+                  { value: "vegas", label: "🎰 Vegas – Casino cổ điển" },
+                  { value: "retro", label: "⚙️ Retro – Cơ khí" },
+                  { value: "modern", label: "✨ Hiện đại – Tinh tế" },
                 ].map(({ value, label }) => (
                   <DropdownMenuRadioItem key={value} value={value}
                     className="text-white focus:bg-white/20 focus:text-white">
