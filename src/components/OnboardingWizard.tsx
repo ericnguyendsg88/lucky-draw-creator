@@ -711,7 +711,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Element Order (drag & drop) ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>drag to reorder</span></label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Thứ Tự Hiển Thị <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>kéo thả để sắp xếp</span></label>
                     <DragReorderList
                         items={elementOrder}
                         onReorder={(newOrder) => onChange({ cardElementOrder: newOrder as ('emoji' | 'name' | 'number')[] })}
