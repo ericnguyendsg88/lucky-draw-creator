@@ -756,7 +756,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
         )}
 
         {/* ── Global reset (homepage only) ── */}
-        {!isFocusMode && history.length > 0 && (
+        {!isFreeDrawMode && !isFocusMode && history.length > 0 && (
           <div className="flex justify-center mb-8">
             <AlertDialog>
               <AlertDialogTrigger asChild>
