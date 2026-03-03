@@ -36,6 +36,7 @@ import {
     Palette,
     Upload,
     X,
+    Type,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
