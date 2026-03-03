@@ -791,6 +791,73 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
     );
 }
 
+// ─── Layout Grid Preview (reusable) ──────────────────────────────────────────
+function LayoutGridPreview({ cfg }: { cfg: DrawConfig }) {
+    const cards = cfg.prizeCards;
+    if (cards.length === 0) return (
+        <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: 24, fontSize: 13 }}>
+            No prize cards configured yet
+        </div>
+    );
+    const gridCols = cfg.cardLayout === 'small' ? 4 : cfg.cardLayout === 'large' ? 2 : (cards.length <= 2 ? 2 : cards.length === 3 ? 3 : cards.length === 4 ? 2 : 3);
+    return (
+        <div style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+            gap: 8,
+        }}>
+            {cards.map((card, idx) => {
+                const cardAccent = card.accentColor || cfg.accentColor;
+                const span = card.colSpan ?? 1;
+                return (
+                    <div
+                        key={`preview-${idx}`}
+                        style={{
+                            gridColumn: `span ${Math.min(span, gridCols)}`,
+                            padding: cfg.cardPadding ? cfg.cardPadding * 0.6 : 12,
+                            borderRadius: cfg.cardBorderRadius ?? 16,
+                            background: `rgba(20,30,60,${(cfg.cardOpacity ?? 70) / 100})`,
+                            border: `2px solid ${cardAccent}60`,
+                            boxShadow: `0 4px 16px rgba(0,0,0,0.3), 0 0 12px ${cardAccent}25`,
+                            textAlign: cfg.cardTextAlign ?? 'center',
+                            minHeight: 80,
+                            display: 'flex',
+                            flexDirection: 'column' as const,
+                            alignItems: cfg.cardTextAlign === 'left' ? 'flex-start' : cfg.cardTextAlign === 'right' ? 'flex-end' : 'center',
+                            justifyContent: 'center',
+                            gap: 2,
+                        }}
+                    >
+                        {(cfg.cardElementOrder ?? ['emoji', 'name', 'number']).map(el => {
+                            const scale = (cfg.cardFontSize ?? 100) / 100 * 0.7;
+                            if (el === 'emoji') return <div key="emoji" style={{ fontSize: 22 * scale }}>{card.emoji || '🏆'}</div>;
+                            if (el === 'name') return (
+                                <div key="name" style={{
+                                    fontSize: 11 * scale, fontWeight: 700, color: 'white',
+                                    fontFamily: `'${cfg.fontFamily}', sans-serif`, lineHeight: 1.2,
+                                }}>{card.name}</div>
+                            );
+                            if (el === 'number' && card.showNumber !== false) return (
+                                <div key="number" style={{
+                                    fontSize: 18 * scale, fontWeight: 900, color: cardAccent,
+                                    fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                                }}>{card.totalPrizes}</div>
+                            );
+                            return null;
+                        })}
+                        <div style={{ width: '80%', height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4 }}>
+                            <div style={{ width: '50%', height: '100%', borderRadius: 2, background: cardAccent }} />
+                        </div>
+                        {span === 2 && (
+                            <div style={{ position: 'absolute', bottom: 4, right: 6, fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>WIDE</div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 // ─── Step 6 – Card Layout Organizer ──────────────────────────────────────────
 function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
     const cards = cfg.prizeCards;
