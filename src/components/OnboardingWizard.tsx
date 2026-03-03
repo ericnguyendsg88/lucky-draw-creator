@@ -542,7 +542,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
             return;
         }
         if (file.size > 4 * 1024 * 1024) {
-            setCustomFontError('Font file too large (max 4 MB).');
+            setCustomFontError('File font quá lớn (tối đa 4 MB).');
             return;
         }
 
