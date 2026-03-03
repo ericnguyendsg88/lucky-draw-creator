@@ -19,6 +19,7 @@ import {
   saveBgImage,
   clearBgImage,
   BG_IMAGE_MAX_BYTES,
+  applyAccentTheme,
 } from "@/lib/drawConfig";
 
 // ─── Background adjuster (quick tweaks after onboarding) ─────────────────────
