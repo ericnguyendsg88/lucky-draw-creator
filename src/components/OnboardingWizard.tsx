@@ -136,10 +136,11 @@ function ColorPickerCard({ label, value, onChange }: { label: string; value: str
 }
 
 // ─── Step Indicator ──────────────────────────────────────────────────────────
-function StepIndicator({ steps, currentStep, onStepClick }: {
+function StepIndicator({ steps, currentStep, onStepClick, freeNav }: {
     steps: { icon: any; label: string }[];
     currentStep: number;
     onStepClick: (i: number) => void;
+    freeNav?: boolean;
 }) {
     return (
         <div className="onb-step-indicator">
@@ -147,7 +148,7 @@ function StepIndicator({ steps, currentStep, onStepClick }: {
                 const Icon = s.icon;
                 const isDone = i < currentStep;
                 const isActive = i === currentStep;
-                const isClickable = i <= currentStep;
+                const isClickable = freeNav || i <= currentStep;
                 return (
                     <div key={i} className="onb-step-indicator-item">
                         {i > 0 && (
@@ -1065,6 +1066,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [cfg, setCfg] = useState<DrawConfig>(() => ({ ...DEFAULT_CONFIG, ...(loadConfig() ?? {}) }));
     const [direction, setDirection] = useState(1);
     const [showPreview, setShowPreview] = useState(false);
+    const isAdjusting = loadConfig() !== null;
 
     // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
     const hasPrizes = cfg.prizeCards.length > 0;
@@ -1149,7 +1151,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 </div>
 
                 {/* Step Indicator with connecting lines */}
-                <StepIndicator steps={stepLabels} currentStep={step} onStepClick={goToStep} />
+                <StepIndicator steps={stepLabels} currentStep={step} onStepClick={goToStep} freeNav={isAdjusting} />
 
                 <div className="onb-progress-bar">
                     <motion.div className="onb-progress-fill"
