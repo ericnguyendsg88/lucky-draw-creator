@@ -592,7 +592,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 variant="outline"
                 className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                Trang Chủ
+                Home
               </Button>
 
               {history.some(h => h.cardId === selectedCardId) && (
@@ -601,19 +601,19 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                     <Button variant="outline"
                       className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
                       <RotateCcw className="w-5 h-5 mr-2" />
-                      Làm Lại Giải Này
+                      Reset This Prize
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Làm lại {currentCard.name}?</AlertDialogTitle>
+                      <AlertDialogTitle>Reset {currentCard.name}?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Hành động này sẽ xóa các số đã bốc cho {currentCard.name} và cho phép bốc lại.
+                        This will clear all drawn numbers for {currentCard.name} and allow re-drawing.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Hủy</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Xác Nhận</AlertDialogAction>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Confirm</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
