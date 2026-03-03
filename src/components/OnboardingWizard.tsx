@@ -1316,7 +1316,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 <div className="onb-header">
                     <div className="onb-logo">
                         <Sparkles size={22} className="onb-logo-icon" />
-                        <span>Lucky Draw Setup</span>
+                        <span>Thiết Lập Bốc Thăm</span>
                     </div>
                 </div>
 
