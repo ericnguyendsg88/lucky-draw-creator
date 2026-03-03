@@ -1105,7 +1105,7 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
     return (
         <div className="onb-step-content">
             <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 12, textAlign: 'center' }}>
-                Drag cards to reorder · Click resize to make cards wider
+                Kéo thả để sắp xếp · Nhấn nút mở rộng để thay đổi kích thước
             </div>
 
             {/* Grid preview */}
