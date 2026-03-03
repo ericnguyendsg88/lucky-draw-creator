@@ -74,7 +74,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
         saveBgImage(dataUrl);
         setBgImageUrl(dataUrl);
       } catch {
-        setUploadError('Could not save — browser storage may be full. Try a smaller file.');
+        setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy. Hãy thử file nhỏ hơn.');
       }
     };
     reader.readAsDataURL(file);
