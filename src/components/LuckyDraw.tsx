@@ -77,10 +77,15 @@ interface DynPrizeCardProps {
   isFocused: boolean;
   onClick: () => void;
   emojiSet: string;
+  customEmojis: string[];
   fontFamily: string;
   accentColor: string;
   cardOpacity: number;
   cardBlur: number;
+  cardPadding: number;
+  cardBorderRadius: number;
+  cardFontSize: number;
+  cardTextAlign: 'left' | 'center' | 'right';
 }
 
 function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, fontFamily, accentColor, cardOpacity, cardBlur }: DynPrizeCardProps) {
