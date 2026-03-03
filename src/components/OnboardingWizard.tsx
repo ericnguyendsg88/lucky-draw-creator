@@ -188,7 +188,10 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
         document.body.style.backgroundRepeat = 'no-repeat';
         document.body.style.backgroundAttachment = 'fixed';
         document.documentElement.style.setProperty('--bg-overlay-opacity', String(cfg.bgOverlayOpacity / 100));
-    }, [cfg.bgWidth, cfg.bgPosX, cfg.bgPosY, cfg.bgOverlayOpacity, bgImageUrl]);
+        const oc = cfg.bgOverlayColor || '#000000';
+        const r = parseInt(oc.slice(1, 3), 16), g = parseInt(oc.slice(3, 5), 16), b = parseInt(oc.slice(5, 7), 16);
+        document.documentElement.style.setProperty('--bg-overlay-computed', `rgba(${r},${g},${b},${cfg.bgOverlayOpacity / 100})`);
+    }, [cfg.bgWidth, cfg.bgPosX, cfg.bgPosY, cfg.bgOverlayOpacity, cfg.bgOverlayColor, bgImageUrl]);
 
     const processFile = (file: File) => {
         setUploadError(null);
