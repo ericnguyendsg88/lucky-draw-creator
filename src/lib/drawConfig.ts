@@ -19,6 +19,12 @@ export interface DrawConfig {
     bgPosX: number;
     bgPosY: number;
     bgOverlayOpacity: number;
+    // style
+    fontFamily: string;      // Google Font name for display
+    emojiSet: string;        // emoji set key
+    accentColor: string;     // hex color for accent
+    cardOpacity: number;     // card background opacity 0-100
+    cardBlur: number;        // card backdrop blur 0-20
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
