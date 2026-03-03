@@ -76,8 +76,6 @@ interface DynPrizeCardProps {
   isSelected: boolean;
   isFocused: boolean;
   onClick: () => void;
-  emojiSet: string;
-  customEmojis: string[];
   fontFamily: string;
   accentColor: string;
   cardOpacity: number;
@@ -86,16 +84,35 @@ interface DynPrizeCardProps {
   cardBorderRadius: number;
   cardFontSize: number;
   cardTextAlign: 'left' | 'center' | 'right';
+  cardElementOrder: ('emoji' | 'name' | 'number')[];
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, customEmojis, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, fontFamily, accentColor, cardOpacity, cardBlur, cardPadding, cardBorderRadius, cardFontSize, cardTextAlign, cardElementOrder }: DynPrizeCardProps) {
   const color = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
-  const IconComp = CARD_ICONS[card.id % CARD_ICONS.length];
-  const emojis = getEmojis(emojiSet, customEmojis);
-  const emoji = emojis[card.id % emojis.length];
+  const emoji = card.emoji || '🏆';
   const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
   const sizeScale = cardFontSize / 100;
+  const showNumber = card.showNumber !== false;
+  const order = cardElementOrder ?? ['emoji', 'name', 'number'];
+
+  const renderElement = (el: string) => {
+    if (el === 'emoji') return (
+      <div key="emoji" className="text-3xl md:text-4xl mb-1" style={{ fontSize: 28 * sizeScale }}>{emoji}</div>
+    );
+    if (el === 'name') return (
+      <h3 key="name" className="font-display font-bold text-sm md:text-base mb-1 relative z-10 leading-tight px-1"
+        style={{ fontSize: 14 * sizeScale }}>{card.name}</h3>
+    );
+    if (el === 'number' && showNumber) return (
+      <div key="number" className={`text-2xl md:text-3xl font-display font-black mb-1 relative z-10 ${color.iconColor}`}
+        style={{ fontSize: 28 * sizeScale }}>
+        {prizeState.remaining}
+        <span className="text-muted-foreground text-sm md:text-base font-semibold ml-1" style={{ fontSize: 12 * sizeScale }}>/ {prizeState.total}</span>
+      </div>
+    );
+    return null;
+  };
 
   return (
     <motion.div
@@ -134,20 +151,8 @@ function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onCli
         />
       )}
 
-      <motion.div
-        className="relative z-10"
-        animate={isActive ? { y: [0, -5, 0] } : {}}
-        transition={{ duration: 0.6, repeat: Infinity }}
-      >
-        <div className="text-3xl md:text-4xl mb-1">{emoji}</div>
-        <IconComp className={`w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 ${color.iconColor}`} />
-      </motion.div>
-
-      <h3 className="font-display font-bold text-sm md:text-base mb-1 relative z-10 leading-tight px-1">{card.name}</h3>
-
-      <div className={`text-2xl md:text-3xl font-display font-black mb-1 relative z-10 ${color.iconColor}`}>
-        {prizeState.remaining}
-        <span className="text-muted-foreground text-sm md:text-base font-semibold ml-1">/ {prizeState.total}</span>
+      <div className="relative z-10">
+        {order.map(el => renderElement(el))}
       </div>
 
       {/* Progress bar */}
