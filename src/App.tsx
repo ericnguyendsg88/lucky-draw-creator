@@ -197,10 +197,10 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
           )}
 
           {[
-            { label: `Width: ${width}%`, val: width, set: setWidth, min: 50, max: 200 },
-            { label: `Position X: ${posX}%`, val: posX, set: setPosX, min: 0, max: 100 },
-            { label: `Position Y: ${posY}%`, val: posY, set: setPosY, min: 0, max: 100 },
-            { label: `Overlay Darkness: ${overlayOpacity}%`, val: overlayOpacity, set: setOverlayOpacity, min: 0, max: 100, step: 5 },
+            { label: `Chiều rộng: ${width}%`, val: width, set: setWidth, min: 50, max: 200 },
+            { label: `Vị trí X: ${posX}%`, val: posX, set: setPosX, min: 0, max: 100 },
+            { label: `Vị trí Y: ${posY}%`, val: posY, set: setPosY, min: 0, max: 100 },
+            { label: `Độ tối phủ: ${overlayOpacity}%`, val: overlayOpacity, set: setOverlayOpacity, min: 0, max: 100, step: 5 },
           ].map(({ label, val, set, min, max, step }) => (
             <div key={label} style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 6 }}>{label}</label>
