@@ -652,27 +652,6 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     </div>
                 </div>
 
-                {/* ── Card Grid Layout (only when 2+ cards) ── */}
-                {cfg.prizeCards.length >= 2 && (
-                    <div className="onb-card" style={{ marginBottom: 16 }}>
-                        <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🏠 Home Screen Card Layout</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                            {([
-                                { value: 'auto', label: 'Auto', desc: 'Fits screen', preview: '⚡' },
-                                { value: 'small', label: 'Small', desc: 'Compact grid', preview: '▪▪▪' },
-                                { value: 'large', label: 'Large', desc: 'Big cards', preview: '◼◼' },
-                            ] as const).map(opt => (
-                                <button key={opt.value} type="button" onClick={() => onChange({ cardLayout: opt.value })}
-                                    className={`onb-style-option ${cfg.cardLayout === opt.value ? 'onb-style-option--active' : ''}`}
-                                    style={{ flexDirection: 'column', gap: 2, padding: '10px 8px' }}>
-                                    <span style={{ fontSize: 20 }}>{opt.preview}</span>
-                                    <span style={{ fontSize: 13, fontWeight: 700 }}>{opt.label}</span>
-                                    <span style={{ fontSize: 10, opacity: 0.6 }}>{opt.desc}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
                 {/* ── Card Layout (sizing) ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
