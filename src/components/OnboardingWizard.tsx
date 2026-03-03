@@ -492,9 +492,31 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 </div>
             </div>
 
-            {/* ── Card Layout ── */}
+            {/* ── Card Grid Layout (only when 2+ cards) ── */}
+            {cfg.prizeCards.length >= 2 && (
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🏠 Home Screen Card Layout</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                        {([
+                            { value: 'auto', label: 'Auto', desc: 'Fits screen', preview: '⚡' },
+                            { value: 'small', label: 'Small', desc: 'Compact grid', preview: '▪▪▪' },
+                            { value: 'large', label: 'Large', desc: 'Big cards', preview: '◼◼' },
+                        ] as const).map(opt => (
+                            <button key={opt.value} type="button" onClick={() => onChange({ cardLayout: opt.value })}
+                                className={`onb-style-option ${cfg.cardLayout === opt.value ? 'onb-style-option--active' : ''}`}
+                                style={{ flexDirection: 'column', gap: 2, padding: '10px 8px' }}>
+                                <span style={{ fontSize: 20 }}>{opt.preview}</span>
+                                <span style={{ fontSize: 13, fontWeight: 700 }}>{opt.label}</span>
+                                <span style={{ fontSize: 10, opacity: 0.6 }}>{opt.desc}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* ── Card Layout (sizing) ── */}
             <div className="onb-card" style={{ marginBottom: 16 }}>
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Card Layout</label>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Card Styling</label>
                 <SliderRow label="Card Padding" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
                 <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
                 <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
