@@ -269,9 +269,12 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                         <motion.div key={i} layout initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                             className="onb-prize-card" style={{ borderColor: color.border, boxShadow: `0 0 16px ${color.glow}` }}>
                             <div className="onb-prize-card-header">
-                                <div className="onb-prize-card-icon" style={{ color: color.border }}>
-                                    <IconComp size={18} /><span className="onb-card-index">#{i + 1}</span>
-                                </div>
+                                {/* Emoji selector */}
+                                <button type="button" onClick={() => setEmojiPickerOpen(emojiPickerOpen === i ? null : i)}
+                                    style={{ fontSize: 28, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 10, width: 48, height: 48, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    title="Choose emoji">
+                                    {card.emoji || '🏆'}
+                                </button>
                                 <div className="onb-prize-card-fields">
                                     <label className="onb-label">Prize Name</label>
                                     <input type="text" value={card.name} maxLength={30} onChange={e => updateCard(i, { name: e.target.value })}
@@ -281,6 +284,17 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     <Trash2 size={15} />
                                 </button>
                             </div>
+                            {/* Emoji picker grid */}
+                            {emojiPickerOpen === i && (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: '8px 0', borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: 8 }}>
+                                    {COMMON_EMOJIS.map(em => (
+                                        <button key={em} type="button" onClick={() => { updateCard(i, { emoji: em }); setEmojiPickerOpen(null); }}
+                                            style={{ fontSize: 22, width: 36, height: 36, borderRadius: 8, border: card.emoji === em ? '2px solid white' : '1px solid rgba(255,255,255,0.1)', background: card.emoji === em ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {em}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             <div className="onb-prize-card-body">
                                 <div className="onb-field-group">
                                     <label className="onb-label">Total Prizes</label>
@@ -290,6 +304,13 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                             onChange={e => updateCard(i, { totalPrizes: clamp(Number(e.target.value), 1, 500) })} className="onb-input onb-input-num" />
                                         <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { totalPrizes: clamp(card.totalPrizes + 1, 1, 500) })}>+</button>
                                     </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Show prize count</label>
+                                    <button type="button" onClick={() => updateCard(i, { showNumber: !card.showNumber })}
+                                        style={{ width: 40, height: 22, borderRadius: 11, background: card.showNumber !== false ? '#3b82f6' : 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.2s' }}>
+                                        <span style={{ position: 'absolute', top: 2, left: card.showNumber !== false ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: 'white', transition: 'left 0.2s' }} />
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>
