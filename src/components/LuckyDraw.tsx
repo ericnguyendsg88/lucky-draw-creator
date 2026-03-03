@@ -621,6 +621,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <motion.div key={card.id}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: card.id * 0.04 }}
+                style={{ gridColumn: `span ${card.colSpan ?? 1}` }}
               >
                 <DynPrizeCard
                   card={card}
@@ -638,6 +639,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   cardFontSize={drawConfig.cardFontSize ?? 100}
                   cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
                   cardElementOrder={drawConfig.cardElementOrder ?? ['emoji', 'name', 'number']}
+                />
                 />
               </motion.div>
             ))}
