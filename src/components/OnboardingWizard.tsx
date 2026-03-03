@@ -248,13 +248,15 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     const addCard = () => {
         if (cards.length >= 8) return;
-        onChange({ prizeCards: [...cards, { id: cards.length, name: `Prize ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5 }] });
+        onChange({ prizeCards: [...cards, { id: cards.length, name: `Prize ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5, emoji: COMMON_EMOJIS[cards.length % COMMON_EMOJIS.length], showNumber: true }] });
     };
 
     const removeCard = (i: number) => {
         if (cards.length <= 0) return;
         onChange({ prizeCards: cards.filter((_, idx) => idx !== i).map((c, idx) => ({ ...c, id: idx })) });
     };
+
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState<number | null>(null);
 
     return (
         <div className="onb-step-content">
