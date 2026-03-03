@@ -560,7 +560,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
                 size="lg">
                 <Sparkles className="w-7 h-7 mr-3" />
-                {isDrawing ? 'Drawing...' : drawnNumbers.size >= maxNumber ? 'All numbers drawn!' : 'Draw Number'}
+                {isDrawing ? 'Đang quay...' : drawnNumbers.size >= maxNumber ? 'Đã hết số!' : 'Bốc Thăm'}
               </Button>
             </div>
 
