@@ -1406,7 +1406,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             <LayoutGridPreview cfg={cfg} />
                         </div>
                         <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: 4 }}>
-                            You can customize the layout in the final step
+                            Bạn có thể tùy chỉnh bố cục ở bước cuối cùng
                         </div>
                     </DialogContent>
                 </Dialog>
