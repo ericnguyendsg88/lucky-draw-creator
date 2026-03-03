@@ -680,7 +680,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             {/* History for multi-draw cards first, then slot machine */}
             {currentCard.drawsPerSession > 1 && (
               <div className="w-full mb-4">
-                <PrizeHistoryDyn history={history} cardId={selectedCardId} />
+                <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
             )}
 
