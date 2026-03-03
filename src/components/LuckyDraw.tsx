@@ -194,6 +194,16 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
+  // Load custom font if configured
+  useEffect(() => {
+    if (drawConfig.customFontName) {
+      const stored = loadCustomFont();
+      if (stored) {
+        registerCustomFont(drawConfig.customFontName, stored).catch(() => {});
+      }
+    }
+  }, [drawConfig.customFontName]);
+
   // Re-init when config changes (shouldn't happen during session, but defensive)
   useEffect(() => {
     setPrizes(buildInitialPrizes(prizeCards));
