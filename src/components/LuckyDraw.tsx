@@ -519,8 +519,6 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   isSelected={selectedCardId === card.id}
                   isFocused={false}
                   onClick={() => handleCardClick(card.id)}
-                  emojiSet={drawConfig.emojiSet}
-                  customEmojis={drawConfig.customEmojis ?? []}
                   fontFamily={drawConfig.fontFamily}
                   accentColor={drawConfig.accentColor}
                   cardOpacity={drawConfig.cardOpacity}
@@ -529,6 +527,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   cardBorderRadius={drawConfig.cardBorderRadius ?? 16}
                   cardFontSize={drawConfig.cardFontSize ?? 100}
                   cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
+                  cardElementOrder={drawConfig.cardElementOrder ?? ['emoji', 'name', 'number']}
                 />
               </motion.div>
             ))}
