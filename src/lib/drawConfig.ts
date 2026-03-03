@@ -51,6 +51,11 @@ export interface DrawConfig {
     slotDigitColor: string;    // hex for digit text
     slotBorderColor: string;   // hex for frame border
     slotGlowOpacity: number;   // 0-100 glow intensity
+    // drawn numbers display
+    drawnNumBgColor: string;    // hex for drawn number badge background
+    drawnNumTextColor: string;  // hex for drawn number text
+    drawnNumBorderColor: string;// hex for drawn number border
+    drawnNumBgOpacity: number;  // 0-100
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
@@ -183,6 +188,21 @@ export function applySlotTheme(cfg: Pick<DrawConfig, 'slotBgColor' | 'slotBgOpac
     root.setProperty('--slot-glow-opacity', String((cfg.slotGlowOpacity ?? 30) / 100));
 }
 
+/** Apply drawn numbers CSS variables from config. */
+export function applyDrawnNumTheme(cfg: Pick<DrawConfig, 'drawnNumBgColor' | 'drawnNumTextColor' | 'drawnNumBorderColor' | 'drawnNumBgOpacity'>): void {
+    const root = document.documentElement.style;
+    const toRgb = (hex: string) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r},${g},${b}`;
+    };
+    root.setProperty('--drawn-num-bg-rgb', toRgb(cfg.drawnNumBgColor || '#1e2650'));
+    root.setProperty('--drawn-num-bg-opacity', String((cfg.drawnNumBgOpacity ?? 80) / 100));
+    root.setProperty('--drawn-num-text-color', cfg.drawnNumTextColor || '#ffffff');
+    root.setProperty('--drawn-num-border-rgb', toRgb(cfg.drawnNumBorderColor || '#3b82f6'));
+}
+
 // ---------------------------------------------------------------------------
 // Default configuration (mirrors the original hard-coded values)
 // ---------------------------------------------------------------------------
@@ -231,6 +251,10 @@ export const DEFAULT_CONFIG: DrawConfig = {
     slotDigitColor: '#ffffff',
     slotBorderColor: '#3b82f6',
     slotGlowOpacity: 30,
+    drawnNumBgColor: '#1e2650',
+    drawnNumTextColor: '#ffffff',
+    drawnNumBorderColor: '#3b82f6',
+    drawnNumBgOpacity: 80,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────

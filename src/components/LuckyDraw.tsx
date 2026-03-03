@@ -575,7 +575,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 <div className="flex flex-wrap gap-2 justify-center">
                   {history.map((item, i) => (
                     <motion.span key={i} className="history-number"
-                      style={{ borderColor: 'hsl(var(--primary) / 0.5)', color: 'white' }}
+                      style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
                       initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.02 }}>
                       {String(item.number).padStart(3, '0')}
@@ -837,7 +837,7 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
           <motion.span
             key={i}
             className="history-number"
-            style={{ borderColor: `${colorHex}99`, color: 'white' }}
+            style={{ borderColor: `${colorHex}99` }}
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}

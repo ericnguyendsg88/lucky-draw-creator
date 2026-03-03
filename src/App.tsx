@@ -24,6 +24,7 @@ import {
   CUSTOM_FONT_KEY,
   applyAccentTheme,
   applySlotTheme,
+  applyDrawnNumTheme,
 } from "@/lib/drawConfig";
 
 // ─── Background adjuster (quick tweaks after onboarding) ─────────────────────
@@ -306,12 +307,14 @@ const App = () => {
   useEffect(() => {
     applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
     applySlotTheme(drawConfig);
-  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.slotBgColor, drawConfig.slotBgOpacity, drawConfig.slotDigitColor, drawConfig.slotBorderColor, drawConfig.slotGlowOpacity]);
+    applyDrawnNumTheme(drawConfig);
+  }, [drawConfig]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
     applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor);
     applySlotTheme(cfg);
+    applyDrawnNumTheme(cfg);
     markOnboardingDone();
     setShowOnboarding(false);
   };
@@ -342,6 +345,7 @@ const App = () => {
                   setDrawConfig(fresh);
                   applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor);
                   applySlotTheme(fresh);
+                  applyDrawnNumTheme(fresh);
                   // Reopen wizard
                   setShowOnboarding(true);
                 }

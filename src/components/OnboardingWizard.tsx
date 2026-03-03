@@ -20,6 +20,7 @@ import {
     registerCustomFont,
     applyAccentTheme,
     applySlotTheme,
+    applyDrawnNumTheme,
 } from "@/lib/drawConfig";
 import {
     Image,
@@ -752,6 +753,22 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                     <SliderRow label="Glow Intensity" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
                 </div>
+
+                {/* ── Drawn Numbers ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Drawn Numbers</label>
+
+                    <SlotColorRow label="Background Color" value={cfg.drawnNumBgColor || '#1e2650'}
+                        onChange={c => { onChange({ drawnNumBgColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBgColor: c }); }} />
+
+                    <SliderRow label="Background Opacity" value={cfg.drawnNumBgOpacity ?? 80} min={10} max={100} step={5} onChange={v => { onChange({ drawnNumBgOpacity: v }); applyDrawnNumTheme({ ...cfg, drawnNumBgOpacity: v }); }} unit="%" />
+
+                    <SlotColorRow label="Text Color" value={cfg.drawnNumTextColor || '#ffffff'}
+                        onChange={c => { onChange({ drawnNumTextColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumTextColor: c }); }} />
+
+                    <SlotColorRow label="Border Color" value={cfg.drawnNumBorderColor || '#3b82f6'}
+                        onChange={c => { onChange({ drawnNumBorderColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBorderColor: c }); }} />
+                </div>
             </div>
 
             {/* ── Sticky Live Preview (right column) ── */}
@@ -878,6 +895,34 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                                 </div>
                             ))}
                         </div>
+                    </div>
+                </div>
+
+                {/* Drawn Numbers Preview */}
+                <div style={{
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                }}>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔢 Drawn Numbers</label>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
+                        {['042', '187', '003'].map((num, i) => {
+                            const bgHex = cfg.drawnNumBgColor || '#1e2650';
+                            const r = parseInt(bgHex.slice(1, 3), 16), g = parseInt(bgHex.slice(3, 5), 16), b = parseInt(bgHex.slice(5, 7), 16);
+                            const borderHex = cfg.drawnNumBorderColor || '#3b82f6';
+                            const br = parseInt(borderHex.slice(1, 3), 16), bg2 = parseInt(borderHex.slice(3, 5), 16), bb = parseInt(borderHex.slice(5, 7), 16);
+                            return (
+                                <div key={i} style={{
+                                    padding: '6px 12px', borderRadius: 10,
+                                    background: `rgba(${r},${g},${b},${(cfg.drawnNumBgOpacity ?? 80) / 100})`,
+                                    color: cfg.drawnNumTextColor || '#ffffff',
+                                    border: `2px solid rgba(${br},${bg2},${bb},0.6)`,
+                                    fontFamily: 'monospace', fontSize: 14, fontWeight: 900,
+                                    boxShadow: `0 0 12px rgba(${br},${bg2},${bb},0.3)`,
+                                }}>
+                                    {num}
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
