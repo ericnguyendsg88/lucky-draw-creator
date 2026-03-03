@@ -270,11 +270,14 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
         <div className="onb-step-content">
             <div className="onb-cards-list">
                 {cards.map((card, i) => {
-                    const color = CARD_COLORS[i % CARD_COLORS.length];
+                    const fallbackColor = CARD_COLORS[i % CARD_COLORS.length];
                     const IconComp = CARD_ICONS[i % CARD_ICONS.length];
+                    const cardHex = card.accentColor || cfg.accentColor;
+                    const usedBorder = card.accentColor ? `${cardHex}b3` : fallbackColor.border;
+                    const usedGlow = card.accentColor ? `${cardHex}40` : fallbackColor.glow;
                     return (
                         <motion.div key={i} layout initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                            className="onb-prize-card" style={{ borderColor: color.border, boxShadow: `0 0 16px ${color.glow}` }}>
+                            className="onb-prize-card" style={{ borderColor: usedBorder, boxShadow: `0 0 16px ${usedGlow}` }}>
                             <div className="onb-prize-card-header">
                                 {/* Emoji selector */}
                                 <button type="button" onClick={() => setEmojiPickerOpen(emojiPickerOpen === i ? null : i)}
