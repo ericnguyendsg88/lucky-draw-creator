@@ -903,7 +903,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔢 Drawn Numbers</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔢 Số Đã Bốc</label>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
                         {['042', '187', '003'].map((num, i) => {
                             const bgHex = cfg.drawnNumBgColor || '#1e2650';
