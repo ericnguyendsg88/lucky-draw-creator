@@ -132,7 +132,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
 
       {isOpen && (
         <div style={panelStyle} className="onb-modal">
-          <div style={{ marginBottom: 16, fontSize: 16, fontWeight: 'bold' }}>Cài Đặt Nền</div>
+          <div style={{ marginBottom: 16, fontSize: 16, fontWeight: 'bold' }}>Background Settings</div>
 
           {/* ── Upload zone ── */}
           <div
