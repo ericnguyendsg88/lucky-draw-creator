@@ -1399,7 +1399,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     }}>
                         <DialogHeader>
                             <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <LayoutGrid size={18} /> Home Screen Preview
+                                <LayoutGrid size={18} /> Xem Trước Màn Hình Chính
                             </DialogTitle>
                         </DialogHeader>
                         <div style={{ padding: '8px 0' }}>
