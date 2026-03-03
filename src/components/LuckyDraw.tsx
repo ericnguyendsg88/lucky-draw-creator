@@ -837,7 +837,7 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
           <motion.span
             key={i}
             className="history-number"
-            style={{ borderColor: `${colorHex}99`, color: 'white' }}
+            style={{ borderColor: `${colorHex}99` }}
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
