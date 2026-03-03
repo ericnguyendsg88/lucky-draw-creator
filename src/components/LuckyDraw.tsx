@@ -753,9 +753,9 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Reset {currentCard.name}?</AlertDialogTitle>
+                      <AlertDialogTitle>Đặt lại {currentCard.name}?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will clear all drawn numbers for {currentCard.name} and allow re-drawing.
+                        Toàn bộ số đã bốc của {currentCard.name} sẽ bị xóa và cho phép bốc lại.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
