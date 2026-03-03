@@ -475,11 +475,16 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
-  // Decide layout: if <= 3 cards → 1 row; 4 = 2×2; 5-8 = 2 or 3 cols
-  const gridCols = prizeCards.length <= 2 ? 'grid-cols-1 sm:grid-cols-2'
-    : prizeCards.length === 3 ? 'grid-cols-3'
-      : prizeCards.length === 4 ? 'grid-cols-2'
-        : 'grid-cols-2 md:grid-cols-3';
+  // Decide layout based on cardLayout config
+  const cardLayout = drawConfig.cardLayout ?? 'auto';
+  const gridCols = cardLayout === 'small'
+    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+    : cardLayout === 'large'
+      ? 'grid-cols-1 sm:grid-cols-2'
+      : prizeCards.length <= 2 ? 'grid-cols-1 sm:grid-cols-2'
+        : prizeCards.length === 3 ? 'grid-cols-3'
+          : prizeCards.length === 4 ? 'grid-cols-2'
+            : 'grid-cols-2 md:grid-cols-3';
 
   const allDone = prizeCards.length > 0 && prizeCards.every(c => prizes[c.id]?.remaining === 0);
   const isFreeDrawMode = prizeCards.length === 0;
