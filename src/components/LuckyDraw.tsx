@@ -75,13 +75,19 @@ interface DynPrizeCardProps {
   isSelected: boolean;
   isFocused: boolean;
   onClick: () => void;
+  emojiSet: string;
+  fontFamily: string;
+  accentColor: string;
+  cardOpacity: number;
+  cardBlur: number;
 }
 
-function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick }: DynPrizeCardProps) {
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick, emojiSet, fontFamily, accentColor, cardOpacity, cardBlur }: DynPrizeCardProps) {
   const color = CARD_COLORS[card.id % CARD_COLORS.length];
   const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
   const IconComp = CARD_ICONS[card.id % CARD_ICONS.length];
-  const emoji = CARD_EMOJIS[card.id % CARD_EMOJIS.length];
+  const emojis = getEmojis(emojiSet);
+  const emoji = emojis[card.id % emojis.length];
   const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
 
   return (
