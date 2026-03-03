@@ -389,8 +389,8 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                                 cursor: 'pointer', fontSize: 10, color: 'white',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             }}
-                                            title="Use global theme color">
-                                            G
+                                            title="Dùng màu chung">
+                                            C
                                         </button>
                                         {['#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'].map(c => (
                                             <button key={c} type="button" onClick={() => updateCard(i, { accentColor: c })}
