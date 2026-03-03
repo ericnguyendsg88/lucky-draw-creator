@@ -314,7 +314,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
             <div className="onb-field-group onb-max-number">
                 <label className="onb-label">Max Ticket Number <span className="onb-required">*</span></label>
-                <p className="onb-sublabel">Numbers from 1 to ? will be entered into the draw</p>
+                
                 <input type="number" min={1} max={9999} value={cfg.maxNumber}
                     onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), 1, 9999) })}
                     className="onb-input onb-input-max" placeholder="e.g. 250" />
