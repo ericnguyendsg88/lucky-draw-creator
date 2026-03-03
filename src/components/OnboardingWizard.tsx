@@ -1151,7 +1151,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 </div>
 
                 {/* Step Indicator with connecting lines */}
-                <StepIndicator steps={stepLabels} currentStep={step} onStepClick={goToStep} />
+                <StepIndicator steps={stepLabels} currentStep={step} onStepClick={goToStep} freeNav={isAdjusting} />
 
                 <div className="onb-progress-bar">
                     <motion.div className="onb-progress-fill"
