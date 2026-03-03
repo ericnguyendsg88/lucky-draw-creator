@@ -129,7 +129,41 @@ function StepIndicator({ steps, currentStep, onStepClick }: {
     );
 }
 
-// ─── Step 1 – Background ─────────────────────────────────────────────────────
+// ─── Step 1 – Title ──────────────────────────────────────────────────────────
+function StepTitle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
+    return (
+        <div className="onb-step-content">
+            <div className="onb-card">
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>Draw Title</label>
+                <input
+                    type="text"
+                    value={cfg.drawTitle}
+                    onChange={e => onChange({ drawTitle: e.target.value })}
+                    className="onb-input"
+                    placeholder="e.g. LUCKY DRAW"
+                    maxLength={50}
+                    style={{ fontSize: 18, fontWeight: 700, fontFamily: `'${cfg.fontFamily}', sans-serif` }}
+                />
+            </div>
+            <div style={{
+                marginTop: 20, textAlign: 'center', padding: '24px 16px',
+                background: 'rgba(20,30,60,0.6)', borderRadius: 16,
+                border: '1px solid rgba(255,255,255,0.1)',
+            }}>
+                <h1 style={{
+                    fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                    fontSize: 32, fontWeight: 900, color: 'white',
+                    textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5)',
+                    letterSpacing: '0.05em',
+                }}>
+                    {cfg.drawTitle || 'LUCKY DRAW'}
+                </h1>
+            </div>
+        </div>
+    );
+}
+
+// ─── Step 2 – Background ─────────────────────────────────────────────────────
 function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
     const [bgImageUrl, setBgImageUrl] = useState<string | null>(() => loadBgImage());
     const [dragOver, setDragOver] = useState(false);

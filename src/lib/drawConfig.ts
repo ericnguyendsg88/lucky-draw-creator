@@ -119,6 +119,7 @@ export const DEFAULT_PRIZE_CARDS: PrizeCardConfig[] = [
 ];
 
 export const DEFAULT_CONFIG: DrawConfig = {
+    drawTitle: 'LUCKY DRAW',
     maxNumber: 250,
     prizeCards: DEFAULT_PRIZE_CARDS,
     bgWidth: 100,
