@@ -1002,7 +1002,7 @@ function LayoutGridPreview({ cfg }: { cfg: DrawConfig }) {
     const cards = cfg.prizeCards;
     if (cards.length === 0) return (
         <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: 24, fontSize: 13 }}>
-            No prize cards configured yet
+            Chưa có thẻ giải nào
         </div>
     );
     const gridCols = cfg.cardLayout === 'small' ? 4 : cfg.cardLayout === 'large' ? 2 : (cards.length <= 2 ? 2 : cards.length === 3 ? 3 : cards.length === 4 ? 2 : 3);
