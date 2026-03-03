@@ -758,7 +758,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Số Đã Bốc</label>
 
-                    <SlotColorRow label="Background Color" value={cfg.drawnNumBgColor || '#1e2650'}
+                    <SlotColorRow label="Màu nền" value={cfg.drawnNumBgColor || '#1e2650'}
                         onChange={c => { onChange({ drawnNumBgColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBgColor: c }); }} />
 
                     <SliderRow label="Background Opacity" value={cfg.drawnNumBgOpacity ?? 80} min={10} max={100} step={5} onChange={v => { onChange({ drawnNumBgOpacity: v }); applyDrawnNumTheme({ ...cfg, drawnNumBgOpacity: v }); }} unit="%" />
