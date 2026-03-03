@@ -209,11 +209,11 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
           <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
             <button onClick={() => setIsOpen(false)}
               style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer' }}>
-              Đóng
+              Close
             </button>
             <button onClick={save}
               style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: '#2563eb', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
-              Lưu
+              Save
             </button>
           </div>
         </div>
