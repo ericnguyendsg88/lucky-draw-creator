@@ -428,7 +428,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
             {cards.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '20px 0', color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>
-                    No prize cards added. The draw will start immediately after setup.
+                    Chưa có giải nào. Chương trình sẽ bắt đầu ngay sau khi thiết lập.
                 </div>
             )}
 
