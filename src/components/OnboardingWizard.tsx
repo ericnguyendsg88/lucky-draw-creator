@@ -52,23 +52,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const ALL_STEP_LABELS = [
-    { icon: Type, label: "Title" },
-    { icon: Image, label: "Background" },
-    { icon: Trophy, label: "Prizes" },
-    { icon: Palette, label: "Style" },
-    { icon: Clock, label: "Timing" },
-    { icon: Users, label: "Batch Size" },
-    { icon: LayoutGrid, label: "Layout" },
+    { icon: Type, label: "Tiêu đề" },
+    { icon: Image, label: "Hình nền" },
+    { icon: Trophy, label: "Giải thưởng" },
+    { icon: Palette, label: "Giao diện" },
+    { icon: Clock, label: "Thời gian" },
+    { icon: Users, label: "Số lượt" },
+    { icon: LayoutGrid, label: "Bố cục" },
 ];
 
 const ALL_STEP_TITLES = [
-    "✏️  Draw Title",
-    "🎨  Background",
-    "🏆  Prize Cards",
-    "🎭  Style",
-    "⏱️  Timing",
-    "🎯  Batch Size",
-    "📐  Card Layout",
+    "✏️  Tiêu Đề Chương Trình",
+    "🎨  Hình Nền",
+    "🏆  Cơ Cấu Giải Thưởng",
+    "🎭  Giao Diện",
+    "⏱️  Thời Gian Quay",
+    "🎯  Số Lượt Quay",
+    "📐  Bố Cục Thẻ Giải",
 ];
 
 const CARD_COLORS = [
@@ -201,13 +201,13 @@ function StepTitle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
     return (
         <div className="onb-step-content">
             <div className="onb-card">
-                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>Draw Title</label>
+                <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>Tên chương trình</label>
                 <input
                     type="text"
                     value={cfg.drawTitle}
                     onChange={e => onChange({ drawTitle: e.target.value })}
                     className="onb-input"
-                    placeholder="e.g. LUCKY DRAW"
+                    placeholder="VD: BỐC THĂM MAY MẮN"
                     maxLength={50}
                     style={{ fontSize: 18, fontWeight: 700, fontFamily: `'${cfg.fontFamily}', sans-serif` }}
                 />
@@ -223,7 +223,7 @@ function StepTitle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5)',
                     letterSpacing: '0.05em',
                 }}>
-                    {cfg.drawTitle || 'LUCKY DRAW'}
+                    {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                 </h1>
             </div>
         </div>
@@ -253,13 +253,13 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
     const processFile = (file: File) => {
         setUploadError(null);
         const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowed.includes(file.type)) { setUploadError('Unsupported format. Please use JPEG, PNG, WebP, or GIF.'); return; }
-        if (file.size > BG_IMAGE_MAX_BYTES) { setUploadError(`File is ${(file.size / 1024 / 1024).toFixed(1)} MB. Max 6 MB.`); return; }
+        if (!allowed.includes(file.type)) { setUploadError('Định dạng không hỗ trợ. Vui lòng dùng JPEG, PNG, WebP hoặc GIF.'); return; }
+        if (file.size > BG_IMAGE_MAX_BYTES) { setUploadError(`File ${(file.size / 1024 / 1024).toFixed(1)} MB. Tối đa 6 MB.`); return; }
         const reader = new FileReader();
         reader.onload = (e) => {
             const dataUrl = e.target?.result as string;
             try { saveBgImage(dataUrl); setBgImageUrl(dataUrl); }
-            catch { setUploadError('Could not save — browser storage may be full.'); }
+            catch { setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy.'); }
         };
         reader.readAsDataURL(file);
     };
@@ -283,25 +283,25 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="onb-upload-input" onChange={handleFileChange} />
                 {bgImageUrl ? (
                     <div className="onb-upload-preview">
-                        <img src={bgImageUrl} alt="Current background" className="onb-upload-thumb" />
+                        <img src={bgImageUrl} alt="Hình nền hiện tại" className="onb-upload-thumb" />
                         <div className="onb-upload-overlay-label">
-                            <span>✅ Custom image active</span>
-                            <span className="onb-upload-change">Click to change</span>
+                            <span>✅ Đang dùng ảnh tùy chỉnh</span>
+                            <span className="onb-upload-change">Nhấn để thay đổi</span>
                         </div>
                     </div>
                 ) : (
                     <div className="onb-upload-empty">
                         <div className="onb-upload-icon">🖼️</div>
-                        <div className="onb-upload-title">{dragOver ? 'Drop to upload' : 'Upload Background Image'}</div>
-                        <div className="onb-upload-sub">Drag & drop or <span className="onb-upload-link">click to browse</span></div>
-                        <div className="onb-upload-limits">JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Max 6 MB</div>
+                        <div className="onb-upload-title">{dragOver ? 'Thả để tải lên' : 'Tải Ảnh Nền Lên'}</div>
+                        <div className="onb-upload-sub">Kéo thả hoặc <span className="onb-upload-link">nhấn để chọn file</span></div>
+                        <div className="onb-upload-limits">JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Tối đa 6 MB</div>
                     </div>
                 )}
             </div>
             {uploadError && <div className="onb-upload-error">⚠️ {uploadError}</div>}
             {bgImageUrl && (
                 <button type="button" className="onb-remove-image-btn" onClick={e => { e.stopPropagation(); removeImage(); }}>
-                    🗑️ Remove image (use default)
+                    🗑️ Xóa ảnh (dùng mặc định)
                 </button>
             )}
             
@@ -318,7 +318,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     const addCard = () => {
         if (cards.length >= 8) return;
-        onChange({ prizeCards: [...cards, { id: cards.length, name: `Prize ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5, emoji: COMMON_EMOJIS[cards.length % COMMON_EMOJIS.length], showNumber: true }] });
+        onChange({ prizeCards: [...cards, { id: cards.length, name: `Giải ${cards.length + 1}`, totalPrizes: 5, drawSeconds: 3, drawsPerSession: 5, emoji: COMMON_EMOJIS[cards.length % COMMON_EMOJIS.length], showNumber: true }] });
     };
 
     const removeCard = (i: number) => {
@@ -348,11 +348,11 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     {card.emoji || '🏆'}
                                 </button>
                                 <div className="onb-prize-card-fields">
-                                    <label className="onb-label">Prize Name</label>
+                                    <label className="onb-label">Tên giải</label>
                                     <input type="text" value={card.name} maxLength={30} onChange={e => updateCard(i, { name: e.target.value })}
-                                        className="onb-input onb-input-name" placeholder="e.g. Grand Prize" />
+                                        className="onb-input onb-input-name" placeholder="VD: Giải Đặc Biệt" />
                                 </div>
-                                <button type="button" onClick={() => removeCard(i)} className="onb-remove-btn" title="Remove this prize">
+                                <button type="button" onClick={() => removeCard(i)} className="onb-remove-btn" title="Xóa giải này">
                                     <Trash2 size={15} />
                                 </button>
                             </div>
@@ -369,7 +369,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                             )}
                             <div className="onb-prize-card-body">
                                 <div className="onb-field-group">
-                                    <label className="onb-label">Total Prizes</label>
+                                    <label className="onb-label">Tổng số giải</label>
                                     <div className="onb-number-row">
                                         <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { totalPrizes: clamp(card.totalPrizes - 1, 1, 500) })}>−</button>
                                         <input type="number" min={1} max={500} value={card.totalPrizes}
@@ -379,7 +379,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                 </div>
                                 {/* Per-card accent color */}
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', whiteSpace: 'nowrap' }}>Card Color</label>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', whiteSpace: 'nowrap' }}>Màu thẻ</label>
                                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
                                         <button type="button" onClick={() => updateCard(i, { accentColor: undefined })}
                                             style={{
@@ -389,8 +389,8 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                                 cursor: 'pointer', fontSize: 10, color: 'white',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             }}
-                                            title="Use global theme color">
-                                            G
+                                            title="Dùng màu chung">
+                                            C
                                         </button>
                                         {['#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'].map(c => (
                                             <button key={c} type="button" onClick={() => updateCard(i, { accentColor: c })}
@@ -414,7 +414,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Show prize count</label>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Hiện số giải</label>
                                     <button type="button" onClick={() => updateCard(i, { showNumber: !card.showNumber })}
                                         style={{ width: 40, height: 22, borderRadius: 11, background: card.showNumber !== false ? 'var(--accent-color-hex, #3b82f6)' : 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.2s' }}>
                                         <span style={{ position: 'absolute', top: 2, left: card.showNumber !== false ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: 'white', transition: 'left 0.2s' }} />
@@ -428,22 +428,22 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
             {cards.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '20px 0', color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>
-                    No prize cards added. The draw will start immediately after setup.
+                    Chưa có giải nào. Chương trình sẽ bắt đầu ngay sau khi thiết lập.
                 </div>
             )}
 
             {cards.length < 8 && (
                 <button type="button" className="onb-add-btn" onClick={addCard}>
-                    <Plus size={16} /> Add Prize Card
+                    <Plus size={16} /> Thêm Giải Thưởng
                 </button>
             )}
 
             <div className="onb-field-group onb-max-number">
-                <label className="onb-label">Max Ticket Number <span className="onb-required">*</span></label>
+                <label className="onb-label">Số phiếu tối đa <span className="onb-required">*</span></label>
                 
                 <input type="number" min={1} max={9999} value={cfg.maxNumber}
                     onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), 1, 9999) })}
-                    className="onb-input onb-input-max" placeholder="e.g. 250" />
+                    className="onb-input onb-input-max" placeholder="VD: 250" />
             </div>
         </div>
     );
@@ -538,11 +538,11 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
         setCustomFontError(null);
 
         if (!file.name.match(/\.(ttf|otf|woff|woff2)$/i)) {
-            setCustomFontError('Please upload a .ttf, .otf, .woff, or .woff2 font file.');
+            setCustomFontError('Vui lòng tải lên file font .ttf, .otf, .woff hoặc .woff2.');
             return;
         }
         if (file.size > 4 * 1024 * 1024) {
-            setCustomFontError('Font file too large (max 4 MB).');
+            setCustomFontError('File font quá lớn (tối đa 4 MB).');
             return;
         }
 
@@ -557,12 +557,12 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     onChange({ fontFamily: fontName, customFontName: fontName });
                     setCustomFontLoaded(true);
                 } catch {
-                    setCustomFontError('Failed to load font. The file may be corrupted.');
+                    setCustomFontError('Không thể tải font. File có thể bị hỏng.');
                 }
             };
             reader.readAsDataURL(file);
         } catch {
-            setCustomFontError('Failed to read font file.');
+            setCustomFontError('Không thể đọc file font.');
         }
         e.target.value = '';
     };
@@ -601,7 +601,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Font Section ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Display Font</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔤 Phông Chữ</label>
 
                     {/* Upload custom font */}
                     <div style={{ marginBottom: 12 }}>
@@ -617,9 +617,9 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             </div>
                         ) : (
                             <button type="button" onClick={() => fontFileRef.current?.click()}
-                                className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }}>
+                                className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }} title="Tải font tùy chỉnh">
                                 <Upload size={16} />
-                                <span>Upload Custom Font (.ttf, .otf, .woff)</span>
+                                <span>Tải Font Tùy Chỉnh (.ttf, .otf, .woff)</span>
                             </button>
                         )}
                         {customFontError && <div className="onb-upload-error" style={{ marginTop: 6 }}>⚠️ {customFontError}</div>}
@@ -640,7 +640,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Primary Theme Color ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Primary Theme Color</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Màu Chủ Đạo</label>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                         {ACCENT_PRESETS.map(color => (
                             <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor); }}
@@ -671,31 +671,31 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Title / Heading Color ── */}
                 <ColorPickerCard
-                    label="✏️ Title / Heading Color"
+                    label="✏️ Màu Tiêu Đề"
                     value={cfg.titleColor || '#ffffff'}
                     onChange={(c) => { onChange({ titleColor: c }); applyAccentTheme(cfg.accentColor, c, cfg.cardTextColor, cfg.bgOverlayColor); }}
                 />
 
                 {/* ── Card Text Color ── */}
                 <ColorPickerCard
-                    label="📝 Card Text Color"
+                    label="📝 Màu Chữ Trên Thẻ"
                     value={cfg.cardTextColor || '#ffffff'}
                     onChange={(c) => { onChange({ cardTextColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, c, cfg.bgOverlayColor); }}
                 />
 
                 {/* ── Background Overlay Tint ── */}
                 <ColorPickerCard
-                    label="🌗 Background Overlay Tint"
+                    label="🌗 Màu Phủ Nền"
                     value={cfg.bgOverlayColor || '#000000'}
                     onChange={(c) => { onChange({ bgOverlayColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, c); }}
                 />
 
                 {/* ── Card Layout (sizing) ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Card Styling</label>
-                    <SliderRow label="Card Padding" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
-                    <SliderRow label="Border Radius" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
-                    <SliderRow label="Font Size" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>📐 Kiểu Dáng Thẻ</label>
+                    <SliderRow label="Khoảng cách trong" value={cfg.cardPadding} min={8} max={40} step={2} onChange={v => onChange({ cardPadding: v })} unit="px" />
+                    <SliderRow label="Bo góc" value={cfg.cardBorderRadius} min={0} max={32} step={2} onChange={v => onChange({ cardBorderRadius: v })} unit="px" />
+                    <SliderRow label="Cỡ chữ" value={cfg.cardFontSize} min={50} max={150} step={5} onChange={v => onChange({ cardFontSize: v })} unit="%" />
                     <div style={{ marginTop: 8 }}>
                         <div style={{ display: 'flex', gap: 6 }}>
                             {(['left', 'center', 'right'] as const).map(align => (
@@ -711,7 +711,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Element Order (drag & drop) ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Card Element Order <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>drag to reorder</span></label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔀 Thứ Tự Hiển Thị <span style={{ fontSize: 11, opacity: 0.5, fontWeight: 400 }}>kéo thả để sắp xếp</span></label>
                     <DragReorderList
                         items={elementOrder}
                         onReorder={(newOrder) => onChange({ cardElementOrder: newOrder as ('emoji' | 'name' | 'number')[] })}
@@ -721,7 +721,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                                     {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
                                 </span>
                                 <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white', pointerEvents: 'none' }}>
-                                    {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
+                                    {el === 'number' ? 'Số Giải' : el === 'name' ? 'Tên Giải' : 'Biểu Tượng'}
                                 </span>
                                 <span style={{ fontSize: 16, opacity: 0.3, pointerEvents: 'none' }}>⠿</span>
                             </>
@@ -731,42 +731,42 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* ── Card Effects ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>✨ Card Effects</label>
-                    <SliderRow label="Card Opacity" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
-                    <SliderRow label="Card Blur" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>✨ Hiệu Ứng Thẻ</label>
+                    <SliderRow label="Độ mờ nền thẻ" value={cfg.cardOpacity} min={20} max={100} step={5} onChange={v => onChange({ cardOpacity: v })} unit="%" />
+                    <SliderRow label="Độ mờ kính" value={cfg.cardBlur} min={0} max={20} step={1} onChange={v => onChange({ cardBlur: v })} unit="px" />
                 </div>
 
                 {/* ── Slot Machine ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎰 Slot Machine</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎰 Máy Quay Số</label>
 
-                    <SlotColorRow label="Background Color" value={cfg.slotBgColor || '#3b82f6'}
+                    <SlotColorRow label="Màu nền" value={cfg.slotBgColor || '#3b82f6'}
                         onChange={c => { onChange({ slotBgColor: c }); applySlotTheme({ ...cfg, slotBgColor: c }); }} />
 
-                    <SliderRow label="Background Opacity" value={cfg.slotBgOpacity ?? 55} min={10} max={100} step={5} onChange={v => { onChange({ slotBgOpacity: v }); applySlotTheme({ ...cfg, slotBgOpacity: v }); }} unit="%" />
+                    <SliderRow label="Độ mờ nền" value={cfg.slotBgOpacity ?? 55} min={10} max={100} step={5} onChange={v => { onChange({ slotBgOpacity: v }); applySlotTheme({ ...cfg, slotBgOpacity: v }); }} unit="%" />
 
-                    <SlotColorRow label="Digit Color" value={cfg.slotDigitColor || '#ffffff'}
+                    <SlotColorRow label="Màu số" value={cfg.slotDigitColor || '#ffffff'}
                         onChange={c => { onChange({ slotDigitColor: c }); applySlotTheme({ ...cfg, slotDigitColor: c }); }} />
 
-                    <SlotColorRow label="Border Color" value={cfg.slotBorderColor || '#3b82f6'}
+                    <SlotColorRow label="Màu viền" value={cfg.slotBorderColor || '#3b82f6'}
                         onChange={c => { onChange({ slotBorderColor: c }); applySlotTheme({ ...cfg, slotBorderColor: c }); }} />
 
-                    <SliderRow label="Glow Intensity" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
+                    <SliderRow label="Độ phát sáng" value={cfg.slotGlowOpacity ?? 30} min={0} max={100} step={5} onChange={v => { onChange({ slotGlowOpacity: v }); applySlotTheme({ ...cfg, slotGlowOpacity: v }); }} unit="%" />
                 </div>
 
                 {/* ── Drawn Numbers ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
-                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Drawn Numbers</label>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔢 Số Đã Bốc</label>
 
-                    <SlotColorRow label="Background Color" value={cfg.drawnNumBgColor || '#1e2650'}
+                    <SlotColorRow label="Màu nền" value={cfg.drawnNumBgColor || '#1e2650'}
                         onChange={c => { onChange({ drawnNumBgColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBgColor: c }); }} />
 
-                    <SliderRow label="Background Opacity" value={cfg.drawnNumBgOpacity ?? 80} min={10} max={100} step={5} onChange={v => { onChange({ drawnNumBgOpacity: v }); applyDrawnNumTheme({ ...cfg, drawnNumBgOpacity: v }); }} unit="%" />
+                    <SliderRow label="Độ mờ nền" value={cfg.drawnNumBgOpacity ?? 80} min={10} max={100} step={5} onChange={v => { onChange({ drawnNumBgOpacity: v }); applyDrawnNumTheme({ ...cfg, drawnNumBgOpacity: v }); }} unit="%" />
 
-                    <SlotColorRow label="Text Color" value={cfg.drawnNumTextColor || '#ffffff'}
+                    <SlotColorRow label="Màu chữ" value={cfg.drawnNumTextColor || '#ffffff'}
                         onChange={c => { onChange({ drawnNumTextColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumTextColor: c }); }} />
 
-                    <SlotColorRow label="Border Color" value={cfg.drawnNumBorderColor || '#3b82f6'}
+                    <SlotColorRow label="Màu viền" value={cfg.drawnNumBorderColor || '#3b82f6'}
                         onChange={c => { onChange({ drawnNumBorderColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBorderColor: c }); }} />
                 </div>
             </div>
@@ -781,7 +781,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>📝 Title</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>📝 Tiêu Đề</label>
                     <div style={{
                         padding: 10, borderRadius: 8,
                         background: (() => {
@@ -796,7 +796,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
                             textShadow: '0 0 12px rgba(150,200,255,0.4)',
                         }}>
-                            {cfg.drawTitle || 'LUCKY DRAW'}
+                            {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                         </h3>
                     </div>
                 </div>
@@ -822,7 +822,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         })(),
                     }} />
                     <div style={{ position: 'relative', zIndex: 1 }}>
-                        <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Prize Card</label>
+                        <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🏆 Thẻ Giải</label>
                         <div style={{
                             padding: cfg.cardPadding * 0.6, borderRadius: cfg.cardBorderRadius,
                             background: `rgba(20,30,60,${cfg.cardOpacity / 100})`, backdropFilter: `blur(${cfg.cardBlur}px)`,
@@ -838,7 +838,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             );
                             if (el === 'name') return (
                                 <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 14 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 2 }}>
-                                    {previewCard?.name ?? 'Grand Prize'}
+                                    {previewCard?.name ?? 'Giải Đặc Biệt'}
                                 </div>
                             );
                             if (el === 'number') return (
@@ -860,7 +860,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🎰 Slot Machine</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🎰 Máy Quay Số</label>
                     <div style={{
                         padding: 12, borderRadius: 12, textAlign: 'center',
                         background: (() => {
@@ -903,7 +903,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
-                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔢 Drawn Numbers</label>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔢 Số Đã Bốc</label>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
                         {['042', '187', '003'].map((num, i) => {
                             const bgHex = cfg.drawnNumBgColor || '#1e2650';
@@ -978,7 +978,7 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
                         <motion.div key={i} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
                             className="onb-winners-row" style={{ borderColor: color.border }}>
                             <div className="onb-timing-name" style={{ color: color.border }}>
-                                {card.name}<span className="onb-card-total"> (Total: {card.totalPrizes})</span>
+                                {card.name}<span className="onb-card-total"> (Tổng: {card.totalPrizes})</span>
                             </div>
                             <div className="onb-number-row">
                                 <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val - 1, 1, max) })}>−</button>
@@ -986,7 +986,7 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
                                     onChange={e => updateCard(i, { drawsPerSession: clamp(Number(e.target.value), 1, max) })}
                                     className="onb-input onb-input-num" />
                                 <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val + 1, 1, max) })}>+</button>
-                                <span className="onb-per-session">winners/press</span>
+                                <span className="onb-per-session">giải/lần bấm</span>
                             </div>
                         </motion.div>
                     );
@@ -1002,7 +1002,7 @@ function LayoutGridPreview({ cfg }: { cfg: DrawConfig }) {
     const cards = cfg.prizeCards;
     if (cards.length === 0) return (
         <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: 24, fontSize: 13 }}>
-            No prize cards configured yet
+            Chưa có thẻ giải nào
         </div>
     );
     const gridCols = cfg.cardLayout === 'small' ? 4 : cfg.cardLayout === 'large' ? 2 : (cards.length <= 2 ? 2 : cards.length === 3 ? 3 : cards.length === 4 ? 2 : 3);
@@ -1055,7 +1055,7 @@ function LayoutGridPreview({ cfg }: { cfg: DrawConfig }) {
                             <div style={{ width: '50%', height: '100%', borderRadius: 2, background: cardAccent }} />
                         </div>
                         {span === 2 && (
-                            <div style={{ position: 'absolute', bottom: 4, right: 6, fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>WIDE</div>
+                            <div style={{ position: 'absolute', bottom: 4, right: 6, fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>RỘNG</div>
                         )}
                     </div>
                 );
@@ -1105,7 +1105,7 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
     return (
         <div className="onb-step-content">
             <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 12, textAlign: 'center' }}>
-                Drag cards to reorder · Click resize to make cards wider
+                Kéo thả để sắp xếp · Nhấn nút mở rộng để thay đổi kích thước
             </div>
 
             {/* Grid preview */}
@@ -1167,7 +1167,7 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
                                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     color: 'white', transition: 'all 0.15s',
                                 }}
-                                title={span === 1 ? 'Make wider' : 'Make normal'}
+                                title={span === 1 ? 'Mở rộng' : 'Thu nhỏ'}
                             >
                                 {span === 1 ? <Maximize2 size={12} /> : <Minimize2 size={12} />}
                             </button>
@@ -1207,7 +1207,7 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
                                 <div style={{
                                     position: 'absolute', bottom: 4, right: 6,
                                     fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600,
-                                }}>WIDE</div>
+                                }}>RỘNG</div>
                             )}
                         </div>
                     );
@@ -1219,8 +1219,8 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
                 display: 'flex', gap: 16, justifyContent: 'center',
                 fontSize: 11, color: 'rgba(255,255,255,0.4)',
             }}>
-                <span>🖱️ Drag to reorder</span>
-                <span>↔️ Click ⤢ to resize</span>
+                <span>🖱️ Kéo để sắp xếp</span>
+                <span>↔️ Nhấn ⤢ để thay đổi kích thước</span>
             </div>
         </div>
     );
@@ -1316,7 +1316,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 <div className="onb-header">
                     <div className="onb-logo">
                         <Sparkles size={22} className="onb-logo-icon" />
-                        <span>Lucky Draw Setup</span>
+                        <span>Thiết Lập Bốc Thăm</span>
                     </div>
                 </div>
 
@@ -1355,7 +1355,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
                 <div className="onb-footer">
                     <button type="button" onClick={back} className={`onb-btn-back ${step === 0 ? "invisible" : ""}`}>
-                        <ChevronLeft size={18} /> Back
+                        <ChevronLeft size={18} /> Quay Lại
                     </button>
 
                     {/* Preview Layout button – visible on all steps except the Layout step itself */}
@@ -1376,15 +1376,15 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
                             title="Preview home screen layout"
                         >
-                            <Eye size={15} /> Preview
+                            <Eye size={15} /> Xem trước
                         </button>
                     )}
 
                     <button type="button" onClick={next} className="onb-btn-next">
                         {step < totalSteps - 1 ? (
-                            <><span>Next</span> <ChevronRight size={18} /></>
+                            <><span>Tiếp Theo</span> <ChevronRight size={18} /></>
                         ) : (
-                            <><Zap size={16} /> <span>Start Lucky Draw!</span></>
+                            <><Zap size={16} /> <span>Bắt Đầu Bốc Thăm!</span></>
                         )}
                     </button>
                 </div>
@@ -1399,14 +1399,14 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     }}>
                         <DialogHeader>
                             <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <LayoutGrid size={18} /> Home Screen Preview
+                                <LayoutGrid size={18} /> Xem Trước Màn Hình Chính
                             </DialogTitle>
                         </DialogHeader>
                         <div style={{ padding: '8px 0' }}>
                             <LayoutGridPreview cfg={cfg} />
                         </div>
                         <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: 4 }}>
-                            You can customize the layout in the final step
+                            Bạn có thể tùy chỉnh bố cục ở bước cuối cùng
                         </div>
                     </DialogContent>
                 </Dialog>
