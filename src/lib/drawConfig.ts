@@ -236,6 +236,10 @@ export const DEFAULT_CONFIG: DrawConfig = {
     slotDigitColor: '#ffffff',
     slotBorderColor: '#3b82f6',
     slotGlowOpacity: 30,
+    drawnNumBgColor: '#1e2650',
+    drawnNumTextColor: '#ffffff',
+    drawnNumBorderColor: '#3b82f6',
+    drawnNumBgOpacity: 80,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
