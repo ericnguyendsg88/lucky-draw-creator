@@ -13,6 +13,7 @@ import {
     BG_IMAGE_MAX_BYTES,
     FONT_OPTIONS,
     EMOJI_SETS,
+    COMMON_EMOJIS,
     loadCustomFont,
     saveCustomFont,
     clearCustomFont,
