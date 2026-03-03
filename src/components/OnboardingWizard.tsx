@@ -379,7 +379,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                 </div>
                                 {/* Per-card accent color */}
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', whiteSpace: 'nowrap' }}>Card Color</label>
+                                    <label style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', whiteSpace: 'nowrap' }}>Màu thẻ</label>
                                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
                                         <button type="button" onClick={() => updateCard(i, { accentColor: undefined })}
                                             style={{
