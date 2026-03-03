@@ -763,7 +763,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                     <SliderRow label="Độ mờ nền" value={cfg.drawnNumBgOpacity ?? 80} min={10} max={100} step={5} onChange={v => { onChange({ drawnNumBgOpacity: v }); applyDrawnNumTheme({ ...cfg, drawnNumBgOpacity: v }); }} unit="%" />
 
-                    <SlotColorRow label="Text Color" value={cfg.drawnNumTextColor || '#ffffff'}
+                    <SlotColorRow label="Màu chữ" value={cfg.drawnNumTextColor || '#ffffff'}
                         onChange={c => { onChange({ drawnNumTextColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumTextColor: c }); }} />
 
                     <SlotColorRow label="Border Color" value={cfg.drawnNumBorderColor || '#3b82f6'}
