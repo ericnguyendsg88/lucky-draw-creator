@@ -206,7 +206,6 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <p className="onb-step-desc">Upload your background image or keep the default. You can fine-tune position and size later via the ⚙️ button.</p>
             <div
                 className={`onb-upload-zone ${dragOver ? 'onb-upload-zone--drag' : ''} ${bgImageUrl ? 'onb-upload-zone--has-image' : ''}`}
                 onClick={() => fileInputRef.current?.click()}
