@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useEffect, useState, useRef } from 'react';
-import { Settings, Wand2 } from 'lucide-react';
+import { Settings, Wand2, RotateCcw, X } from 'lucide-react';
 import { OnboardingWizard } from "@/components/OnboardingWizard";
 import {
   DrawConfig,
@@ -18,7 +18,10 @@ import {
   loadBgImage,
   saveBgImage,
   clearBgImage,
+  clearCustomFont,
   BG_IMAGE_MAX_BYTES,
+  BG_IMAGE_KEY,
+  CUSTOM_FONT_KEY,
   applyAccentTheme,
 } from "@/lib/drawConfig";
 
@@ -217,6 +220,76 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
   );
 }
 
+// ─── Settings Menu (Adjust / Reset) ──────────────────────────────────────────
+function SettingsMenu({ onAdjust, onReset }: { onAdjust: () => void; onReset: () => void }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(!open)}
+        title="Settings"
+        style={{
+          position: 'fixed', top: 16, right: 80, zIndex: 9999,
+          background: 'rgba(0,0,0,0.7)', borderRadius: '50%',
+          width: 48, height: 48, border: '2px solid rgba(255,255,255,0.3)',
+          color: 'white', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
+          transition: 'all 0.2s',
+        }}
+      >
+        <Wand2 size={22} />
+      </button>
+
+      {open && (
+        <>
+          {/* Backdrop */}
+          <div onClick={() => setOpen(false)} style={{
+            position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.3)',
+          }} />
+          {/* Dropdown */}
+          <div style={{
+            position: 'fixed', top: 72, right: 80, zIndex: 9999,
+            background: 'rgba(15,23,42,0.95)', borderRadius: 12, padding: 8,
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(16px)', minWidth: 200,
+          }}>
+            <button
+              onClick={() => { setOpen(false); onAdjust(); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+                padding: '10px 14px', borderRadius: 8, background: 'none',
+                border: 'none', color: 'white', cursor: 'pointer', fontSize: 14,
+                fontWeight: 600, transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+            >
+              <Wand2 size={18} /> Adjust Settings
+            </button>
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '4px 8px' }} />
+            <button
+              onClick={() => { setOpen(false); onReset(); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+                padding: '10px 14px', borderRadius: 8, background: 'none',
+                border: 'none', color: '#f87171', cursor: 'pointer', fontSize: 14,
+                fontWeight: 600, transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.1)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+            >
+              <RotateCcw size={18} /> Reset Entire Wizard
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
 // ─── App ─────────────────────────────────────────────────────────────────────
 const queryClient = new QueryClient();
 
@@ -248,24 +321,25 @@ const App = () => {
         ) : (
           <>
             <BackgroundAdjuster cfg={drawConfig} onSave={setDrawConfig} />
-            <button
-              onClick={() => {
-                if (window.confirm("Return to the Setup Wizard? (Background and draw settings can be changed)")) {
+            <SettingsMenu
+              onAdjust={() => setShowOnboarding(true)}
+              onReset={() => {
+                if (window.confirm("⚠️ Reset ALL wizard settings to defaults? This will clear your configuration, custom background, and custom font. Draw history will NOT be affected.")) {
+                  // Clear all config from storage
+                  localStorage.removeItem('luckyDrawConfig_v2');
+                  localStorage.removeItem(BG_IMAGE_KEY);
+                  localStorage.removeItem(CUSTOM_FONT_KEY);
+                  clearBgImage();
+                  clearCustomFont();
+                  // Reset state
+                  const fresh = { ...DEFAULT_CONFIG };
+                  setDrawConfig(fresh);
+                  applyAccentTheme(fresh.accentColor);
+                  // Reopen wizard
                   setShowOnboarding(true);
                 }
               }}
-              title="Setup Wizard"
-              style={{
-                position: 'fixed', top: 16, right: 80, zIndex: 9999,
-                background: 'rgba(0,0,0,0.7)', borderRadius: '50%',
-                width: 48, height: 48, border: '2px solid rgba(255,255,255,0.3)',
-                color: 'white', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
-              }}
-            >
-              <Wand2 size={24} />
-            </button>
+            />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index drawConfig={drawConfig} />} />
