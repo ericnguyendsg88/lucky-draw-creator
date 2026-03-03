@@ -838,6 +838,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             <div style={{ width: '50%', height: '100%', borderRadius: 3, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
                         </div>
                     </div>
+                    </div>
                 </div>
 
                 {/* Slot Machine Preview */}
