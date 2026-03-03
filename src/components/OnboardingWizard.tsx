@@ -619,7 +619,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             <button type="button" onClick={() => fontFileRef.current?.click()}
                                 className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }} title="Tải font tùy chỉnh">
                                 <Upload size={16} />
-                                <span>Upload Custom Font (.ttf, .otf, .woff)</span>
+                                <span>Tải Font Tùy Chỉnh (.ttf, .otf, .woff)</span>
                             </button>
                         )}
                         {customFontError && <div className="onb-upload-error" style={{ marginTop: 6 }}>⚠️ {customFontError}</div>}
