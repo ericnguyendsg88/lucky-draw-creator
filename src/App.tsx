@@ -24,6 +24,7 @@ import {
   CUSTOM_FONT_KEY,
   applyAccentTheme,
   applySlotTheme,
+  applyDrawnNumTheme,
 } from "@/lib/drawConfig";
 
 // ─── Background adjuster (quick tweaks after onboarding) ─────────────────────
