@@ -342,6 +342,71 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
     );
 }
 
+// ─── Drag & Drop Reorder List ────────────────────────────────────────────────
+function DragReorderList<T extends string>({ items, onReorder, renderItem }: {
+    items: T[];
+    onReorder: (newItems: T[]) => void;
+    renderItem: (item: T, index: number) => React.ReactNode;
+}) {
+    const [dragIdx, setDragIdx] = useState<number | null>(null);
+    const [overIdx, setOverIdx] = useState<number | null>(null);
+
+    const handleDragStart = (idx: number) => (e: React.DragEvent) => {
+        setDragIdx(idx);
+        e.dataTransfer.effectAllowed = 'move';
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.style.opacity = '0.5';
+        }
+    };
+
+    const handleDragEnd = (e: React.DragEvent) => {
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.style.opacity = '1';
+        }
+        if (dragIdx !== null && overIdx !== null && dragIdx !== overIdx) {
+            const arr = [...items];
+            const [moved] = arr.splice(dragIdx, 1);
+            arr.splice(overIdx, 0, moved);
+            onReorder(arr);
+        }
+        setDragIdx(null);
+        setOverIdx(null);
+    };
+
+    const handleDragOver = (idx: number) => (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setOverIdx(idx);
+    };
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {items.map((item, idx) => (
+                <div
+                    key={item}
+                    draggable
+                    onDragStart={handleDragStart(idx)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver(idx)}
+                    onDragEnter={(e) => { e.preventDefault(); setOverIdx(idx); }}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        background: overIdx === idx && dragIdx !== null && dragIdx !== idx
+                            ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.06)',
+                        borderRadius: 8, padding: '10px 12px',
+                        border: overIdx === idx && dragIdx !== null && dragIdx !== idx
+                            ? '1px solid rgba(96,165,250,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                        cursor: 'grab', transition: 'background 0.15s, border-color 0.15s',
+                        userSelect: 'none',
+                    }}
+                >
+                    {renderItem(item, idx)}
+                </div>
+            ))}
+        </div>
+    );
+}
+
 // ─── Step 3 – Style ──────────────────────────────────────────────────────────
 function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
     const ACCENT_PRESETS = ['#3b82f6', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316', '#6366f1', '#14b8a6'];
