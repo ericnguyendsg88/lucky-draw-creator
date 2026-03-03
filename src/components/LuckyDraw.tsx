@@ -640,7 +640,6 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
                   cardElementOrder={drawConfig.cardElementOrder ?? ['emoji', 'name', 'number']}
                 />
-                />
               </motion.div>
             ))}
           </motion.div>
