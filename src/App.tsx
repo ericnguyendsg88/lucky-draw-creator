@@ -303,8 +303,8 @@ const App = () => {
 
   // Apply accent theme on mount and config changes
   useEffect(() => {
-    applyAccentTheme(drawConfig.accentColor);
-  }, [drawConfig.accentColor]);
+    applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
+  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
