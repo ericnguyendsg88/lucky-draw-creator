@@ -38,6 +38,8 @@ export interface DrawConfig {
     // element visibility / order
     showPrizeNumber: boolean;  // global toggle for prize count number
     cardElementOrder: ('emoji' | 'name' | 'number')[]; // order of elements in card
+    // card grid layout
+    cardLayout: 'auto' | 'small' | 'large'; // grid layout style for prize cards
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
