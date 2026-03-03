@@ -705,7 +705,7 @@ interface OnboardingWizardProps {
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [step, setStep] = useState(0);
-    const [cfg, setCfg] = useState<DrawConfig>(() => loadConfig() ?? DEFAULT_CONFIG);
+    const [cfg, setCfg] = useState<DrawConfig>(() => ({ ...DEFAULT_CONFIG, ...(loadConfig() ?? {}) }));
     const [direction, setDirection] = useState(1);
 
     // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
