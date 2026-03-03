@@ -554,7 +554,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
                   size="lg">
                   <Play className="w-7 h-7 mr-3" />
-                  Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+                  Continue ({currentDrawIndex}/{pendingNumbers.length})
                 </Button>
               ) : (
                 <Button
