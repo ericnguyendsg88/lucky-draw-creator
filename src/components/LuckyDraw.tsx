@@ -473,11 +473,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   };
 
   const getButtonText = () => {
-    if (isPaused) return "Paused – Press Continue";
-    if (isDrawing) return "Drawing...";
-    if (selectedCardId === null) return "Select a prize";
-    if (isComplete) return "All drawn!";
-    return `Draw ${currentCard?.name ?? ""}`;
+    if (isPaused) return "Đã tạm dừng – Nhấn Tiếp Tục";
+    if (isDrawing) return "Đang quay...";
+    if (selectedCardId === null) return "Chọn giải thưởng";
+    if (isComplete) return "Đã quay hết!";
+    return `Bốc Thăm ${currentCard?.name ?? ""}`;
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
