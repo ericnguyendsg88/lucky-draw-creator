@@ -225,8 +225,14 @@ const App = () => {
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingDone());
   const [drawConfig, setDrawConfig] = useState<DrawConfig>(() => loadConfig() ?? DEFAULT_CONFIG);
 
+  // Apply accent theme on mount and config changes
+  useEffect(() => {
+    applyAccentTheme(drawConfig.accentColor);
+  }, [drawConfig.accentColor]);
+
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
+    applyAccentTheme(cfg.accentColor);
     markOnboardingDone();
     setShowOnboarding(false);
   };
