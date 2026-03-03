@@ -759,8 +759,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Confirm</AlertDialogAction>
+                      <AlertDialogCancel>Hủy</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Xác Nhận</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
