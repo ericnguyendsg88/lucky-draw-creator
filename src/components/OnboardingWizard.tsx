@@ -348,7 +348,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     {card.emoji || '🏆'}
                                 </button>
                                 <div className="onb-prize-card-fields">
-                                    <label className="onb-label">Prize Name</label>
+                                    <label className="onb-label">Tên giải</label>
                                     <input type="text" value={card.name} maxLength={30} onChange={e => updateCard(i, { name: e.target.value })}
                                         className="onb-input onb-input-name" placeholder="e.g. Grand Prize" />
                                 </div>
