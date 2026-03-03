@@ -64,7 +64,7 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     }
     if (file.size > BG_IMAGE_MAX_BYTES) {
       const mb = (file.size / 1024 / 1024).toFixed(1);
-      setUploadError(`File is ${mb} MB. Max 6 MB for backgrounds.`);
+      setUploadError(`File ${mb} MB. Tối đa 6 MB.`);
       return;
     }
     const reader = new FileReader();
