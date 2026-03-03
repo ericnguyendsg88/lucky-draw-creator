@@ -457,7 +457,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                 {/* Custom emoji input */}
                 <div style={{ marginBottom: 12 }}>
-                    <label className="onb-sublabel">Type or paste emojis from your keyboard:</label>
+                    
                     <div style={{ display: 'flex', gap: 8 }}>
                         <input
                             type="text"
