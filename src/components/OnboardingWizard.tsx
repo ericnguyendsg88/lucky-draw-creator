@@ -407,24 +407,17 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
         }
     };
 
-    const addCustomEmoji = () => {
-        const trimmed = emojiInput.trim();
-        if (!trimmed) return;
-        // Split into individual characters/emoji - simple approach
-        const chars = Array.from(trimmed).filter(s => s.trim().length > 0);
-        if (chars.length > 0) {
-            const updated = [...cfg.customEmojis, ...chars].slice(0, 20); // max 20
-            onChange({ customEmojis: updated });
-        }
-        setEmojiInput('');
-    };
-
-    const removeCustomEmoji = (idx: number) => {
-        onChange({ customEmojis: cfg.customEmojis.filter((_, i) => i !== idx) });
-    };
-
     const activeFont = cfg.fontFamily;
-    const previewEmojis = cfg.customEmojis.length > 0 ? cfg.customEmojis : (EMOJI_SETS[cfg.emojiSet]?.emojis ?? EMOJI_SETS.classic.emojis);
+    const elementOrder = cfg.cardElementOrder ?? ['emoji', 'name', 'number'];
+
+    const moveElement = (from: number, to: number) => {
+        const arr = [...elementOrder];
+        const [el] = arr.splice(from, 1);
+        arr.splice(to, 0, el);
+        onChange({ cardElementOrder: arr });
+    };
+
+    const previewCard = cfg.prizeCards[0];
 
     return (
         <div className="onb-step-content">
