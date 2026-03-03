@@ -42,14 +42,14 @@
     --silver: 210 20% 80%;
     --bronze: 25 80% 55%;
     --fourth: 210 100% 60%;
-    
+
     --gradient-primary: radial-gradient(ellipse at 50% 50%, hsl(220 70% 20%) 0%, hsl(220 80% 12%) 50%, hsl(220 90% 8%) 100%);
     --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
     --gradient-gold: linear-gradient(135deg, hsl(45 100% 60%) 0%, hsl(35 100% 55%) 50%, hsl(45 100% 65%) 100%);
     --gradient-silver: linear-gradient(135deg, hsl(210 20% 85%) 0%, hsl(210 20% 70%) 50%, hsl(210 20% 85%) 100%);
     --gradient-bronze: linear-gradient(135deg, hsl(25 80% 55%) 0%, hsl(30 70% 50%) 50%, hsl(25 80% 60%) 100%);
     --gradient-fourth: linear-gradient(135deg, hsl(210 100% 65%) 0%, hsl(210 100% 55%) 50%, hsl(210 100% 70%) 100%);
-    
+
     --shadow-glow: 0 0 30px hsl(217 91% 60% / 0.3);
     --shadow-gold: 0 0 40px hsl(45 93% 58% / 0.4);
   }
@@ -90,7 +90,7 @@
     overflow-x: hidden;
     position: relative;
   }
-  
+
   /* Overlay for better text readability - optimized */
   body::after {
     content: '';
@@ -101,7 +101,7 @@
     z-index: 0;
     will-change: auto;
   }
-  
+
   #root {
     position: relative;
     z-index: 2;
@@ -112,18 +112,18 @@
   .font-display {
     font-family: 'Orbitron', sans-serif;
   }
-  
+
   .prize-card {
     @apply rounded-2xl p-5 text-center transition-all duration-300;
     background: rgba(20, 30, 60, 0.7);
     border: 2px solid rgba(100, 150, 255, 0.3);
-    box-shadow: 
+    box-shadow:
       0 8px 24px rgba(0, 0, 0, 0.5),
       0 0 20px rgba(100, 150, 255, 0.2);
     position: relative;
     overflow: hidden;
   }
-  
+
   .prize-card::before {
     content: '';
     position: absolute;
@@ -131,30 +131,28 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(
-      45deg,
-      transparent,
-      rgba(255, 255, 255, 0.15),
-      transparent
-    );
+    background: linear-gradient(45deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        transparent);
     transform: rotate(45deg);
     transition: all 0.6s;
   }
-  
+
   .prize-card:hover::before {
     left: 100%;
   }
-  
+
   .prize-card-gold {
     border-color: hsl(var(--gold) / 0.5);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.6),
       0 0 35px hsl(var(--gold) / 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-  
+
   .prize-card-gold:hover {
-    box-shadow: 
+    box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.7),
       0 0 60px hsl(var(--gold) / 0.6),
       0 0 40px hsl(var(--gold-light) / 0.5),
@@ -162,17 +160,17 @@
     transform: translateY(-6px) scale(1.02);
     border-color: hsl(var(--gold) / 0.8);
   }
-  
+
   .prize-card-silver {
     border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.6),
       0 0 35px rgba(200, 200, 255, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-  
+
   .prize-card-silver:hover {
-    box-shadow: 
+    box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.7),
       0 0 60px rgba(200, 200, 255, 0.5),
       0 0 40px rgba(230, 230, 255, 0.4),
@@ -180,17 +178,17 @@
     transform: translateY(-6px) scale(1.02);
     border-color: rgba(255, 255, 255, 0.6);
   }
-  
+
   .prize-card-bronze {
     border-color: hsl(var(--bronze) / 0.5);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.6),
       0 0 35px hsl(var(--bronze) / 0.25),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-  
+
   .prize-card-bronze:hover {
-    box-shadow: 
+    box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.7),
       0 0 60px hsl(var(--bronze) / 0.5),
       0 0 40px hsl(25 80% 65% / 0.4),
@@ -198,17 +196,17 @@
     transform: translateY(-6px) scale(1.02);
     border-color: hsl(var(--bronze) / 0.7);
   }
-  
+
   .prize-card-fourth {
     border-color: hsl(210 100% 60% / 0.5);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.6),
       0 0 35px hsl(210 100% 60% / 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-  
+
   .prize-card-fourth:hover {
-    box-shadow: 
+    box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.7),
       0 0 60px hsl(210 100% 60% / 0.6),
       0 0 40px hsl(210 100% 70% / 0.5),
@@ -216,18 +214,18 @@
     transform: translateY(-6px) scale(1.02);
     border-color: hsl(210 100% 60% / 0.7);
   }
-  
+
   .prize-card-special {
     border-color: hsl(320 100% 60% / 0.6);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.6),
       0 0 40px hsl(320 100% 60% / 0.4),
       0 0 60px hsl(280 100% 60% / 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
-  
+
   .prize-card-special:hover {
-    box-shadow: 
+    box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.7),
       0 0 80px hsl(320 100% 60% / 0.7),
       0 0 60px hsl(280 100% 60% / 0.6),
@@ -236,13 +234,13 @@
     transform: translateY(-6px) scale(1.02);
     border-color: hsl(320 100% 60% / 0.8);
   }
-  
+
   .number-display {
     font-family: 'Orbitron', sans-serif;
     @apply text-7xl md:text-9xl font-bold tracking-wider;
     text-shadow: 0 0 30px hsl(var(--primary) / 0.5);
   }
-  
+
   /* Slot Machine Styles - Optimized */
   .slot-machine-container {
     @apply relative rounded-2xl p-6 md:p-10;
@@ -250,15 +248,15 @@
     border: 2px solid rgba(100, 150, 255, 0.4);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   }
-  
+
   .slot-digits-wrapper {
     @apply flex gap-2 md:gap-4 justify-center items-center;
   }
-  
+
   .slot-digit-container {
     @apply relative;
   }
-  
+
   .slot-digit-frame {
     @apply relative overflow-hidden rounded-xl;
     width: 70px;
@@ -267,14 +265,14 @@
     border: 2px solid rgba(59, 130, 246, 0.5);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   @media (min-width: 768px) {
     .slot-digit-frame {
       width: 100px;
       height: 150px;
     }
   }
-  
+
   .slot-digit {
     font-family: 'Orbitron', sans-serif;
     @apply absolute inset-0 flex items-center justify-center;
@@ -284,29 +282,41 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .slot-digit-spinning {
     animation: slotSpin 0.06s linear infinite;
   }
-  
+
   @keyframes slotSpin {
-    0% { transform: translateY(-2px); }
-    100% { transform: translateY(2px); }
+    0% {
+      transform: translateY(-2px);
+    }
+
+    100% {
+      transform: translateY(2px);
+    }
   }
-  
+
   .slot-glow-pulse {
     animation: glowPulse 0.3s ease-in-out infinite;
   }
-  
+
   @keyframes glowPulse {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
   }
-  
+
   .draw-button {
     @apply px-8 py-4 text-xl font-bold rounded-2xl transition-all duration-300;
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(59, 130, 246, 0.5),
       0 0 60px rgba(59, 130, 246, 0.3),
       0 4px 20px rgba(37, 99, 235, 0.4);
@@ -315,7 +325,7 @@
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
   }
-  
+
   .draw-button::before {
     content: '';
     position: absolute;
@@ -323,49 +333,780 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(
-      45deg,
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
+    background: linear-gradient(45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent);
     transform: rotate(45deg);
     transition: all 0.5s;
   }
-  
+
   .draw-button:hover:not(:disabled)::before {
     left: 100%;
   }
-  
+
   .draw-button:hover:not(:disabled) {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 
+    box-shadow:
       0 12px 48px rgba(59, 130, 246, 0.7),
       0 0 100px rgba(59, 130, 246, 0.5),
       0 0 60px rgba(96, 165, 250, 0.6);
     background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
   }
-  
+
   .draw-button:active:not(:disabled) {
     transform: translateY(-1px) scale(0.98);
-    box-shadow: 
+    box-shadow:
       0 4px 20px rgba(59, 130, 246, 0.5),
       0 0 40px rgba(59, 130, 246, 0.4);
   }
-  
+
   .draw-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   .history-number {
     @apply px-5 py-3 rounded-xl text-base md:text-lg font-mono font-black;
     background: linear-gradient(135deg, rgba(40, 50, 100, 0.8) 0%, rgba(30, 40, 80, 0.8) 100%);
     border: 2px solid rgba(100, 150, 255, 0.3);
-    box-shadow: 
+    box-shadow:
       0 6px 16px rgba(0, 0, 0, 0.4),
       0 0 25px rgba(100, 150, 255, 0.3);
     transition: all 0.3s ease;
   }
-  
+
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ONBOARDING WIZARD STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.onb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 8, 25, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+/* floating particles */
+.onb-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.onb-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(96, 165, 250, 0.5);
+  bottom: -10px;
+  animation: onbFloat linear infinite;
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.8);
+}
+
+@keyframes onbFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: translateY(-100vh) scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* ── Modal ── */
+.onb-modal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(15, 23, 60, 0.98) 0%, rgba(10, 17, 45, 0.98) 100%);
+  border: 1.5px solid rgba(96, 165, 250, 0.35);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 60px rgba(96, 165, 250, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.onb-header {
+  padding: 20px 28px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.onb-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.05em;
+}
+
+.onb-logo-icon {
+  color: #60a5fa;
+}
+
+/* Step pills */
+.onb-steps {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.onb-step-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.25s;
+}
+
+.onb-step-pill.active {
+  border-color: rgba(96, 165, 250, 0.6);
+  background: rgba(96, 165, 250, 0.12);
+  color: #93c5fd;
+}
+
+.onb-step-pill.done {
+  border-color: rgba(52, 211, 153, 0.5);
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+}
+
+.onb-step-pill-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onb-step-pill-label {
+  white-space: nowrap;
+}
+
+/* Progress bar */
+.onb-progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.onb-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Step header ── */
+.onb-step-header {
+  padding: 18px 28px 6px;
+}
+
+.onb-step-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 2px;
+}
+
+.onb-step-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Scrollable body ── */
+.onb-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 28px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96, 165, 250, 0.3) transparent;
+}
+
+.onb-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.onb-body::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.3);
+  border-radius: 4px;
+}
+
+/* ── Shared step content ── */
+.onb-step-content {
+  padding: 8px 0 16px;
+}
+
+.onb-step-desc {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.onb-hint {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* ── Card ── */
+.onb-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+/* ── Slider row ── */
+.onb-slider-row {
+  margin-bottom: 14px;
+}
+
+.onb-slider-row:last-child {
+  margin-bottom: 0;
+}
+
+.onb-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+.onb-slider-value {
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+.onb-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  cursor: pointer;
+}
+
+.onb-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+  cursor: pointer;
+}
+
+.onb-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+}
+
+/* ── Prize cards list ── */
+.onb-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.onb-prize-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(96, 165, 250, 0.35);
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: box-shadow 0.2s;
+}
+
+.onb-prize-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.onb-prize-card-icon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 42px;
+  color: #60a5fa;
+}
+
+.onb-card-index {
+  opacity: 0.7;
+}
+
+.onb-prize-card-fields {
+  flex: 1;
+}
+
+.onb-prize-card-body {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.onb-remove-btn {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #f87171;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.onb-remove-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* ── Fields & inputs ── */
+.onb-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+
+.onb-sublabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 6px;
+}
+
+.onb-required {
+  color: #f87171;
+}
+
+.onb-input {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  padding: 7px 11px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.onb-input:focus {
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+}
+
+.onb-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.onb-input-name {
+  font-weight: 600;
+}
+
+.onb-input-num {
+  width: 68px;
+  text-align: center;
+  padding: 7px 6px;
+}
+
+.onb-input-max {
+  max-width: 200px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* number stepper row */
+.onb-number-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.onb-num-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  background: rgba(96, 165, 250, 0.1);
+  color: #93c5fd;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.onb-num-btn:hover {
+  background: rgba(96, 165, 250, 0.22);
+  border-color: rgba(96, 165, 250, 0.6);
+}
+
+.onb-field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.onb-max-number {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Add card button ── */
+.onb-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1.5px dashed rgba(96, 165, 250, 0.4);
+  background: rgba(96, 165, 250, 0.05);
+  color: #93c5fd;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+
+.onb-add-btn:hover {
+  background: rgba(96, 165, 250, 0.12);
+  border-color: rgba(96, 165, 250, 0.7);
+}
+
+/* ── Timing rows ── */
+.onb-timing-row,
+.onb-winners-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(96, 165, 250, 0.25);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.onb-timing-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  min-width: 140px;
+}
+
+.onb-card-total {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.onb-timing-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.onb-slider-timing {
+  flex: 1;
+}
+
+.onb-timing-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #93c5fd;
+  min-width: 34px;
+  text-align: right;
+}
+
+.onb-per-session {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+/* ── Footer ── */
+.onb-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 12px;
+}
+
+.onb-btn-back {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.onb-btn-back:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+.onb-btn-back.invisible {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.onb-btn-next {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 26px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45);
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.onb-btn-next:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.6), 0 0 50px rgba(139, 92, 246, 0.35);
+  background: linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #a78bfa 100%);
+}
+
+.onb-btn-next:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ── Upload zone ── */
+.onb-upload-input {
+  display: none;
+}
+
+.onb-upload-zone {
+  position: relative;
+  border: 2px dashed rgba(96, 165, 250, 0.4);
+  border-radius: 14px;
+  background: rgba(96, 165, 250, 0.04);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  overflow: hidden;
+  min-height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.onb-upload-zone:hover,
+.onb-upload-zone:focus-visible {
+  border-color: rgba(96, 165, 250, 0.75);
+  background: rgba(96, 165, 250, 0.09);
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1), 0 0 30px rgba(96, 165, 250, 0.15);
+  outline: none;
+}
+
+.onb-upload-zone--drag {
+  border-color: rgba(167, 139, 250, 0.9);
+  background: rgba(167, 139, 250, 0.12);
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15), 0 0 40px rgba(167, 139, 250, 0.25);
+  transform: scale(1.01);
+}
+
+.onb-upload-zone--has-image {
+  border-style: solid;
+  border-color: rgba(52, 211, 153, 0.55);
+  background: transparent;
+  min-height: 160px;
+}
+
+/* Empty state */
+.onb-upload-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.onb-upload-icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.onb-upload-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.onb-upload-sub {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.onb-upload-link {
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.onb-upload-limits {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.25);
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
+
+/* Preview state */
+.onb-upload-preview {
+  position: relative;
+  width: 100%;
+  height: 160px;
+}
+
+.onb-upload-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.onb-upload-overlay-label {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.onb-upload-zone--has-image:hover .onb-upload-overlay-label {
+  opacity: 1;
+}
+
+.onb-upload-overlay-label span:first-child {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6ee7b7;
+}
+
+.onb-upload-change {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Error */
+.onb-upload-error {
+  font-size: 12.5px;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* Remove image button */
+.onb-remove-image-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 4px;
+}
+
+.onb-remove-image-btn:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
 }

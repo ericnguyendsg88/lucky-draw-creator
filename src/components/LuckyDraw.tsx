@@ -1,48 +1,29 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import { PrizeCard } from "./PrizeCard";
 import { NumberDisplay } from "./NumberDisplay";
-import { PrizeHistory } from "./PrizeHistory";
 import { Button } from "./ui/button";
-import { Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2, Trophy, Award, Settings } from "lucide-react";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  Sparkles, RotateCcw, ArrowLeft, Pause, Play, Volume2, Trophy, Star, Award, Medal
+} from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup,
+  DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { soundManager, SoundPack } from "@/lib/sounds";
+import { DrawConfig, PrizeCardConfig } from "@/lib/drawConfig";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface DrawnNumber {
   number: number;
-  place: 0 | 1 | 2 | 3 | 4;
-  round?: number; // For Giải Khuyến Khích: round 1 or 2
+  cardId: number;   // index into config.prizeCards
+  sessionRound?: number;
 }
 
 interface PrizeState {
@@ -50,130 +31,184 @@ interface PrizeState {
   remaining: number;
 }
 
-const initialPrizes: Record<0 | 1 | 2 | 3 | 4, PrizeState> = {
-  4: { total: 30, remaining: 30 },  // Giải Khuyến Khích: 30 prizes, 2 draws (15 + 15)
-  3: { total: 15, remaining: 15 },  // Giải Ba: 15 prizes, 1 draw
-  2: { total: 3, remaining: 3 },    // Combined Nhất+Nhì: 3 numbers drawn, facilitator decides
-  1: { total: 1, remaining: 1 },    // Giải Nhất: included in combined draw
-  0: { total: 1, remaining: 1 },    // Giải Đặc Biệt: 1 prize
-};
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-// Batch sizes for each prize level
-// Combined Giải Nhất + Nhì: draw 3 numbers at once
-const batchSizes: Record<0 | 1 | 2 | 3 | 4, number[]> = {
-  4: [15, 15],  // 2 draws: 15 then 15
-  3: [15],      // 1 draw: all 15
-  2: [3],       // Combined with prize 1: draw 3 numbers
-  1: [3],       // Combined with prize 2: draw 3 numbers (not used separately)
-  0: [1],       // 1 draw: 1
-};
+const CARD_COLORS = [
+  { border: "rgba(236,72,153,0.6)", glow: "rgba(236,72,153,0.25)", gradient: "from-pink-500/10 via-purple-500/10 to-transparent", iconColor: "text-pink-300" },
+  { border: "rgba(251,191,36,0.6)", glow: "rgba(251,191,36,0.25)", gradient: "from-yellow-500/10 via-yellow-400/5 to-transparent", iconColor: "text-yellow-300" },
+  { border: "rgba(226,232,240,0.5)", glow: "rgba(226,232,240,0.15)", gradient: "from-slate-100/10 via-slate-200/5 to-transparent", iconColor: "text-slate-100" },
+  { border: "rgba(251,146,60,0.6)", glow: "rgba(251,146,60,0.25)", gradient: "from-orange-400/10 via-orange-300/5 to-transparent", iconColor: "text-orange-300" },
+  { border: "rgba(96,165,250,0.6)", glow: "rgba(96,165,250,0.25)", gradient: "from-blue-400/10 via-blue-300/5 to-transparent", iconColor: "text-blue-300" },
+  { border: "rgba(167,139,250,0.6)", glow: "rgba(167,139,250,0.25)", gradient: "from-violet-400/10 via-violet-300/5 to-transparent", iconColor: "text-violet-300" },
+  { border: "rgba(52,211,153,0.6)", glow: "rgba(52,211,153,0.25)", gradient: "from-emerald-400/10 via-emerald-300/5 to-transparent", iconColor: "text-emerald-300" },
+  { border: "rgba(244,114,182,0.6)", glow: "rgba(244,114,182,0.25)", gradient: "from-rose-400/10 via-rose-300/5 to-transparent", iconColor: "text-rose-300" },
+];
 
-const placeLabels: Record<0 | 1 | 2 | 3 | 4, string> = {
-  0: "Đặc Biệt",
-  1: "Nhất",
-  2: "Nhì",
-  3: "Ba",
-  4: "Khuyến Khích",
-};
+const CARD_ICONS = [Trophy, Trophy, Award, Medal, Star, Star, Trophy, Award];
+const CARD_EMOJIS = ["💎", "👑", "🥈", "🥉", "⭐", "🌟", "🎖️", "🎗️"];
 
-export const LuckyDraw = () => {
-  const [prizes, setPrizes] = useState(initialPrizes);
+const CARD_CSS_CLASSES = [
+  "prize-card-special",
+  "prize-card-gold",
+  "prize-card-silver",
+  "prize-card-bronze",
+  "prize-card-fourth",
+  "prize-card-fourth",
+  "prize-card-fourth",
+  "prize-card-fourth",
+];
+
+function buildInitialPrizes(cards: PrizeCardConfig[]): Record<number, PrizeState> {
+  const p: Record<number, PrizeState> = {};
+  cards.forEach(c => { p[c.id] = { total: c.totalPrizes, remaining: c.totalPrizes }; });
+  return p;
+}
+
+// ─── Dynamic Prize Card (replaces the old hard-coded PrizeCard) ───────────────
+interface DynPrizeCardProps {
+  card: PrizeCardConfig;
+  prizeState: PrizeState;
+  isActive: boolean;
+  isSelected: boolean;
+  isFocused: boolean;
+  onClick: () => void;
+}
+
+function DynPrizeCard({ card, prizeState, isActive, isSelected, isFocused, onClick }: DynPrizeCardProps) {
+  const color = CARD_COLORS[card.id % CARD_COLORS.length];
+  const cssClass = CARD_CSS_CLASSES[card.id % CARD_CSS_CLASSES.length];
+  const IconComp = CARD_ICONS[card.id % CARD_ICONS.length];
+  const emoji = CARD_EMOJIS[card.id % CARD_EMOJIS.length];
+  const progress = ((prizeState.total - prizeState.remaining) / prizeState.total) * 100;
+
+  return (
+    <motion.div
+      onClick={onClick}
+      className={`prize-card ${cssClass} ${isSelected ? 'ring-4 ring-white/60' : ''} ${isFocused ? 'ring-8 ring-white/80 shadow-2xl' : ''} bg-gradient-to-br ${color.gradient} relative overflow-hidden cursor-pointer`}
+      style={{ borderColor: color.border, boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 20px ${color.glow}` }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{
+        opacity: 1, y: 0,
+        scale: isSelected && !isFocused ? 1.07 : (isActive ? 1.04 : 1),
+      }}
+      transition={{ duration: 0.2, type: "spring", stiffness: 400, damping: 25 }}
+      whileHover={{ scale: isFocused ? 1.02 : (isSelected ? 1.10 : (isActive ? 1.07 : 1.03)), y: isFocused ? 0 : -4 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {/* Glow animation */}
+      {(isActive || isFocused) && (
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          style={{
+            background: isFocused
+              ? `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)`
+              : `radial-gradient(circle at 50% 50%, ${color.glow} 0%, transparent 70%)`,
+          }}
+          animate={{ scale: [1, 1.2, 1], opacity: isFocused ? [0.4, 0.6, 0.4] : [0.2, 0.35, 0.2] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+      )}
+
+      <motion.div
+        className="relative z-10"
+        animate={isActive ? { y: [0, -5, 0] } : {}}
+        transition={{ duration: 0.6, repeat: Infinity }}
+      >
+        <div className="text-3xl md:text-4xl mb-1">{emoji}</div>
+        <IconComp className={`w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 ${color.iconColor}`} />
+      </motion.div>
+
+      <h3 className="font-display font-bold text-sm md:text-base mb-1 relative z-10 leading-tight px-1">{card.name}</h3>
+
+      <div className={`text-2xl md:text-3xl font-display font-black mb-1 relative z-10 ${color.iconColor}`}>
+        {prizeState.remaining}
+        <span className="text-muted-foreground text-sm md:text-base font-semibold ml-1">/ {prizeState.total}</span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="w-full bg-black/30 rounded-full h-2 overflow-hidden backdrop-blur-sm relative z-10">
+        <motion.div
+          className={`h-full rounded-full ${color.iconColor} bg-current`}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          style={{ boxShadow: `0 0 8px currentColor` }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── LuckyDraw ────────────────────────────────────────────────────────────────
+
+interface LuckyDrawProps {
+  drawConfig: DrawConfig;
+}
+
+export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
+  const { prizeCards, maxNumber } = drawConfig;
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [prizes, setPrizes] = useState<Record<number, PrizeState>>(() => buildInitialPrizes(prizeCards));
   const [currentNumber, setCurrentNumber] = useState<number | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [history, setHistory] = useState<DrawnNumber[]>([]);
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
-  const [selectedPlace, setSelectedPlace] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
-  const [drawCounts, setDrawCounts] = useState<Record<0 | 1 | 2 | 3 | 4, number>>({
-    0: 0, 1: 0, 2: 0, 3: 0, 4: 0
+  const [drawCounts, setDrawCounts] = useState<Record<number, number>>(() => {
+    const d: Record<number, number> = {};
+    prizeCards.forEach(c => { d[c.id] = 0; });
+    return d;
   });
   const [pendingNumbers, setPendingNumbers] = useState<number[]>([]);
   const [currentDrawIndex, setCurrentDrawIndex] = useState(0);
   const [soundPack, setSoundPackState] = useState<SoundPack>(soundManager.getSoundPack());
-  
-  // Initialize maxNumber from localStorage or default to null (not set)
-  const [maxNumber, setMaxNumber] = useState<number | null>(() => {
-    const stored = localStorage.getItem('luckyDrawMaxNumber');
-    return stored ? parseInt(stored) : null;
-  });
-  const [tempMaxNumber, setTempMaxNumber] = useState<string>("");
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isRangeSet, setIsRangeSet] = useState<boolean>(() => {
-    return localStorage.getItem('luckyDrawMaxNumber') !== null;
-  });
-  
+
   const drawTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
-  
-  // Force settings dialog open on first load if range not set
+
+  // Re-init when config changes (shouldn't happen during session, but defensive)
   useEffect(() => {
-    if (!isRangeSet) {
-      setIsSettingsOpen(true);
-      setTempMaxNumber("250"); // Default suggestion
-    }
-  }, [isRangeSet]);
-  
-  // Save maxNumber to localStorage whenever it changes
-  useEffect(() => {
-    if (maxNumber !== null) {
-      localStorage.setItem('luckyDrawMaxNumber', maxNumber.toString());
-      setIsRangeSet(true);
-    }
-  }, [maxNumber]);
-  
-  // Warn user before accidental page refresh/close when there's draw history
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (history.length > 0) {
-        e.preventDefault();
-        e.returnValue = '';
-        return '';
-      }
-    };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [history.length]);
+    setPrizes(buildInitialPrizes(prizeCards));
+    const d: Record<number, number> = {};
+    prizeCards.forEach(c => { d[c.id] = 0; });
+    setDrawCounts(d);
+  }, [prizeCards]);
+
+  // ── Sound ──────────────────────────────────────────────────────────────────
   const handleSoundPackChange = (pack: string) => {
     const newPack = pack as SoundPack;
     soundManager.setSoundPack(newPack);
     setSoundPackState(newPack);
     soundManager.playClick();
   };
-  
-  const currentPlace = selectedPlace;
-  const isComplete = currentPlace === null || prizes[currentPlace].remaining === 0;
-  
-  const triggerConfetti = (place: 0 | 1 | 2 | 3 | 4) => {
-    const intensity = {
-      0: { particleCount: 300, spread: 120, startVelocity: 80 },
-      1: { particleCount: 200, spread: 100, startVelocity: 60 },
-      2: { particleCount: 150, spread: 80, startVelocity: 50 },
-      3: { particleCount: 100, spread: 60, startVelocity: 40 },
-      4: { particleCount: 50, spread: 40, startVelocity: 30 },
-    };
-    
-    const colors = {
-      0: ['#ff0080', '#ff00ff', '#8000ff', '#ffd700'],
-      1: ['#ffd700', '#ffb700', '#ffa500'],
-      2: ['#c0c0c0', '#a8a8a8', '#d4d4d4'],
-      3: ['#cd7f32', '#b87333', '#a0522d'],
-      4: ['#3b82f6', '#2563eb', '#60a5fa'],
-    };
-    
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  const currentCard = selectedCardId !== null ? prizeCards.find(c => c.id === selectedCardId) ?? null : null;
+  const currentPrize = selectedCardId !== null ? prizes[selectedCardId] : null;
+  const isComplete = currentCard === null || currentPrize === null || currentPrize.remaining === 0;
+
+  const triggerConfetti = (cardId: number) => {
+    const totalCards = prizeCards.length;
+    const importance = 1 - cardId / (totalCards + 1); // 0=last, 1=first
     confetti({
-      ...intensity[place],
-      colors: colors[place],
+      particleCount: Math.round(50 + importance * 250),
+      spread: 40 + importance * 80,
+      startVelocity: 30 + importance * 50,
+      colors: CARD_COLORS[cardId % CARD_COLORS.length].border
+        ? ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa']
+        : ['#3b82f6', '#60a5fa', '#93c5fd'],
       origin: { y: 0.7 },
     });
   };
-  
+
   const clearAllTimeouts = () => {
-    drawTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    drawTimeoutsRef.current.forEach(t => clearTimeout(t));
     drawTimeoutsRef.current = [];
   };
-  
+
   const pauseDraw = () => {
     if (isDrawing && !isPaused) {
       setIsPaused(true);
@@ -181,262 +216,176 @@ export const LuckyDraw = () => {
       setIsSpinning(false);
     }
   };
-  
+
   const resumeDraw = () => {
-    if (isPaused && pendingNumbers.length > 0 && currentPlace !== null) {
+    if (isPaused && pendingNumbers.length > 0 && selectedCardId !== null) {
       setIsPaused(false);
-      continueDrawing(pendingNumbers, currentDrawIndex, currentPlace);
+      continueDrawing(pendingNumbers, currentDrawIndex, selectedCardId);
     }
   };
-  
-  const continueDrawing = (numbersToAdd: number[], startIndex: number, place: 0 | 1 | 2 | 3 | 4) => {
-    // For Giải Khuyến Khích (4) and Giải Ba (3): draw all 15 numbers simultaneously
-    if (place === 3 || place === 4) {
-      const drawDuration = 2500; // Spin time
-      
-      // Start spinning
+
+  const continueDrawing = (numbersToAdd: number[], startIndex: number, cardId: number) => {
+    const card = prizeCards.find(c => c.id === cardId);
+    if (!card) return;
+
+    const drawsPerSession = card.drawsPerSession;
+    const spinMs = card.drawSeconds * 1000;
+
+    // If drawsPerSession > 1: draw all at once (like the original 15-at-once logic)
+    if (drawsPerSession > 1) {
       setIsSpinning(true);
-      
-      // Land all numbers at once after spin time
       const landTimeout = setTimeout(() => {
         setIsSpinning(false);
         soundManager.playNumberLand();
-        
-        // Add all numbers to history at once
-        const newHistoryItems = numbersToAdd.slice(startIndex).map(num => {
-          const round = place === 4 ? drawCounts[place] + 1 : undefined;
-          return { number: num, place, round };
-        });
-        
-        setHistory(prev => [...newHistoryItems, ...prev]);
-        
-        // Set the last number as current display
-        const lastNumber = numbersToAdd[numbersToAdd.length - 1];
-        setCurrentNumber(lastNumber);
+
+        const newItems = numbersToAdd.slice(startIndex).map(num => ({
+          number: num, cardId, sessionRound: drawCounts[cardId] + 1,
+        }));
+        setHistory(prev => [...newItems, ...prev]);
+
+        const lastNum = numbersToAdd[numbersToAdd.length - 1];
+        setCurrentNumber(lastNum);
         setCurrentDrawIndex(numbersToAdd.length);
-        
-        // Update remaining prizes
+
         const drawnCount = numbersToAdd.length - startIndex;
         setPrizes(prev => ({
           ...prev,
-          [place]: { ...prev[place], remaining: prev[place].remaining - drawnCount },
+          [cardId]: { ...prev[cardId], remaining: prev[cardId].remaining - drawnCount },
         }));
-        
-        triggerConfetti(place);
-        
-        // Play win sound
-        const winIntensity = 'small';
-        soundManager.playWin(winIntensity);
-        
-        // Finish drawing
-        setDrawCounts(prev => ({
-          ...prev,
-          [place]: prev[place] + 1
-        }));
-        
+
+        triggerConfetti(cardId);
+        soundManager.playWin('small');
+
+        setDrawCounts(prev => ({ ...prev, [cardId]: prev[cardId] + 1 }));
         setIsDrawing(false);
         setPendingNumbers([]);
         setCurrentDrawIndex(0);
-        
-        // Reset slot machine to "- - -" after a brief delay for prizes 3 and 4
-        const resetTimeout = setTimeout(() => {
-          setCurrentNumber(null);
-        }, 2000); // Wait 2 seconds before resetting
-        
+
+        const resetTimeout = setTimeout(() => setCurrentNumber(null), 2000);
         drawTimeoutsRef.current.push(resetTimeout);
-      }, drawDuration);
-      
+      }, spinMs);
       drawTimeoutsRef.current.push(landTimeout);
       return;
     }
-    
-    // Original logic for other prizes
-    // Custom spin times: Đặc Biệt 10s, Combined Nhất+Nhì 7s each
-    const drawDurations: Record<0 | 1 | 2 | 3 | 4, number> = {
-      0: 8000,  // Giải Đặc Biệt: 8s spin + 2s pause = 10s
-      1: 3000,  // Combined Nhất+Nhì: 3s spin + 4s pause
-      2: 3000,  // Combined Nhất+Nhì: 3s spin + 4s pause
-      3: 2500,  // Giải Ba: default
-      4: 2500,  // Giải Khuyến Khích: default
-    };
-    const drawDurationPerNumber = drawDurations[place];
-    const pauseBetweenNumbers = (place === 1 || place === 2) ? 4000 : 2000;
-    const totalTimePerNumber = drawDurationPerNumber + pauseBetweenNumbers;
-    
-    numbersToAdd.slice(startIndex).forEach((num, relativeIndex) => {
-      const index = startIndex + relativeIndex;
-      const startTime = relativeIndex * totalTimePerNumber;
-      
+
+    // Single draw per session: animate them one-by-one
+    const pauseBetween = spinMs < 4000 ? 2000 : 4000;
+    const totalTimePerNumber = spinMs + pauseBetween;
+
+    numbersToAdd.slice(startIndex).forEach((num, relIdx) => {
+      const idx = startIndex + relIdx;
+      const startTime = relIdx * totalTimePerNumber;
+
       const spinTimeout = setTimeout(() => {
         setIsSpinning(true);
-        
         const landTimeout = setTimeout(() => {
           setIsSpinning(false);
           soundManager.playNumberLand();
           setCurrentNumber(num);
-          // For Giải Khuyến Khích, include round number (1 or 2)
-          const round = place === 4 ? drawCounts[place] + 1 : undefined;
-          setHistory(prev => [{ number: num, place, round }, ...prev]);
-          setCurrentDrawIndex(index + 1);
-          
-          // Update remaining count
+          setHistory(prev => [{ number: num, cardId, sessionRound: drawCounts[cardId] + 1 }, ...prev]);
+          setCurrentDrawIndex(idx + 1);
           setPrizes(prev => ({
             ...prev,
-            [place]: { ...prev[place], remaining: prev[place].remaining - 1 },
+            [cardId]: { ...prev[cardId], remaining: prev[cardId].remaining - 1 },
           }));
-          
-          triggerConfetti(place);
-          if (index === numbersToAdd.length - 1) {
-            const winIntensity = place === 0 ? 'large' : place <= 2 ? 'medium' : 'small';
-            soundManager.playWin(winIntensity);
+          triggerConfetti(cardId);
+          if (idx === numbersToAdd.length - 1) {
+            const importance = 1 - cardId / (prizeCards.length + 1);
+            soundManager.playWin(importance > 0.6 ? 'large' : importance > 0.3 ? 'medium' : 'small');
           }
-        }, drawDurationPerNumber);
-        
+        }, spinMs);
         drawTimeoutsRef.current.push(landTimeout);
       }, startTime);
-      
       drawTimeoutsRef.current.push(spinTimeout);
     });
-    
+
     const remainingNumbers = numbersToAdd.length - startIndex;
     const totalTime = remainingNumbers * totalTimePerNumber;
     const finishTimeout = setTimeout(() => {
-      setDrawCounts(prev => ({
-        ...prev,
-        [place]: prev[place] + 1
-      }));
-      
+      setDrawCounts(prev => ({ ...prev, [cardId]: prev[cardId] + 1 }));
       setIsDrawing(false);
       setPendingNumbers([]);
       setCurrentDrawIndex(0);
     }, totalTime);
-    
     drawTimeoutsRef.current.push(finishTimeout);
   };
-  
+
   const drawNumber = useCallback(() => {
-    if (isDrawing || currentPlace === null || maxNumber === null) return;
-    
-    // For combined Nhất+Nhì session, check if both are exhausted
-    if (currentPlace === 2 && prizes[1].remaining === 0 && prizes[2].remaining === 0) return;
-    
+    if (isDrawing || selectedCardId === null) return;
+    const card = prizeCards.find(c => c.id === selectedCardId);
+    if (!card) return;
+    const prizeState = prizes[selectedCardId];
+    if (prizeState.remaining === 0) return;
+
     soundManager.playClick();
     setIsDrawing(true);
     setIsFocusMode(true);
     setIsPaused(false);
-    const place = currentPlace;
-    
-    // For combined Nhất+Nhì session, always draw 3 numbers
-    const batchSize = (place === 1 || place === 2) ? 3 : Math.min(
-      batchSizes[place][drawCounts[place]] || batchSizes[place][batchSizes[place].length - 1],
-      prizes[place].remaining
-    );
-    
-    // Generate all numbers at once
+
+    const batchSize = Math.min(card.drawsPerSession, prizeState.remaining);
+
     const numbersToAdd: number[] = [];
     const newDrawnNumbers = new Set(drawnNumbers);
-    
     for (let i = 0; i < batchSize; i++) {
-      let newNumber: number;
-      do {
-        newNumber = Math.floor(Math.random() * maxNumber) + 1; // Numbers 1 to maxNumber
-      } while (newDrawnNumbers.has(newNumber));
-      numbersToAdd.push(newNumber);
-      newDrawnNumbers.add(newNumber);
+      let n: number;
+      do { n = Math.floor(Math.random() * maxNumber) + 1; } while (newDrawnNumbers.has(n));
+      numbersToAdd.push(n);
+      newDrawnNumbers.add(n);
     }
-    
-    // Update drawnNumbers immediately to prevent duplicates across all prizes
     setDrawnNumbers(newDrawnNumbers);
-    
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
-    continueDrawing(numbersToAdd, 0, place);
-  }, [isDrawing, drawnNumbers, currentPlace, prizes, drawCounts, maxNumber]);
-  
-  const handlePrizeClick = (place: 0 | 1 | 2 | 3 | 4) => {
-    // Allow clicking on any prize card (even completed ones) to view history
+    continueDrawing(numbersToAdd, 0, selectedCardId);
+  }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, maxNumber, prizeCards]);
+
+  const handleCardClick = (cardId: number) => {
     if (!isDrawing) {
       soundManager.playClick();
-      setSelectedPlace(place);
+      setSelectedCardId(cardId);
       setIsFocusMode(true);
-      // Reset current number to show dashes when entering a new prize session
       setCurrentNumber(null);
     }
   };
-  
+
   const reset = () => {
     soundManager.playClick();
     clearAllTimeouts();
     setIsDrawing(false);
     setIsSpinning(false);
     setIsPaused(false);
-    setPrizes(initialPrizes);
+    setPrizes(buildInitialPrizes(prizeCards));
     setCurrentNumber(null);
     setHistory([]);
     setDrawnNumbers(new Set());
-    setSelectedPlace(null);
+    setSelectedCardId(null);
     setIsFocusMode(false);
-    setDrawCounts({ 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
+    const d: Record<number, number> = {};
+    prizeCards.forEach(c => { d[c.id] = 0; });
+    setDrawCounts(d);
     setPendingNumbers([]);
     setCurrentDrawIndex(0);
   };
-  
-  const resetPrize = (place: 0 | 1 | 2 | 3 | 4) => {
+
+  const resetCard = (cardId: number) => {
     soundManager.playClick();
-    
-    // For combined Nhất+Nhì session, reset both prizes
-    const placesToReset = (place === 1 || place === 2) ? [1, 2] : [place];
-    
-    // Get numbers that were drawn for these prizes
-    const numbersToRemove = history
-      .filter(item => placesToReset.includes(item.place))
-      .map(item => item.number);
-    
-    // Remove from drawnNumbers set
+    const numbersToRemove = history.filter(h => h.cardId === cardId).map(h => h.number);
     setDrawnNumbers(prev => {
-      const newSet = new Set(prev);
-      numbersToRemove.forEach(n => newSet.delete(n));
-      return newSet;
+      const s = new Set(prev);
+      numbersToRemove.forEach(n => s.delete(n));
+      return s;
     });
-    
-    // Remove from history
-    setHistory(prev => prev.filter(item => !placesToReset.includes(item.place)));
-    
-    // Reset prize count
-    setPrizes(prev => {
-      const updates: any = {};
-      placesToReset.forEach(p => {
-        updates[p] = initialPrizes[p];
-      });
-      return { ...prev, ...updates };
-    });
-    
-    // Reset draw count for these prizes
-    setDrawCounts(prev => {
-      const updates: any = { ...prev };
-      placesToReset.forEach(p => {
-        updates[p] = 0;
-      });
-      return updates;
-    });
-    
-    // Clear current number if it was from these prizes
-    if (currentNumber !== null && numbersToRemove.includes(currentNumber)) {
-      setCurrentNumber(null);
-    }
+    setHistory(prev => prev.filter(h => h.cardId !== cardId));
+    setPrizes(prev => ({
+      ...prev,
+      [cardId]: { total: prizeCards.find(c => c.id === cardId)!.totalPrizes, remaining: prizeCards.find(c => c.id === cardId)!.totalPrizes },
+    }));
+    setDrawCounts(prev => ({ ...prev, [cardId]: 0 }));
+    if (currentNumber !== null && numbersToRemove.includes(currentNumber)) setCurrentNumber(null);
   };
-  
-  const clearHistory = () => {
-    soundManager.playClick();
-    setHistory([]);
-  };
-  
+
   const goBackHome = () => {
-    // Allow going back if not drawing OR if paused
     if (!isDrawing || isPaused) {
       soundManager.playClick();
-      
-      // If paused mid-draw, clean up the pending draw
       if (isPaused) {
         clearAllTimeouts();
         setIsDrawing(false);
@@ -444,34 +393,38 @@ export const LuckyDraw = () => {
         setPendingNumbers([]);
         setCurrentDrawIndex(0);
       }
-      
       setIsFocusMode(false);
-      setSelectedPlace(null);
+      setSelectedCardId(null);
     }
   };
-  
+
   const getButtonText = () => {
-    if (!isRangeSet || maxNumber === null) return "Vui lòng cài đặt phạm vi số trước";
-    if (isPaused) return "Đã Tạm Dừng - Nhấn Tiếp Tục";
+    if (isPaused) return "Tạm Dừng – Nhấn Tiếp Tục";
     if (isDrawing) return "Đang Bốc Thăm...";
-    if (currentPlace === null) return "Chọn một giải thưởng để bắt đầu";
-    if (currentPlace === 2 && prizes[1].remaining === 0 && prizes[2].remaining === 0) return "Giải này đã hết!";
-    if (currentPlace !== 2 && prizes[currentPlace].remaining === 0) return "Giải này đã hết!";
-    const placeLabels = { 0: "Đặc Biệt", 1: "Nhất+Nhì", 2: "Nhất+Nhì", 3: "Ba", 4: "Khuyến Khích" };
-    return `Bốc Giải ${placeLabels[currentPlace]}`;
+    if (selectedCardId === null) return "Chọn một giải thưởng";
+    if (isComplete) return "Giải này đã hết!";
+    return `Bốc ${currentCard?.name ?? ""}`;
   };
-  
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  // Decide layout: if <= 3 cards → 1 row; 4 = 2×2; 5-8 = 2 or 3 cols
+  const gridCols = prizeCards.length <= 2 ? 'grid-cols-1 sm:grid-cols-2'
+    : prizeCards.length === 3 ? 'grid-cols-3'
+      : prizeCards.length === 4 ? 'grid-cols-2'
+        : 'grid-cols-2 md:grid-cols-3';
+
+  const allDone = prizeCards.every(c => prizes[c.id]?.remaining === 0);
+
   return (
-    <div className="min-h-screen py-4 px-4 pt-20">      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Sound Pack Selector & Settings - Top Right */}
-        <div className="absolute top-0 right-0 z-20 flex gap-2">
+    <div className="min-h-screen py-4 px-4 pt-20">
+      <div className="max-w-7xl mx-auto relative z-10">
+
+        {/* ── Sound Pack Selector – top right ── */}
+        <div className="absolute top-0 right-0 z-20">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon"
-                className="bg-white/10 border-white/20 hover:bg-white/20 text-white backdrop-blur-sm"
-              >
+              <Button variant="outline" size="icon"
+                className="bg-white/10 border-white/20 hover:bg-white/20 text-white backdrop-blur-sm">
                 <Volume2 className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
@@ -479,475 +432,186 @@ export const LuckyDraw = () => {
               <DropdownMenuLabel className="text-white/80">Âm Thanh</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-white/20" />
               <DropdownMenuRadioGroup value={soundPack} onValueChange={handleSoundPackChange}>
-                <DropdownMenuRadioItem value="arcade" className="text-white focus:bg-white/20 focus:text-white">
-                  🎮 Arcade - Kiểu 8-bit
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="vegas" className="text-white focus:bg-white/20 focus:text-white">
-                  🎰 Vegas - Sòng bài cổ điển
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="retro" className="text-white focus:bg-white/20 focus:text-white">
-                  ⚙️ Retro - Cơ khí cổ điển
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="modern" className="text-white focus:bg-white/20 focus:text-white">
-                  ✨ Modern - Hiện đại
-                </DropdownMenuRadioItem>
+                {[
+                  { value: "arcade", label: "🎮 Arcade – Kiểu 8-bit" },
+                  { value: "vegas", label: "🎰 Vegas – Sòng bài cổ điển" },
+                  { value: "retro", label: "⚙️ Retro – Cơ khí cổ điển" },
+                  { value: "modern", label: "✨ Modern – Hiện đại" },
+                ].map(({ value, label }) => (
+                  <DropdownMenuRadioItem key={value} value={value}
+                    className="text-white focus:bg-white/20 focus:text-white">
+                    {label}
+                  </DropdownMenuRadioItem>
+                ))}
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          {/* Settings Dialog */}
-          <Dialog open={isSettingsOpen} onOpenChange={(open) => {
-            // Prevent closing if range not set
-            if (!open && !isRangeSet) {
-              return;
-            }
-            setIsSettingsOpen(open);
-          }}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon"
-                className={`bg-white/10 border-white/20 hover:bg-white/20 text-white backdrop-blur-sm ${!isRangeSet ? 'animate-pulse ring-2 ring-yellow-400' : ''}`}
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent 
-              className="bg-slate-900/95 border-white/20 backdrop-blur-lg text-white"
-              onInteractOutside={(e) => {
-                // Prevent closing by clicking outside if range not set
-                if (!isRangeSet) {
-                  e.preventDefault();
-                }
-              }}
-              onEscapeKeyDown={(e) => {
-                // Prevent closing with Escape key if range not set
-                if (!isRangeSet) {
-                  e.preventDefault();
-                }
-              }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-white">
-                  {!isRangeSet ? '⚠️ Cài Đặt Bắt Buộc' : 'Cài Đặt'}
-                </DialogTitle>
-                <DialogDescription className="text-white/70">
-                  {!isRangeSet 
-                    ? 'Vui lòng thiết lập phạm vi số trước khi bắt đầu bốc thăm'
-                    : 'Tùy chỉnh phạm vi số cho bốc thăm'
-                  }
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="maxNumber" className="text-white">
-                    Số lớn nhất (1 - 250) <span className="text-red-400">*</span>
-                  </Label>
-                  <Input
-                    id="maxNumber"
-                    type="number"
-                    min="1"
-                    max="250"
-                    value={tempMaxNumber}
-                    onChange={(e) => setTempMaxNumber(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white"
-                    placeholder="Nhập số từ 1 đến 250"
-                    autoFocus
-                  />
-                  {maxNumber !== null && (
-                    <p className="text-sm text-white/60">
-                      Hiện tại: Số từ 1 đến {maxNumber}
-                    </p>
-                  )}
-                  {!isRangeSet && (
-                    <p className="text-sm text-yellow-400 font-semibold">
-                      ⚠️ Bạn phải thiết lập phạm vi số trước khi tiếp tục
-                    </p>
-                  )}
-                </div>
-              </div>
-              <DialogFooter>
-                {isRangeSet && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setTempMaxNumber(maxNumber?.toString() || "250");
-                      setIsSettingsOpen(false);
-                    }}
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                  >
-                    Hủy
-                  </Button>
-                )}
-                <Button
-                  onClick={() => {
-                    const num = parseInt(tempMaxNumber);
-                    if (!isNaN(num) && num >= 1 && num <= 250) {
-                      // Check if reducing the range would invalidate existing drawn numbers
-                      if (maxNumber !== null) {
-                        const hasNumbersOutOfNewRange = Array.from(drawnNumbers).some(n => n > num);
-                        
-                        if (hasNumbersOutOfNewRange) {
-                          const confirmChange = window.confirm(
-                            `Cảnh báo: Có ${Array.from(drawnNumbers).filter(n => n > num).length} số đã bốc vượt quá phạm vi mới (${num}). Thay đổi này sẽ xóa toàn bộ lịch sử bốc thăm. Bạn có chắc chắn muốn tiếp tục?`
-                          );
-                          
-                          if (!confirmChange) {
-                            return;
-                          }
-                          
-                          // Reset everything when changing to a smaller range
-                          reset();
-                        }
-                      }
-                      
-                      setMaxNumber(num);
-                      setIsRangeSet(true);
-                      setIsSettingsOpen(false);
-                    } else {
-                      alert("Vui lòng nhập số từ 1 đến 250");
-                    }
-                  }}
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                  {!isRangeSet ? 'Bắt Đầu' : 'Lưu'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
-        
-        {/* Header */}
-        <motion.div
-          className="text-center mb-4"
+
+        {/* ── Header ── */}
+        <motion.div className="text-center mb-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 
-            className="font-display text-4xl md:text-6xl font-black mb-2 text-white"
-            style={{
-              textShadow: '0 0 40px rgba(150, 200, 255, 0.8), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5)',
-              letterSpacing: '0.05em'
-            }}
-          >
+          <h1 className="font-display text-4xl md:text-6xl font-black mb-2 text-white"
+            style={{ textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
             LUCKY DRAW
           </h1>
         </motion.div>
-        
-        {/* Special Prize Card - Full Width */}
-        <motion.div 
-          className="mb-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ 
-            opacity: isFocusMode && selectedPlace !== 0 ? 0 : 1, 
-            y: isFocusMode && selectedPlace !== 0 ? 20 : 0,
-            scale: isFocusMode && selectedPlace === 0 ? 1.1 : 1,
-            height: isFocusMode && selectedPlace !== 0 ? 0 : 'auto'
-          }}
-          transition={{ delay: 0.05, duration: 0.5 }}
-        >
-          <PrizeCard place={0} total={prizes[0].total} remaining={prizes[0].remaining} isActive={currentPlace === 0} isSelected={selectedPlace === 0} isFocused={isFocusMode && selectedPlace === 0} onClick={() => handlePrizeClick(0)} />
-        </motion.div>
-        
-        {/* Combined Giải Nhất + Nhì - Single Card */}
-        <motion.div 
-          className="mb-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ 
-            opacity: isFocusMode && selectedPlace !== 1 && selectedPlace !== 2 ? 0 : 1, 
-            y: isFocusMode && selectedPlace !== 1 && selectedPlace !== 2 ? 20 : 0,
-            scale: isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 1.1 : 1,
-            height: isFocusMode && selectedPlace !== 1 && selectedPlace !== 2 ? 0 : 'auto'
-          }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-        >
+
+        {/* ── Prize Cards grid ── */}
+        {!isFocusMode && (
           <motion.div
-            onClick={() => handlePrizeClick(2)}
-            className={`prize-card bg-gradient-to-br from-yellow-500/10 via-slate-100/10 to-transparent relative overflow-hidden cursor-pointer ${
-              (selectedPlace === 1 || selectedPlace === 2) ? 'ring-4 ring-white/60' : ''
-            } ${
-              isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 'ring-8 ring-white/80 shadow-2xl' : ''
-            }`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0,
-              scale: (selectedPlace === 1 || selectedPlace === 2) && !isFocusMode ? 1.1 : ((currentPlace === 1 || currentPlace === 2) ? 1.05 : 1)
-            }}
-            transition={{ duration: 0.2, type: "spring", stiffness: 400, damping: 25 }}
-            whileHover={{ scale: isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 1.02 : ((selectedPlace === 1 || selectedPlace === 2) ? 1.12 : ((currentPlace === 1 || currentPlace === 2) ? 1.08 : 1.03)), y: isFocusMode && (selectedPlace === 1 || selectedPlace === 2) ? 0 : -4 }}
-            whileTap={{ scale: 0.98 }}
+            className={`grid gap-3 mb-6 ${gridCols}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
           >
-            {/* Animated background glow */}
-            {((currentPlace === 1 || currentPlace === 2) || (isFocusMode && (selectedPlace === 1 || selectedPlace === 2))) && (
-              <motion.div
-                className="absolute inset-0 rounded-2xl"
-                style={{
-                  background: (isFocusMode && (selectedPlace === 1 || selectedPlace === 2))
-                    ? `radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`
-                    : `radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.2) 0%, transparent 70%)`,
-                  opacity: (isFocusMode && (selectedPlace === 1 || selectedPlace === 2)) ? 0.4 : 0.2,
-                }}
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: (isFocusMode && (selectedPlace === 1 || selectedPlace === 2)) ? [0.4, 0.6, 0.4] : [0.2, 0.3, 0.2],
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
+            {prizeCards.map((card) => (
+              <motion.div key={card.id}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: card.id * 0.04 }}
+              >
+                <DynPrizeCard
+                  card={card}
+                  prizeState={prizes[card.id] ?? { total: card.totalPrizes, remaining: card.totalPrizes }}
+                  isActive={selectedCardId === card.id}
+                  isSelected={selectedCardId === card.id}
+                  isFocused={false}
+                  onClick={() => handleCardClick(card.id)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* ── Focus mode: single card + draw area ── */}
+        {isFocusMode && selectedCardId !== null && currentCard !== null && (
+          <motion.div
+            className="flex flex-col items-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            {/* Focused card */}
+            <motion.div className="w-full max-w-sm mb-6"
+              animate={{ scale: 1.06 }}
+              transition={{ duration: 0.4 }}
+            >
+              <DynPrizeCard
+                card={currentCard}
+                prizeState={prizes[currentCard.id] ?? { total: currentCard.totalPrizes, remaining: currentCard.totalPrizes }}
+                isActive={isDrawing}
+                isSelected
+                isFocused
+                onClick={() => { }}
               />
+            </motion.div>
+
+            {/* History for multi-draw cards first, then slot machine */}
+            {currentCard.drawsPerSession > 1 && (
+              <div className="w-full mb-4">
+                <PrizeHistoryDyn history={history} cardId={selectedCardId} />
+              </div>
             )}
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20 py-6 pb-14">
-              {/* Giải Nhất */}
-              <div className="flex flex-col items-center">
-                <motion.div
-                  animate={(currentPlace === 1 || currentPlace === 2) ? { y: [0, -5, 0] } : {}}
-                  transition={{ duration: 0.6, repeat: Infinity }}
-                >
-                  <div className="text-3xl md:text-4xl mb-1">👑</div>
-                  <Trophy className="w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 text-yellow-300" />
-                </motion.div>
-                <h3 className="font-display font-bold text-sm md:text-base mb-1">Giải Nhất</h3>
-                <div className="mb-2">
-                  <div className="text-lg md:text-xl font-black text-yellow-300">10,000,000</div>
-                  <div className="text-xs text-blue-100/60 font-medium">VND</div>
-                </div>
-              </div>
-              
-              {/* Divider */}
-              <div className="hidden md:block w-px h-24 bg-white/20"></div>
-              <div className="md:hidden w-24 h-px bg-white/20"></div>
-              
-              {/* Giải Nhì */}
-              <div className="flex flex-col items-center">
-                <motion.div
-                  animate={(currentPlace === 1 || currentPlace === 2) ? { y: [0, -5, 0] } : {}}
-                  transition={{ duration: 0.6, repeat: Infinity }}
-                >
-                  <div className="text-3xl md:text-4xl mb-1">🥈</div>
-                  <Award className="w-7 h-7 md:w-9 md:h-9 mx-auto mb-2 text-slate-100" />
-                </motion.div>
-                <h3 className="font-display font-bold text-sm md:text-base mb-1">Giải Nhì</h3>
-                <div className="mb-2">
-                  <div className="text-lg md:text-xl font-black text-slate-100">7,000,000</div>
-                  <div className="text-xs text-blue-100/60 font-medium">VND</div>
-                </div>
-              </div>
-              
-              {/* Total Count - Centered Below */}
-              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
-                <div className="text-2xl md:text-3xl font-display font-black">
-                  3 <span className="text-muted-foreground text-base md:text-lg font-semibold">Giải</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-        
-        {/* Prize Cards */}
-        <motion.div 
-          className={`grid gap-2 md:gap-3 mb-4 transition-all duration-500 ${isFocusMode && selectedPlace !== null && selectedPlace !== 0 && selectedPlace !== 1 && selectedPlace !== 2 ? 'grid-cols-1 place-items-center' : 'grid-cols-2'}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <motion.div 
-            className="w-full"
-            animate={{
-              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 3 ? 0 : 1,
-              scale: isFocusMode && selectedPlace === 3 ? 1.2 : 1,
-              height: isFocusMode && selectedPlace !== null && selectedPlace !== 3 ? 0 : 'auto'
-            }}
-            transition={{ duration: 0.5 }}
-          >
-            <PrizeCard place={3} total={prizes[3].total} remaining={prizes[3].remaining} isActive={currentPlace === 3} isSelected={selectedPlace === 3} isFocused={isFocusMode && selectedPlace === 3} onClick={() => handlePrizeClick(3)} />
-          </motion.div>
-          <motion.div 
-            className="w-full"
-            animate={{
-              opacity: isFocusMode && selectedPlace !== null && selectedPlace !== 4 ? 0 : 1,
-              scale: isFocusMode && selectedPlace === 4 ? 1.2 : 1,
-              height: isFocusMode && selectedPlace !== null && selectedPlace !== 4 ? 0 : 'auto'
-            }}
-            transition={{ duration: 0.5 }}
-          >
-            <PrizeCard place={4} total={prizes[4].total} remaining={prizes[4].remaining} isActive={currentPlace === 4} isSelected={selectedPlace === 4} isFocused={isFocusMode && selectedPlace === 4} onClick={() => handlePrizeClick(4)} />
-          </motion.div>
-        </motion.div>
-        
-        {/* Number Display - Only in focus mode */}
-        {isFocusMode && (
-        <motion.div
-          className="flex flex-col items-center justify-center mb-8"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          {/* For prizes 3 and 4, show history first */}
-          {selectedPlace !== null && (selectedPlace === 3 || selectedPlace === 4) && (
-            <>
-              {/* Prize-specific History for prizes 3 and 4 */}
-              <PrizeHistory history={history} place={selectedPlace} />
-              
-              {/* Draw Button */}
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
-                {isDrawing && !isPaused ? (
-                  <Button
-                    onClick={pauseDraw}
-                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                    size="lg"
-                  >
-                    <Pause className="w-7 h-7 mr-3" />
-                    Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
-                  </Button>
-                ) : isPaused ? (
-                  <Button
-                    onClick={resumeDraw}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                    size="lg"
-                  >
-                    <Play className="w-7 h-7 mr-3" />
-                    Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={drawNumber}
-                    disabled={!isRangeSet || currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
-                    className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                    size="lg"
-                  >
-                    <Sparkles className="w-7 h-7 mr-3" />
-                    {getButtonText()}
-                  </Button>
-                )}
-              </div>
-              
-              {/* Slot machine below for prizes 3 and 4 */}
-              <div className="mt-8">
-                <NumberDisplay number={currentNumber} isDrawing={isSpinning} selectedPlace={selectedPlace} isComplete={!isDrawing} />
-              </div>
-            </>
-          )}
-          
-          {/* For other prizes, show slot machine first (default order) */}
-          {selectedPlace !== null && selectedPlace !== 3 && selectedPlace !== 4 && (
-            <>
-              <NumberDisplay number={currentNumber} isDrawing={isSpinning} selectedPlace={selectedPlace} isComplete={!isDrawing} />
-              
-              {/* Draw Button */}
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
-                {isDrawing && !isPaused ? (
-                  <Button
-                    onClick={pauseDraw}
-                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                    size="lg"
-                  >
-                    <Pause className="w-7 h-7 mr-3" />
-                    Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
-                  </Button>
-                ) : isPaused ? (
-                  <Button
-                    onClick={resumeDraw}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                    size="lg"
-                  >
-                    <Play className="w-7 h-7 mr-3" />
-                    Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={drawNumber}
-                    disabled={!isRangeSet || currentPlace === null || (currentPlace !== null && prizes[currentPlace].remaining === 0)}
-                    className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                    size="lg"
-                  >
-                    <Sparkles className="w-7 h-7 mr-3" />
-                    {getButtonText()}
-                  </Button>
-                )}
-              </div>
-              
-              {/* Prize-specific History - only in focus mode */}
-              {(selectedPlace === 1 || selectedPlace === 2) ? (
-                <>
-                  <PrizeHistory history={history} place={1} />
-                  <PrizeHistory history={history} place={2} />
-                </>
+
+            {/* Draw button */}
+            <div className="mt-2 flex flex-col sm:flex-row gap-4 items-center justify-center">
+              {isDrawing && !isPaused ? (
+                <Button onClick={pauseDraw}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                  size="lg">
+                  <Pause className="w-7 h-7 mr-3" />
+                  Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
+                </Button>
+              ) : isPaused ? (
+                <Button onClick={resumeDraw}
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                  size="lg">
+                  <Play className="w-7 h-7 mr-3" />
+                  Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+                </Button>
               ) : (
-                <PrizeHistory history={history} place={selectedPlace} />
+                <Button
+                  onClick={drawNumber}
+                  disabled={selectedCardId === null || isComplete}
+                  className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                  size="lg">
+                  <Sparkles className="w-7 h-7 mr-3" />
+                  {getButtonText()}
+                </Button>
               )}
-            </>
-          )}
-          
-          {/* Back to Home and Reset buttons - positioned below history */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-12">
-            {/* Back to Home Button */}
-            {isFocusMode && (
-              <Button
-                onClick={goBackHome}
+            </div>
+
+            {/* Slot machine (for single-draw cards: show first; for multi: show after) */}
+            <div className="mt-8">
+              <NumberDisplay
+                number={currentNumber}
+                isDrawing={isSpinning}
+                selectedPlace={null}
+                isComplete={!isDrawing}
+              />
+            </div>
+
+            {/* History for single-draw cards */}
+            {currentCard.drawsPerSession === 1 && (
+              <div className="w-full mt-4">
+                <PrizeHistoryDyn history={history} cardId={selectedCardId} />
+              </div>
+            )}
+
+            {/* Back / Reset buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-10">
+              <Button onClick={goBackHome}
                 disabled={isDrawing && !isPaused}
                 variant="outline"
-                size="default"
-                className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg"
-              >
+                className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Trang Chủ
               </Button>
-            )}
-            
-            {/* Reset button - context aware */}
-            {isFocusMode && selectedPlace !== null && (
-              (selectedPlace === 1 || selectedPlace === 2) 
-                ? (history.some(h => h.place === 1 || h.place === 2)) 
-                : history.some(h => h.place === selectedPlace)
-            ) && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="default"
-                    className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg"
-                  >
-                    <RotateCcw className="w-5 h-5 mr-2" />
-                    Làm Lại Giải Này
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Làm lại Giải {(selectedPlace === 1 || selectedPlace === 2) ? "Nhất+Nhì" : placeLabels[selectedPlace]}?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Hành động này sẽ xóa các số đã bốc cho Giải {(selectedPlace === 1 || selectedPlace === 2) ? "Nhất+Nhì" : placeLabels[selectedPlace]} và cho phép bốc lại. Các giải khác không bị ảnh hưởng.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Hủy</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => resetPrize(selectedPlace)}>Xác Nhận</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div>
-        </motion.div>
+
+              {history.some(h => h.cardId === selectedCardId) && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline"
+                      className="px-5 py-3 text-base font-bold bg-white/10 border-blue-400/50 text-blue-100 hover:bg-blue-500/20 hover:border-blue-400 transition-all backdrop-blur-sm shadow-lg">
+                      <RotateCcw className="w-5 h-5 mr-2" />
+                      Làm Lại Giải Này
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Làm lại {currentCard.name}?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Hành động này sẽ xóa các số đã bốc cho {currentCard.name} và cho phép bốc lại.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Hủy</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => resetCard(selectedCardId)}>Xác Nhận</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
+          </motion.div>
         )}
-        
-        {/* Global reset button - only on homepage */}
+
+        {/* ── Global reset (homepage only) ── */}
         {!isFocusMode && history.length > 0 && (
           <div className="flex justify-center mb-8">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="px-6"
-                >
+                <Button variant="outline" size="lg" className="px-6">
                   <RotateCcw className="w-5 h-5 mr-2" />
-                  Reset
+                  Reset Tất Cả
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Bạn có chắc chắn muốn làm lại tất cả?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Hành động này sẽ xóa toàn bộ lịch sử bốc thăm và đặt lại tất cả giải thưởng. Không thể hoàn tác sau khi thực hiện.
+                    Hành động này sẽ xóa toàn bộ lịch sử bốc thăm. Không thể hoàn tác.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -958,15 +622,12 @@ export const LuckyDraw = () => {
             </AlertDialog>
           </div>
         )}
-        
-        
-        {/* Completion Message */}
-        {Object.values(prizes).every(p => p.remaining === 0) && (
-          <motion.div
-            className="text-center mt-8"
+
+        {/* ── Completion banner ── */}
+        {allDone && (
+          <motion.div className="text-center mt-8"
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
+            animate={{ opacity: 1, scale: 1 }}>
             <h2 className="font-display text-3xl font-bold text-gold mb-2">
               🎉 Đã Bốc Hết Giải Thưởng! 🎉
             </h2>
@@ -979,3 +640,40 @@ export const LuckyDraw = () => {
     </div>
   );
 };
+
+// ─── Inline prize history for dynamic cards ───────────────────────────────────
+
+interface HistItem { number: number; cardId: number; sessionRound?: number; }
+
+function PrizeHistoryDyn({ history, cardId }: { history: HistItem[]; cardId: number }) {
+  const items = history.filter(h => h.cardId === cardId);
+  if (items.length === 0) return null;
+  const color = CARD_COLORS[cardId % CARD_COLORS.length];
+
+  return (
+    <motion.div
+      className="w-full mt-6 p-4 rounded-2xl"
+      style={{ background: 'rgba(20,30,70,0.7)', border: `1px solid ${color.border}` }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <div className={`font-display font-bold text-sm mb-3 ${color.iconColor}`}>
+        Các Mã Trúng Thưởng ({items.length})
+      </div>
+      <div className="flex flex-wrap gap-2 justify-center">
+        {items.map((item, i) => (
+          <motion.span
+            key={i}
+            className="history-number"
+            style={{ borderColor: color.border, color: 'white' }}
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.03 }}
+          >
+            {String(item.number).padStart(3, '0')}
+          </motion.span>
+        ))}
+      </div>
+    </motion.div>
+  );
+}

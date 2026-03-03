@@ -1,0 +1,91 @@
+// ---------------------------------------------------------------------------
+// drawConfig.ts
+// Centralised schema + localStorage helpers for the onboarding configuration
+// ---------------------------------------------------------------------------
+
+export interface PrizeCardConfig {
+    id: number;           // 0-based index
+    name: string;        // e.g. "Giải Đặc Biệt"
+    totalPrizes: number; // total prizes on this card  (e.g. 30)
+    drawSeconds: number; // spin duration in seconds  (e.g. 8)
+    drawsPerSession: number; // how many winners drawn at once per session button-press
+}
+
+export interface DrawConfig {
+    maxNumber: number;       // highest ticket number
+    prizeCards: PrizeCardConfig[];
+    // background
+    bgWidth: number;
+    bgPosX: number;
+    bgPosY: number;
+    bgOverlayOpacity: number;
+}
+
+const STORAGE_KEY = 'luckyDrawConfig_v2';
+const ONBOARDED_KEY = 'luckyDrawOnboarded_session';
+export const BG_IMAGE_KEY = 'luckyDrawBgImage';
+
+/** Max file size for custom background uploads: 6 MB.
+ *  Base64 encoding adds ~33% overhead → ~8 MB in localStorage.
+ *  This keeps us safely under the typical 10 MB localStorage limit
+ *  while allowing full 1080p/4K-cropped JPEGs and WebP assets. */
+export const BG_IMAGE_MAX_BYTES = 6 * 1024 * 1024; // 6 MB
+
+/** Returns null if no config has been saved yet. */
+export function loadConfig(): DrawConfig | null {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw) as DrawConfig;
+    } catch {
+        return null;
+    }
+}
+
+export function saveConfig(config: DrawConfig): void {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+}
+
+/** Returns the custom background image as a data URL, or null if none uploaded. */
+export function loadBgImage(): string | null {
+    return localStorage.getItem(BG_IMAGE_KEY);
+}
+
+/** Persists a background image data URL. Throws if it would exceed the size guard. */
+export function saveBgImage(dataUrl: string): void {
+    localStorage.setItem(BG_IMAGE_KEY, dataUrl);
+}
+
+/** Removes the custom background image, reverting to the default. */
+export function clearBgImage(): void {
+    localStorage.removeItem(BG_IMAGE_KEY);
+}
+
+/** Session flag – true if onboarding was already completed THIS browser session */
+export function isOnboardingDone(): boolean {
+    return sessionStorage.getItem(ONBOARDED_KEY) === '1';
+}
+
+export function markOnboardingDone(): void {
+    sessionStorage.setItem(ONBOARDED_KEY, '1');
+}
+
+// ---------------------------------------------------------------------------
+// Default configuration (mirrors the original hard-coded values)
+// ---------------------------------------------------------------------------
+export const DEFAULT_PRIZE_CARDS: PrizeCardConfig[] = [
+    { id: 0, name: 'Giải Đặc Biệt', totalPrizes: 1, drawSeconds: 8, drawsPerSession: 1 },
+    { id: 1, name: 'Giải Nhất', totalPrizes: 1, drawSeconds: 6, drawsPerSession: 1 },
+    { id: 2, name: 'Giải Nhì', totalPrizes: 2, drawSeconds: 5, drawsPerSession: 1 },
+    { id: 3, name: 'Giải Ba', totalPrizes: 15, drawSeconds: 3, drawsPerSession: 15 },
+    { id: 4, name: 'Giải Khuyến Khích', totalPrizes: 30, drawSeconds: 3, drawsPerSession: 15 },
+];
+
+export const DEFAULT_CONFIG: DrawConfig = {
+    maxNumber: 250,
+    prizeCards: DEFAULT_PRIZE_CARDS,
+    bgWidth: 100,
+    bgPosX: 50,
+    bgPosY: 0,
+    bgOverlayOpacity: 70,
+};
