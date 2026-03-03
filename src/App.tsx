@@ -167,13 +167,13 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
               <div className="onb-upload-empty">
                 <div className="onb-upload-icon">🖼️</div>
                 <div className="onb-upload-title">
-                  {dragOver ? 'Thả tải để bắt đầu' : 'Tải Lên Hình Ảnh Nền'}
+                  {dragOver ? 'Drop to upload' : 'Upload Background Image'}
                 </div>
                 <div className="onb-upload-sub">
-                  Kéo thả vào hoặc <span className="onb-upload-link">nhấn để duyệt file</span>
+                  Drag & drop or <span className="onb-upload-link">click to browse</span>
                 </div>
                 <div className="onb-upload-limits">
-                  JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Tối đa 6 MB
+                  JPEG · PNG · WebP · GIF &nbsp;·&nbsp; Max 6 MB
                 </div>
               </div>
             )}
