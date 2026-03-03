@@ -272,7 +272,7 @@ function SettingsMenu({ onAdjust, onReset }: { onAdjust: () => void; onReset: ()
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'none')}
             >
-              <Wand2 size={18} /> Adjust Settings
+              <Wand2 size={18} /> Điều Chỉnh Cài Đặt
             </button>
             <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '4px 8px' }} />
             <button
