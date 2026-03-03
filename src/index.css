@@ -241,12 +241,15 @@
     text-shadow: 0 0 30px hsl(var(--primary) / 0.5);
   }
 
-  /* Slot Machine Styles - Optimized */
+  /* Slot Machine Styles - Themed via CSS variables */
   .slot-machine-container {
     @apply relative rounded-2xl p-6 md:p-10;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.55) 0%, hsl(var(--primary-dark) / 0.4) 100%);
-    border: 2px solid hsl(var(--primary) / 0.7);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 40px hsl(var(--primary) / 0.25);
+    background: linear-gradient(135deg,
+      rgba(var(--slot-bg-rgb, 59,130,246), var(--slot-bg-opacity, 0.55)) 0%,
+      rgba(var(--slot-bg-rgb, 59,130,246), calc(var(--slot-bg-opacity, 0.55) * 0.7)) 100%);
+    border: 2px solid rgba(var(--slot-border-rgb, 59,130,246), 0.7);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6),
+      0 0 40px rgba(var(--slot-bg-rgb, 59,130,246), var(--slot-glow-opacity, 0.3));
   }
 
   .slot-digits-wrapper {
@@ -261,9 +264,12 @@
     @apply relative overflow-hidden rounded-xl;
     width: 70px;
     height: 100px;
-    background: linear-gradient(180deg, hsl(var(--primary-dark) / 0.7) 0%, hsl(var(--primary-dark) / 0.5) 100%);
-    border: 2px solid hsl(var(--primary) / 0.8);
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px hsl(var(--primary) / 0.3);
+    background: linear-gradient(180deg,
+      rgba(var(--slot-bg-rgb, 59,130,246), calc(var(--slot-bg-opacity, 0.55) * 1.2)) 0%,
+      rgba(var(--slot-bg-rgb, 59,130,246), calc(var(--slot-bg-opacity, 0.55) * 0.9)) 100%);
+    border: 2px solid rgba(var(--slot-border-rgb, 59,130,246), 0.8);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(var(--slot-bg-rgb, 59,130,246), var(--slot-glow-opacity, 0.3));
   }
 
   @media (min-width: 768px) {
@@ -277,8 +283,9 @@
     font-family: 'Orbitron', sans-serif;
     @apply absolute inset-0 flex items-center justify-center;
     @apply text-4xl md:text-7xl font-black;
-    color: white;
-    text-shadow: 0 0 20px hsl(var(--primary) / 0.8), 0 0 40px hsl(var(--primary) / 0.4);
+    color: var(--slot-digit-color, white);
+    text-shadow: 0 0 20px rgba(var(--slot-bg-rgb, 59,130,246), 0.8),
+      0 0 40px rgba(var(--slot-bg-rgb, 59,130,246), 0.4);
   }
 
   .slot-digit-spinning {

@@ -45,6 +45,12 @@ export interface DrawConfig {
     cardElementOrder: ('emoji' | 'name' | 'number')[]; // order of elements in card
     // card grid layout
     cardLayout: 'auto' | 'small' | 'large'; // grid layout style for prize cards
+    // slot machine
+    slotBgColor: string;       // hex for slot machine background
+    slotBgOpacity: number;     // 0-100
+    slotDigitColor: string;    // hex for digit text
+    slotBorderColor: string;   // hex for frame border
+    slotGlowOpacity: number;   // 0-100 glow intensity
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
@@ -161,6 +167,22 @@ export function applyAccentTheme(accentHex: string, titleHex?: string, cardTextH
     if (bgOverlayHex) root.setProperty('--bg-overlay-color', bgOverlayHex);
 }
 
+/** Apply slot machine CSS variables from config. */
+export function applySlotTheme(cfg: Pick<DrawConfig, 'slotBgColor' | 'slotBgOpacity' | 'slotDigitColor' | 'slotBorderColor' | 'slotGlowOpacity'>): void {
+    const root = document.documentElement.style;
+    const toRgb = (hex: string) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r},${g},${b}`;
+    };
+    root.setProperty('--slot-bg-rgb', toRgb(cfg.slotBgColor || '#3b82f6'));
+    root.setProperty('--slot-bg-opacity', String((cfg.slotBgOpacity ?? 55) / 100));
+    root.setProperty('--slot-digit-color', cfg.slotDigitColor || '#ffffff');
+    root.setProperty('--slot-border-rgb', toRgb(cfg.slotBorderColor || '#3b82f6'));
+    root.setProperty('--slot-glow-opacity', String((cfg.slotGlowOpacity ?? 30) / 100));
+}
+
 // ---------------------------------------------------------------------------
 // Default configuration (mirrors the original hard-coded values)
 // ---------------------------------------------------------------------------
@@ -204,6 +226,11 @@ export const DEFAULT_CONFIG: DrawConfig = {
     showPrizeNumber: true,
     cardElementOrder: ['emoji', 'name', 'number'],
     cardLayout: 'auto',
+    slotBgColor: '#3b82f6',
+    slotBgOpacity: 55,
+    slotDigitColor: '#ffffff',
+    slotBorderColor: '#3b82f6',
+    slotGlowOpacity: 30,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────

@@ -23,6 +23,7 @@ import {
   BG_IMAGE_KEY,
   CUSTOM_FONT_KEY,
   applyAccentTheme,
+  applySlotTheme,
 } from "@/lib/drawConfig";
 
 // ─── Background adjuster (quick tweaks after onboarding) ─────────────────────
@@ -304,11 +305,13 @@ const App = () => {
   // Apply accent theme on mount and config changes
   useEffect(() => {
     applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
-  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor]);
+    applySlotTheme(drawConfig);
+  }, [drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.slotBgColor, drawConfig.slotBgOpacity, drawConfig.slotDigitColor, drawConfig.slotBorderColor, drawConfig.slotGlowOpacity]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
     applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor);
+    applySlotTheme(cfg);
     markOnboardingDone();
     setShowOnboarding(false);
   };
@@ -338,6 +341,7 @@ const App = () => {
                   const fresh = { ...DEFAULT_CONFIG };
                   setDrawConfig(fresh);
                   applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor);
+                  applySlotTheme(fresh);
                   // Reopen wizard
                   setShowOnboarding(true);
                 }
