@@ -538,7 +538,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
         setCustomFontError(null);
 
         if (!file.name.match(/\.(ttf|otf|woff|woff2)$/i)) {
-            setCustomFontError('Please upload a .ttf, .otf, .woff, or .woff2 font file.');
+            setCustomFontError('Vui lòng tải lên file font .ttf, .otf, .woff hoặc .woff2.');
             return;
         }
         if (file.size > 4 * 1024 * 1024) {
