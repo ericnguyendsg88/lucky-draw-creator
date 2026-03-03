@@ -721,7 +721,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                                     {el === 'emoji' ? '😎' : el === 'name' ? '📝' : '🔢'}
                                 </span>
                                 <span style={{ flex: 1, fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: 'white', pointerEvents: 'none' }}>
-                                    {el === 'number' ? 'Prize Count' : el === 'name' ? 'Prize Name' : 'Emoji'}
+                                    {el === 'number' ? 'Số Giải' : el === 'name' ? 'Tên Giải' : 'Biểu Tượng'}
                                 </span>
                                 <span style={{ fontSize: 16, opacity: 0.3, pointerEvents: 'none' }}>⠿</span>
                             </>
