@@ -708,9 +708,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [cfg, setCfg] = useState<DrawConfig>(() => loadConfig() ?? DEFAULT_CONFIG);
     const [direction, setDirection] = useState(1);
 
-    // When no prize cards, only show steps 0 (bg), 1 (prizes), 2 (style) → then finish
+    // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
     const hasPrizes = cfg.prizeCards.length > 0;
-    const activeStepIndices = hasPrizes ? [0, 1, 2, 3, 4] : [0, 1, 2];
+    const activeStepIndices = hasPrizes ? [0, 1, 2, 3, 4, 5] : [0, 1, 2, 3];
     const totalSteps = activeStepIndices.length;
 
     const handleChange = useCallback((partial: Partial<DrawConfig>) => {
