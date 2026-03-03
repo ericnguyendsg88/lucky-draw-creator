@@ -617,7 +617,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             </div>
                         ) : (
                             <button type="button" onClick={() => fontFileRef.current?.click()}
-                                className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }}>
+                                className="onb-style-option" style={{ width: '100%', flexDirection: 'row', gap: 8 }} title="Tải font tùy chỉnh">
                                 <Upload size={16} />
                                 <span>Upload Custom Font (.ttf, .otf, .woff)</span>
                             </button>
