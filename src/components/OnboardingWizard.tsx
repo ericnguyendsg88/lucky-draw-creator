@@ -19,6 +19,7 @@ import {
     clearCustomFont,
     registerCustomFont,
     applyAccentTheme,
+    applySlotTheme,
 } from "@/lib/drawConfig";
 import {
     Image,
