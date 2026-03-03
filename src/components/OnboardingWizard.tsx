@@ -42,6 +42,7 @@ import {
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const ALL_STEP_LABELS = [
+    { icon: Type, label: "Title" },
     { icon: Image, label: "Background" },
     { icon: Trophy, label: "Prizes" },
     { icon: Palette, label: "Style" },
@@ -50,11 +51,12 @@ const ALL_STEP_LABELS = [
 ];
 
 const ALL_STEP_TITLES = [
-    "🎨  Background Setup",
+    "✏️  Draw Title",
+    "🎨  Background",
     "🏆  Prize Cards",
-    "🎭  Style & Appearance",
-    "⏱️  Draw Timing",
-    "🎯  Winners Per Draw",
+    "🎭  Style",
+    "⏱️  Timing",
+    "🎯  Batch Size",
 ];
 
 const CARD_COLORS = [
