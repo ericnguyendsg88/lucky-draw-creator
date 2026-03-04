@@ -62,13 +62,19 @@ export interface DrawConfig {
     btnBorderRadius: number;    // px border radius
     btnGlowOpacity: number;     // 0-100 glow intensity
     // title style
-    titleFontSize: number;      // title font size in px (24-96)
-    titleGlow: number;          // title glow intensity 0-100
-    titleGlowColor: string;     // hex for title glow color
-    titleGlowSize: number;      // glow spread in px (0-120)
-    titleLetterSpacing: number; // letter spacing in em * 100 (0-30)
+    titleFontSize: number;
+    titleGlow: number;
+    titleGlowColor: string;
+    titleGlowSize: number;
+    titleLetterSpacing: number;
     titleAlign: 'left' | 'center' | 'right';
-    titleShadowY: number;      // vertical text shadow offset (0-20)
+    titleShadowY: number;
+    // confetti effects
+    confettiEnabled: boolean;
+    confettiParticleCount: number;  // base count 20-500
+    confettiSpread: number;         // spread angle 20-180
+    confettiColors: string[];       // array of hex colors
+    confettiGravity: number;        // 0.5-3 (lower = floatier)
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
