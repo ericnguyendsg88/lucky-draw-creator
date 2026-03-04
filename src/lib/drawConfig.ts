@@ -285,6 +285,11 @@ export const DEFAULT_CONFIG: DrawConfig = {
     btnGlowOpacity: 50,
     titleFontSize: 56,
     titleGlow: 80,
+    titleGlowColor: '#96c8ff',
+    titleGlowSize: 40,
+    titleLetterSpacing: 5,
+    titleAlign: 'center',
+    titleShadowY: 4,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────

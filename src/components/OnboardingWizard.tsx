@@ -774,8 +774,27 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 {/* ── Title Style ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔠 Kiểu Tiêu Đề</label>
-                    <SliderRow label="Cỡ chữ tiêu đề" value={cfg.titleFontSize ?? 56} min={24} max={96} step={2} onChange={v => onChange({ titleFontSize: v })} unit="px" />
-                    <SliderRow label="Độ phát sáng" value={cfg.titleGlow ?? 80} min={0} max={100} step={5} onChange={v => onChange({ titleGlow: v })} unit="%" />
+                    <SliderRow label="Cỡ chữ" value={cfg.titleFontSize ?? 56} min={24} max={96} step={2} onChange={v => onChange({ titleFontSize: v })} unit="px" />
+                    <SliderRow label="Giãn chữ" value={cfg.titleLetterSpacing ?? 5} min={0} max={30} step={1} onChange={v => onChange({ titleLetterSpacing: v })} unit="" />
+
+                    <SlotColorRow label="Màu phát sáng" value={cfg.titleGlowColor || '#96c8ff'}
+                        onChange={c => onChange({ titleGlowColor: c })} />
+                    <SliderRow label="Cường độ sáng" value={cfg.titleGlow ?? 80} min={0} max={100} step={5} onChange={v => onChange({ titleGlow: v })} unit="%" />
+                    <SliderRow label="Vùng phát sáng" value={cfg.titleGlowSize ?? 40} min={0} max={120} step={5} onChange={v => onChange({ titleGlowSize: v })} unit="px" />
+                    <SliderRow label="Bóng đổ dọc" value={cfg.titleShadowY ?? 4} min={0} max={20} step={1} onChange={v => onChange({ titleShadowY: v })} unit="px" />
+
+                    <div style={{ marginTop: 8 }}>
+                        <label className="onb-label" style={{ marginBottom: 4, display: 'block', fontSize: 12 }}>Vị trí</label>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                            {(['left', 'center', 'right'] as const).map(align => (
+                                <button key={align} type="button" onClick={() => onChange({ titleAlign: align })}
+                                    className={`onb-style-option ${(cfg.titleAlign || 'center') === align ? 'onb-style-option--active' : ''}`}
+                                    style={{ flex: 1, textTransform: 'capitalize', padding: '8px 12px', fontSize: 13 }}>
+                                    {align === 'left' ? '◀ Trái' : align === 'center' ? '● Giữa' : 'Phải ▶'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* ── Button Style ── */}
