@@ -317,6 +317,7 @@ const App = () => {
     applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor, cfg.fontFamily);
     applySlotTheme(cfg);
     applyDrawnNumTheme(cfg);
+    applyBtnTheme(cfg);
     markOnboardingDone();
     setShowOnboarding(false);
   };
