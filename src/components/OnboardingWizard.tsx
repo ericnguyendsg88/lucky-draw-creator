@@ -256,12 +256,17 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
         setUploadError(null);
         const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         if (!allowed.includes(file.type)) { setUploadError('Định dạng không hỗ trợ. Vui lòng dùng JPEG, PNG, WebP hoặc GIF.'); return; }
-        if (file.size > BG_IMAGE_MAX_BYTES) { setUploadError(`File ${(file.size / 1024 / 1024).toFixed(1)} MB. Tối đa 6 MB.`); return; }
+        if (file.size > BG_IMAGE_MAX_BYTES) { setUploadError(`File ${(file.size / 1024 / 1024).toFixed(1)} MB. Tối đa 10 MB.`); return; }
         const reader = new FileReader();
-        reader.onload = (e) => {
-            const dataUrl = e.target?.result as string;
-            try { saveBgImage(dataUrl); setBgImageUrl(dataUrl); }
-            catch { setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy.'); }
+        reader.onload = async (e) => {
+            const rawDataUrl = e.target?.result as string;
+            try {
+                const compressed = await compressImage(rawDataUrl);
+                saveBgImage(compressed);
+                setBgImageUrl(compressed);
+            } catch {
+                setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy. Hãy thử xóa ảnh cũ trước.');
+            }
         };
         reader.readAsDataURL(file);
     };
