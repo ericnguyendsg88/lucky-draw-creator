@@ -69,7 +69,7 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
       <h3 
         className={`font-black text-center text-white mb-6 uppercase ${isLargerDisplay ? 'text-4xl md:text-5xl' : 'text-2xl md:text-3xl'}`}
         style={{
-          fontFamily: 'Nunito, sans-serif',
+          fontFamily: 'var(--draw-font, Nunito, sans-serif)',
           fontWeight: '900',
           textShadow: '0 0 40px rgba(150, 200, 255, 0.9), 0 0 80px rgba(100, 150, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.6)'
         }}

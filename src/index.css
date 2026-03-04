@@ -373,7 +373,8 @@
   }
 
   .history-number {
-    @apply px-5 py-3 rounded-xl text-base md:text-lg font-mono font-black;
+    @apply px-5 py-3 rounded-xl text-base md:text-lg font-black;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
     background: rgba(var(--drawn-num-bg-rgb, 40,50,100), var(--drawn-num-bg-opacity, 0.8));
     color: var(--drawn-num-text-color, white);
     border: 2px solid rgba(var(--drawn-num-border-rgb, 59,130,246), 0.6);
