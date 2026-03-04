@@ -950,6 +950,30 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         })}
                     </div>
                 </div>
+
+                {/* Button Preview */}
+                <div style={{
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                }}>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔘 Nút Bốc Thăm</label>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{
+                            display: 'inline-block',
+                            padding: '10px 24px',
+                            borderRadius: cfg.btnBorderRadius ?? 16,
+                            background: cfg.btnBgColor || '#3b82f6',
+                            color: cfg.btnTextColor || '#ffffff',
+                            fontFamily: `'${activeFont}', sans-serif`,
+                            fontSize: 14, fontWeight: 700,
+                            border: '2px solid rgba(255,255,255,0.3)',
+                            boxShadow: `0 4px 20px ${cfg.btnBgColor || '#3b82f6'}${Math.round((cfg.btnGlowOpacity ?? 50) / 100 * 255).toString(16).padStart(2, '0')}`,
+                            transition: 'all 0.3s ease',
+                        }}>
+                            ✨ Bốc Thăm
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
