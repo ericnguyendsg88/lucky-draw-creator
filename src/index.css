@@ -237,7 +237,7 @@
   }
 
   .number-display {
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
     @apply text-7xl md:text-9xl font-bold tracking-wider;
     text-shadow: 0 0 30px hsl(var(--primary) / 0.5);
   }
