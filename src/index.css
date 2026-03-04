@@ -355,27 +355,22 @@
 
   .draw-button:hover:not(:disabled) {
     transform: translateY(-4px) scale(1.02);
-    background: var(--btn-hover-bg-color, linear-gradient(135deg, hsl(var(--primary-light, var(--primary))) 0%, hsl(var(--primary)) 50%, hsl(var(--primary-dark, var(--primary))) 100%));
-    color: var(--btn-hover-text-color, var(--btn-text-color, white));
     box-shadow:
-      0 12px 48px color-mix(in srgb, var(--btn-hover-bg-color, hsl(var(--primary))) 70%, transparent),
-      0 0 100px color-mix(in srgb, var(--btn-hover-bg-color, hsl(var(--primary))) 50%, transparent),
-      0 0 60px color-mix(in srgb, var(--btn-hover-bg-color, hsl(var(--primary))) 60%, transparent);
+      0 12px 48px hsl(var(--primary) / 0.7),
+      0 0 100px hsl(var(--primary) / 0.5),
+      0 0 60px hsl(var(--primary-light, var(--primary)) / 0.6);
+    background: linear-gradient(135deg, hsl(var(--primary-light, var(--primary))) 0%, hsl(var(--primary)) 50%, hsl(var(--primary-dark, var(--primary))) 100%);
   }
 
   .draw-button:active:not(:disabled) {
     transform: translateY(-1px) scale(0.98);
-    background: var(--btn-active-bg-color, var(--btn-bg-color, hsl(var(--primary))));
-    color: var(--btn-active-text-color, var(--btn-text-color, white));
     box-shadow:
-      0 4px 20px color-mix(in srgb, var(--btn-active-bg-color, hsl(var(--primary))) 50%, transparent),
-      0 0 40px color-mix(in srgb, var(--btn-active-bg-color, hsl(var(--primary))) 40%, transparent);
+      0 4px 20px hsl(var(--primary) / 0.5),
+      0 0 40px hsl(var(--primary) / 0.4);
   }
 
   .draw-button:disabled {
-    background: var(--btn-disabled-bg-color, var(--btn-bg-color, hsl(var(--primary))));
-    color: var(--btn-disabled-text-color, var(--btn-text-color, white));
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
