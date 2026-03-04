@@ -265,6 +265,12 @@ export const DEFAULT_CONFIG: DrawConfig = {
     drawnNumTextColor: '#ffffff',
     drawnNumBorderColor: '#3b82f6',
     drawnNumBgOpacity: 80,
+    btnBgColor: '#3b82f6',
+    btnTextColor: '#ffffff',
+    btnBorderRadius: 16,
+    btnGlowOpacity: 50,
+    titleFontSize: 56,
+    titleGlow: 80,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
