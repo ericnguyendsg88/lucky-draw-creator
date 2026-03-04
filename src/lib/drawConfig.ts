@@ -260,12 +260,18 @@ export function applyDrawnNumTheme(cfg: Pick<DrawConfig, 'drawnNumBgColor' | 'dr
 }
 
 /** Apply button CSS variables from config. */
-export function applyBtnTheme(cfg: Pick<DrawConfig, 'btnBgColor' | 'btnTextColor' | 'btnBorderRadius' | 'btnGlowOpacity'>): void {
+export function applyBtnTheme(cfg: Pick<DrawConfig, 'btnBgColor' | 'btnTextColor' | 'btnBorderRadius' | 'btnGlowOpacity' | 'btnHoverBgColor' | 'btnHoverTextColor' | 'btnActiveBgColor' | 'btnActiveTextColor' | 'btnDisabledBgColor' | 'btnDisabledTextColor'>): void {
     const root = document.documentElement.style;
     root.setProperty('--btn-bg-color', cfg.btnBgColor || '#3b82f6');
     root.setProperty('--btn-text-color', cfg.btnTextColor || '#ffffff');
     root.setProperty('--btn-border-radius', `${cfg.btnBorderRadius ?? 16}px`);
     root.setProperty('--btn-glow-opacity', String((cfg.btnGlowOpacity ?? 50) / 100));
+    root.setProperty('--btn-hover-bg-color', cfg.btnHoverBgColor || '#60a5fa');
+    root.setProperty('--btn-hover-text-color', cfg.btnHoverTextColor || '#ffffff');
+    root.setProperty('--btn-active-bg-color', cfg.btnActiveBgColor || '#2563eb');
+    root.setProperty('--btn-active-text-color', cfg.btnActiveTextColor || '#ffffff');
+    root.setProperty('--btn-disabled-bg-color', cfg.btnDisabledBgColor || '#6b7280');
+    root.setProperty('--btn-disabled-text-color', cfg.btnDisabledTextColor || '#9ca3af');
 }
 
 // ---------------------------------------------------------------------------

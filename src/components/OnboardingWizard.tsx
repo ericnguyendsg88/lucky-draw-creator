@@ -807,11 +807,33 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔘 Nút Bốc Thăm</label>
 
+                    {/* Normal state */}
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4, display: 'block' }}>Trạng thái bình thường</span>
                     <SlotColorRow label="Màu nền nút" value={cfg.btnBgColor || '#3b82f6'}
                         onChange={c => { onChange({ btnBgColor: c }); applyBtnTheme({ ...cfg, btnBgColor: c }); }} />
-
                     <SlotColorRow label="Màu chữ nút" value={cfg.btnTextColor || '#ffffff'}
                         onChange={c => { onChange({ btnTextColor: c }); applyBtnTheme({ ...cfg, btnTextColor: c }); }} />
+
+                    {/* Hover state */}
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 1, marginTop: 8, marginBottom: 4, display: 'block' }}>Trạng thái di chuột (Hover)</span>
+                    <SlotColorRow label="Màu nền hover" value={cfg.btnHoverBgColor || '#60a5fa'}
+                        onChange={c => { onChange({ btnHoverBgColor: c }); applyBtnTheme({ ...cfg, btnHoverBgColor: c }); }} />
+                    <SlotColorRow label="Màu chữ hover" value={cfg.btnHoverTextColor || '#ffffff'}
+                        onChange={c => { onChange({ btnHoverTextColor: c }); applyBtnTheme({ ...cfg, btnHoverTextColor: c }); }} />
+
+                    {/* Active state */}
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 1, marginTop: 8, marginBottom: 4, display: 'block' }}>Trạng thái nhấn (Active)</span>
+                    <SlotColorRow label="Màu nền active" value={cfg.btnActiveBgColor || '#2563eb'}
+                        onChange={c => { onChange({ btnActiveBgColor: c }); applyBtnTheme({ ...cfg, btnActiveBgColor: c }); }} />
+                    <SlotColorRow label="Màu chữ active" value={cfg.btnActiveTextColor || '#ffffff'}
+                        onChange={c => { onChange({ btnActiveTextColor: c }); applyBtnTheme({ ...cfg, btnActiveTextColor: c }); }} />
+
+                    {/* Disabled state */}
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 1, marginTop: 8, marginBottom: 4, display: 'block' }}>Trạng thái vô hiệu (Disabled)</span>
+                    <SlotColorRow label="Màu nền disabled" value={cfg.btnDisabledBgColor || '#6b7280'}
+                        onChange={c => { onChange({ btnDisabledBgColor: c }); applyBtnTheme({ ...cfg, btnDisabledBgColor: c }); }} />
+                    <SlotColorRow label="Màu chữ disabled" value={cfg.btnDisabledTextColor || '#9ca3af'}
+                        onChange={c => { onChange({ btnDisabledTextColor: c }); applyBtnTheme({ ...cfg, btnDisabledTextColor: c }); }} />
 
                     <SliderRow label="Bo góc nút" value={cfg.btnBorderRadius ?? 16} min={0} max={32} step={2} onChange={v => { onChange({ btnBorderRadius: v }); applyBtnTheme({ ...cfg, btnBorderRadius: v }); }} unit="px" />
 
