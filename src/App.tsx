@@ -309,6 +309,7 @@ const App = () => {
     applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.fontFamily);
     applySlotTheme(drawConfig);
     applyDrawnNumTheme(drawConfig);
+    applyBtnTheme(drawConfig);
   }, [drawConfig]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
