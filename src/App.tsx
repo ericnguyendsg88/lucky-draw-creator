@@ -25,6 +25,7 @@ import {
   applyAccentTheme,
   applySlotTheme,
   applyDrawnNumTheme,
+  applyBtnTheme,
 } from "@/lib/drawConfig";
 
 // ─── Background adjuster (quick tweaks after onboarding) ─────────────────────
