@@ -687,7 +687,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 <ColorPickerCard
                     label="🌗 Màu Phủ Nền"
                     value={cfg.bgOverlayColor || '#000000'}
-                    onChange={(c) => { onChange({ bgOverlayColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, c); }}
+                    onChange={(c) => { onChange({ bgOverlayColor: c }); applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, c, cfg.fontFamily); }}
                 />
 
                 {/* ── Card Layout (sizing) ── */}
