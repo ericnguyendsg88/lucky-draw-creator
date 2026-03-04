@@ -281,7 +281,7 @@
   }
 
   .slot-digit {
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
     @apply absolute inset-0 flex items-center justify-center;
     @apply text-4xl md:text-7xl font-black;
     color: var(--slot-digit-color, white);
