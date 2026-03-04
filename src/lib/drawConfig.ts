@@ -56,6 +56,14 @@ export interface DrawConfig {
     drawnNumTextColor: string;  // hex for drawn number text
     drawnNumBorderColor: string;// hex for drawn number border
     drawnNumBgOpacity: number;  // 0-100
+    // button style
+    btnBgColor: string;         // hex for button background
+    btnTextColor: string;       // hex for button text
+    btnBorderRadius: number;    // px border radius
+    btnGlowOpacity: number;     // 0-100 glow intensity
+    // title style
+    titleFontSize: number;      // title font size in px (32-96)
+    titleGlow: number;          // title glow intensity 0-100
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
@@ -205,6 +213,15 @@ export function applyDrawnNumTheme(cfg: Pick<DrawConfig, 'drawnNumBgColor' | 'dr
     root.setProperty('--drawn-num-border-rgb', toRgb(cfg.drawnNumBorderColor || '#3b82f6'));
 }
 
+/** Apply button CSS variables from config. */
+export function applyBtnTheme(cfg: Pick<DrawConfig, 'btnBgColor' | 'btnTextColor' | 'btnBorderRadius' | 'btnGlowOpacity'>): void {
+    const root = document.documentElement.style;
+    root.setProperty('--btn-bg-color', cfg.btnBgColor || '#3b82f6');
+    root.setProperty('--btn-text-color', cfg.btnTextColor || '#ffffff');
+    root.setProperty('--btn-border-radius', `${cfg.btnBorderRadius ?? 16}px`);
+    root.setProperty('--btn-glow-opacity', String((cfg.btnGlowOpacity ?? 50) / 100));
+}
+
 // ---------------------------------------------------------------------------
 // Default configuration (mirrors the original hard-coded values)
 // ---------------------------------------------------------------------------
@@ -257,6 +274,12 @@ export const DEFAULT_CONFIG: DrawConfig = {
     drawnNumTextColor: '#ffffff',
     drawnNumBorderColor: '#3b82f6',
     drawnNumBgOpacity: 80,
+    btnBgColor: '#3b82f6',
+    btnTextColor: '#ffffff',
+    btnBorderRadius: 16,
+    btnGlowOpacity: 50,
+    titleFontSize: 56,
+    titleGlow: 80,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────

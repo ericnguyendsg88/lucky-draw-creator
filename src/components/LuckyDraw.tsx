@@ -533,8 +533,14 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl md:text-6xl font-black mb-2"
-            style={{ fontFamily: `'${drawConfig.fontFamily}', sans-serif`, color: drawConfig.titleColor || '#ffffff', textShadow: '0 0 40px rgba(150,200,255,0.8), 0 0 80px rgba(100,150,255,0.5), 0 4px 8px rgba(0,0,0,0.5)', letterSpacing: '0.05em' }}>
+          <h1 className="font-black mb-2"
+            style={{
+              fontFamily: `'${drawConfig.fontFamily}', sans-serif`,
+              fontSize: `clamp(24px, ${drawConfig.titleFontSize || 56}px, 96px)`,
+              color: drawConfig.titleColor || '#ffffff',
+              textShadow: `0 0 ${(drawConfig.titleGlow ?? 80) * 0.5}px rgba(150,200,255,${(drawConfig.titleGlow ?? 80) / 100}), 0 0 ${(drawConfig.titleGlow ?? 80)}px rgba(100,150,255,${(drawConfig.titleGlow ?? 80) / 200}), 0 4px 8px rgba(0,0,0,0.5)`,
+              letterSpacing: '0.05em',
+            }}>
             {drawConfig.drawTitle || 'BỐC THĂM MAY MẮN'}
           </h1>
         </motion.div>

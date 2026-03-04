@@ -320,16 +320,18 @@
   }
 
   .draw-button {
-    @apply px-8 py-4 text-xl font-bold rounded-2xl transition-all duration-300;
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-dark, var(--primary))) 50%, hsl(var(--primary-dark, var(--primary))) 100%);
+    @apply px-8 py-4 text-xl font-bold transition-all duration-300;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
+    background: var(--btn-bg-color, hsl(var(--primary)));
+    border-radius: var(--btn-border-radius, 16px);
     box-shadow:
-      0 8px 32px hsl(var(--primary) / 0.5),
-      0 0 60px hsl(var(--primary) / 0.3),
-      0 4px 20px hsl(var(--primary) / 0.4);
+      0 8px 32px color-mix(in srgb, var(--btn-bg-color, hsl(var(--primary))) calc(var(--btn-glow-opacity, 0.5) * 100%), transparent),
+      0 0 60px color-mix(in srgb, var(--btn-bg-color, hsl(var(--primary))) calc(var(--btn-glow-opacity, 0.5) * 60%), transparent),
+      0 4px 20px color-mix(in srgb, var(--btn-bg-color, hsl(var(--primary))) calc(var(--btn-glow-opacity, 0.5) * 80%), transparent);
     position: relative;
     overflow: hidden;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    color: var(--btn-text-color, white);
   }
 
   .draw-button::before {

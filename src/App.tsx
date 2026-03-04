@@ -25,6 +25,7 @@ import {
   applyAccentTheme,
   applySlotTheme,
   applyDrawnNumTheme,
+  applyBtnTheme,
 } from "@/lib/drawConfig";
 
 // ─── Background adjuster (quick tweaks after onboarding) ─────────────────────
@@ -308,6 +309,7 @@ const App = () => {
     applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.fontFamily);
     applySlotTheme(drawConfig);
     applyDrawnNumTheme(drawConfig);
+    applyBtnTheme(drawConfig);
   }, [drawConfig]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
@@ -315,6 +317,7 @@ const App = () => {
     applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor, cfg.fontFamily);
     applySlotTheme(cfg);
     applyDrawnNumTheme(cfg);
+    applyBtnTheme(cfg);
     markOnboardingDone();
     setShowOnboarding(false);
   };
@@ -346,6 +349,7 @@ const App = () => {
                   applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor, fresh.fontFamily);
                   applySlotTheme(fresh);
                   applyDrawnNumTheme(fresh);
+                  applyBtnTheme(fresh);
                   // Reopen wizard
                   setShowOnboarding(true);
                 }

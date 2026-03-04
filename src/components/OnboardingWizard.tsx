@@ -21,6 +21,7 @@ import {
     applyAccentTheme,
     applySlotTheme,
     applyDrawnNumTheme,
+    applyBtnTheme,
 } from "@/lib/drawConfig";
 import {
     Image,
@@ -769,6 +770,28 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     <SlotColorRow label="Màu viền" value={cfg.drawnNumBorderColor || '#3b82f6'}
                         onChange={c => { onChange({ drawnNumBorderColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBorderColor: c }); }} />
                 </div>
+
+                {/* ── Title Style ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔠 Kiểu Tiêu Đề</label>
+                    <SliderRow label="Cỡ chữ tiêu đề" value={cfg.titleFontSize ?? 56} min={24} max={96} step={2} onChange={v => onChange({ titleFontSize: v })} unit="px" />
+                    <SliderRow label="Độ phát sáng" value={cfg.titleGlow ?? 80} min={0} max={100} step={5} onChange={v => onChange({ titleGlow: v })} unit="%" />
+                </div>
+
+                {/* ── Button Style ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔘 Nút Bốc Thăm</label>
+
+                    <SlotColorRow label="Màu nền nút" value={cfg.btnBgColor || '#3b82f6'}
+                        onChange={c => { onChange({ btnBgColor: c }); applyBtnTheme({ ...cfg, btnBgColor: c }); }} />
+
+                    <SlotColorRow label="Màu chữ nút" value={cfg.btnTextColor || '#ffffff'}
+                        onChange={c => { onChange({ btnTextColor: c }); applyBtnTheme({ ...cfg, btnTextColor: c }); }} />
+
+                    <SliderRow label="Bo góc nút" value={cfg.btnBorderRadius ?? 16} min={0} max={32} step={2} onChange={v => { onChange({ btnBorderRadius: v }); applyBtnTheme({ ...cfg, btnBorderRadius: v }); }} unit="px" />
+
+                    <SliderRow label="Độ phát sáng" value={cfg.btnGlowOpacity ?? 50} min={0} max={100} step={5} onChange={v => { onChange({ btnGlowOpacity: v }); applyBtnTheme({ ...cfg, btnGlowOpacity: v }); }} unit="%" />
+                </div>
             </div>
 
             {/* ── Sticky Live Preview (right column) ── */}
@@ -792,9 +815,11 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         textAlign: 'center',
                     }}>
                         <h3 style={{
-                            fontFamily: `'${activeFont}', sans-serif`, fontSize: 18, fontWeight: 900,
+                            fontFamily: `'${activeFont}', sans-serif`,
+                            fontSize: Math.min((cfg.titleFontSize ?? 56) * 0.35, 28),
+                            fontWeight: 900,
                             color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
-                            textShadow: '0 0 12px rgba(150,200,255,0.4)',
+                            textShadow: `0 0 ${(cfg.titleGlow ?? 80) * 0.15}px rgba(150,200,255,${(cfg.titleGlow ?? 80) / 100}), 0 0 ${(cfg.titleGlow ?? 80) * 0.3}px rgba(100,150,255,${(cfg.titleGlow ?? 80) / 200})`,
                         }}>
                             {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                         </h3>
@@ -916,13 +941,37 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                                     background: `rgba(${r},${g},${b},${(cfg.drawnNumBgOpacity ?? 80) / 100})`,
                                     color: cfg.drawnNumTextColor || '#ffffff',
                                     border: `2px solid rgba(${br},${bg2},${bb},0.6)`,
-                                    fontFamily: 'monospace', fontSize: 14, fontWeight: 900,
+                                    fontFamily: `'${activeFont}', sans-serif`, fontSize: 14, fontWeight: 900,
                                     boxShadow: `0 0 12px rgba(${br},${bg2},${bb},0.3)`,
                                 }}>
                                     {num}
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+
+                {/* Button Preview */}
+                <div style={{
+                    background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
+                    border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+                }}>
+                    <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔘 Nút Bốc Thăm</label>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{
+                            display: 'inline-block',
+                            padding: '10px 24px',
+                            borderRadius: cfg.btnBorderRadius ?? 16,
+                            background: cfg.btnBgColor || '#3b82f6',
+                            color: cfg.btnTextColor || '#ffffff',
+                            fontFamily: `'${activeFont}', sans-serif`,
+                            fontSize: 14, fontWeight: 700,
+                            border: '2px solid rgba(255,255,255,0.3)',
+                            boxShadow: `0 4px 20px ${cfg.btnBgColor || '#3b82f6'}${Math.round((cfg.btnGlowOpacity ?? 50) / 100 * 255).toString(16).padStart(2, '0')}`,
+                            transition: 'all 0.3s ease',
+                        }}>
+                            ✨ Bốc Thăm
+                        </div>
                     </div>
                 </div>
             </div>
