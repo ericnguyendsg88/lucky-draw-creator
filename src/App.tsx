@@ -305,7 +305,7 @@ const App = () => {
 
   // Apply accent theme on mount and config changes
   useEffect(() => {
-    applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
+    applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.fontFamily);
     applySlotTheme(drawConfig);
     applyDrawnNumTheme(drawConfig);
   }, [drawConfig]);
