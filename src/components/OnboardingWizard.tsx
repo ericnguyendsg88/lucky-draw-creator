@@ -770,6 +770,28 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     <SlotColorRow label="Màu viền" value={cfg.drawnNumBorderColor || '#3b82f6'}
                         onChange={c => { onChange({ drawnNumBorderColor: c }); applyDrawnNumTheme({ ...cfg, drawnNumBorderColor: c }); }} />
                 </div>
+
+                {/* ── Title Style ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔠 Kiểu Tiêu Đề</label>
+                    <SliderRow label="Cỡ chữ tiêu đề" value={cfg.titleFontSize ?? 56} min={24} max={96} step={2} onChange={v => onChange({ titleFontSize: v })} unit="px" />
+                    <SliderRow label="Độ phát sáng" value={cfg.titleGlow ?? 80} min={0} max={100} step={5} onChange={v => onChange({ titleGlow: v })} unit="%" />
+                </div>
+
+                {/* ── Button Style ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔘 Nút Bốc Thăm</label>
+
+                    <SlotColorRow label="Màu nền nút" value={cfg.btnBgColor || '#3b82f6'}
+                        onChange={c => { onChange({ btnBgColor: c }); applyBtnTheme({ ...cfg, btnBgColor: c }); }} />
+
+                    <SlotColorRow label="Màu chữ nút" value={cfg.btnTextColor || '#ffffff'}
+                        onChange={c => { onChange({ btnTextColor: c }); applyBtnTheme({ ...cfg, btnTextColor: c }); }} />
+
+                    <SliderRow label="Bo góc nút" value={cfg.btnBorderRadius ?? 16} min={0} max={32} step={2} onChange={v => { onChange({ btnBorderRadius: v }); applyBtnTheme({ ...cfg, btnBorderRadius: v }); }} unit="px" />
+
+                    <SliderRow label="Độ phát sáng" value={cfg.btnGlowOpacity ?? 50} min={0} max={100} step={5} onChange={v => { onChange({ btnGlowOpacity: v }); applyBtnTheme({ ...cfg, btnGlowOpacity: v }); }} unit="%" />
+                </div>
             </div>
 
             {/* ── Sticky Live Preview (right column) ── */}
