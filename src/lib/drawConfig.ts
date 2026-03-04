@@ -153,7 +153,7 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
 }
 
 /** Apply the accent color as the site-wide primary theme by setting CSS custom properties. */
-export function applyAccentTheme(accentHex: string, titleHex?: string, cardTextHex?: string, bgOverlayHex?: string): void {
+export function applyAccentTheme(accentHex: string, titleHex?: string, cardTextHex?: string, bgOverlayHex?: string, fontFamily?: string): void {
     const { h, s, l } = hexToHsl(accentHex);
     const hsl = `${h} ${s}% ${l}%`;
     const root = document.documentElement.style;
@@ -170,6 +170,8 @@ export function applyAccentTheme(accentHex: string, titleHex?: string, cardTextH
     if (cardTextHex) root.setProperty('--card-text-color', cardTextHex);
     // background overlay color
     if (bgOverlayHex) root.setProperty('--bg-overlay-color', bgOverlayHex);
+    // global draw font
+    if (fontFamily) root.setProperty('--draw-font', `'${fontFamily}', sans-serif`);
 }
 
 /** Apply slot machine CSS variables from config. */
