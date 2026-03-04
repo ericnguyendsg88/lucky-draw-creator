@@ -296,6 +296,11 @@ export const DEFAULT_CONFIG: DrawConfig = {
     titleLetterSpacing: 5,
     titleAlign: 'center',
     titleShadowY: 4,
+    confettiEnabled: true,
+    confettiParticleCount: 150,
+    confettiSpread: 80,
+    confettiColors: ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa', '#34d399'],
+    confettiGravity: 1,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
