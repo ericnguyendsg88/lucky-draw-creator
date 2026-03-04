@@ -85,7 +85,7 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
     background-color: #1a1f3a;
     min-height: 100vh;
     overflow-x: hidden;
@@ -111,7 +111,7 @@
 
 @layer components {
   .font-display {
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
   }
 
   .prize-card {
@@ -237,7 +237,7 @@
   }
 
   .number-display {
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
     @apply text-7xl md:text-9xl font-bold tracking-wider;
     text-shadow: 0 0 30px hsl(var(--primary) / 0.5);
   }
@@ -471,7 +471,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   font-size: 14px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
@@ -559,7 +559,7 @@
 }
 
 .onb-step-number {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   font-size: 13px;
 }
 
@@ -606,7 +606,7 @@
 }
 
 .onb-step-title {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   font-size: 18px;
   font-weight: 800;
   color: white;
@@ -1009,7 +1009,7 @@
   cursor: pointer;
   transition: all 0.25s;
   box-shadow: 0 4px 20px hsl(var(--primary) / 0.45);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   letter-spacing: 0.04em;
 }
 
