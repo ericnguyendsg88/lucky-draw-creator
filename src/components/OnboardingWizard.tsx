@@ -815,9 +815,11 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                         textAlign: 'center',
                     }}>
                         <h3 style={{
-                            fontFamily: `'${activeFont}', sans-serif`, fontSize: 18, fontWeight: 900,
+                            fontFamily: `'${activeFont}', sans-serif`,
+                            fontSize: Math.min((cfg.titleFontSize ?? 56) * 0.35, 28),
+                            fontWeight: 900,
                             color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
-                            textShadow: '0 0 12px rgba(150,200,255,0.4)',
+                            textShadow: `0 0 ${(cfg.titleGlow ?? 80) * 0.15}px rgba(150,200,255,${(cfg.titleGlow ?? 80) / 100}), 0 0 ${(cfg.titleGlow ?? 80) * 0.3}px rgba(100,150,255,${(cfg.titleGlow ?? 80) / 200})`,
                         }}>
                             {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                         </h3>
