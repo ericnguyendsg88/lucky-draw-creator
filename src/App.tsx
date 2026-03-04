@@ -305,14 +305,14 @@ const App = () => {
 
   // Apply accent theme on mount and config changes
   useEffect(() => {
-    applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor);
+    applyAccentTheme(drawConfig.accentColor, drawConfig.titleColor, drawConfig.cardTextColor, drawConfig.bgOverlayColor, drawConfig.fontFamily);
     applySlotTheme(drawConfig);
     applyDrawnNumTheme(drawConfig);
   }, [drawConfig]);
 
   const handleOnboardingComplete = (cfg: DrawConfig) => {
     setDrawConfig(cfg);
-    applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor);
+    applyAccentTheme(cfg.accentColor, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor, cfg.fontFamily);
     applySlotTheme(cfg);
     applyDrawnNumTheme(cfg);
     markOnboardingDone();
@@ -343,7 +343,7 @@ const App = () => {
                   // Reset state
                   const fresh = { ...DEFAULT_CONFIG };
                   setDrawConfig(fresh);
-                  applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor);
+                  applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor, fresh.fontFamily);
                   applySlotTheme(fresh);
                   applyDrawnNumTheme(fresh);
                   // Reopen wizard
