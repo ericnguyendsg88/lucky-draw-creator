@@ -349,6 +349,7 @@ const App = () => {
                   applyAccentTheme(fresh.accentColor, fresh.titleColor, fresh.cardTextColor, fresh.bgOverlayColor, fresh.fontFamily);
                   applySlotTheme(fresh);
                   applyDrawnNumTheme(fresh);
+                  applyBtnTheme(fresh);
                   // Reopen wizard
                   setShowOnboarding(true);
                 }
