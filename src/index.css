@@ -1009,7 +1009,7 @@
   cursor: pointer;
   transition: all 0.25s;
   box-shadow: 0 4px 20px hsl(var(--primary) / 0.45);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   letter-spacing: 0.04em;
 }
 
