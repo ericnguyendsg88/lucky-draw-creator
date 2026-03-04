@@ -61,6 +61,12 @@ export interface DrawConfig {
     btnTextColor: string;       // hex for button text
     btnBorderRadius: number;    // px border radius
     btnGlowOpacity: number;     // 0-100 glow intensity
+    btnHoverBgColor: string;    // hex for hover state background
+    btnHoverTextColor: string;  // hex for hover state text
+    btnActiveBgColor: string;   // hex for active/pressed state background
+    btnActiveTextColor: string; // hex for active/pressed state text
+    btnDisabledBgColor: string; // hex for disabled state background
+    btnDisabledTextColor: string; // hex for disabled state text
     // title style
     titleFontSize: number;
     titleGlow: number;
