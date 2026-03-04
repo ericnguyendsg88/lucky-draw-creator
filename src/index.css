@@ -85,7 +85,7 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--draw-font, 'Orbitron', sans-serif);
     background-color: #1a1f3a;
     min-height: 100vh;
     overflow-x: hidden;
