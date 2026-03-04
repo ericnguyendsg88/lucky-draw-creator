@@ -22,6 +22,7 @@ import {
   BG_IMAGE_MAX_BYTES,
   BG_IMAGE_KEY,
   CUSTOM_FONT_KEY,
+  compressImage,
   applyAccentTheme,
   applySlotTheme,
   applyDrawnNumTheme,
