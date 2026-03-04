@@ -213,6 +213,15 @@ export function applyDrawnNumTheme(cfg: Pick<DrawConfig, 'drawnNumBgColor' | 'dr
     root.setProperty('--drawn-num-border-rgb', toRgb(cfg.drawnNumBorderColor || '#3b82f6'));
 }
 
+/** Apply button CSS variables from config. */
+export function applyBtnTheme(cfg: Pick<DrawConfig, 'btnBgColor' | 'btnTextColor' | 'btnBorderRadius' | 'btnGlowOpacity'>): void {
+    const root = document.documentElement.style;
+    root.setProperty('--btn-bg-color', cfg.btnBgColor || '#3b82f6');
+    root.setProperty('--btn-text-color', cfg.btnTextColor || '#ffffff');
+    root.setProperty('--btn-border-radius', `${cfg.btnBorderRadius ?? 16}px`);
+    root.setProperty('--btn-glow-opacity', String((cfg.btnGlowOpacity ?? 50) / 100));
+}
+
 // ---------------------------------------------------------------------------
 // Default configuration (mirrors the original hard-coded values)
 // ---------------------------------------------------------------------------
