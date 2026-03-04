@@ -1088,27 +1088,38 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     </div>
                 </div>
 
-                {/* Button Preview */}
+                {/* Button Preview - All States */}
                 <div style={{
                     background: 'rgba(10,15,40,0.9)', borderRadius: 12, padding: 12,
                     border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
                 }}>
                     <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 11 }}>🔘 Nút Bốc Thăm</label>
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{
-                            display: 'inline-block',
-                            padding: '10px 24px',
-                            borderRadius: cfg.btnBorderRadius ?? 16,
-                            background: cfg.btnBgColor || '#3b82f6',
-                            color: cfg.btnTextColor || '#ffffff',
-                            fontFamily: `'${activeFont}', sans-serif`,
-                            fontSize: 14, fontWeight: 700,
-                            border: '2px solid rgba(255,255,255,0.3)',
-                            boxShadow: `0 4px 20px ${cfg.btnBgColor || '#3b82f6'}${Math.round((cfg.btnGlowOpacity ?? 50) / 100 * 255).toString(16).padStart(2, '0')}`,
-                            transition: 'all 0.3s ease',
-                        }}>
-                            ✨ Bốc Thăm
-                        </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+                        {[
+                            { label: 'Bình thường', bg: cfg.btnBgColor || '#3b82f6', text: cfg.btnTextColor || '#ffffff', opacity: 1 },
+                            { label: 'Hover', bg: cfg.btnHoverBgColor || '#60a5fa', text: cfg.btnHoverTextColor || '#ffffff', opacity: 1 },
+                            { label: 'Active', bg: cfg.btnActiveBgColor || '#2563eb', text: cfg.btnActiveTextColor || '#ffffff', opacity: 1 },
+                            { label: 'Disabled', bg: cfg.btnDisabledBgColor || '#6b7280', text: cfg.btnDisabledTextColor || '#9ca3af', opacity: 0.6 },
+                        ].map((s) => (
+                            <div key={s.label} style={{ textAlign: 'center' }}>
+                                <div style={{
+                                    display: 'inline-block',
+                                    padding: '8px 18px',
+                                    borderRadius: cfg.btnBorderRadius ?? 16,
+                                    background: s.bg,
+                                    color: s.text,
+                                    fontFamily: `'${activeFont}', sans-serif`,
+                                    fontSize: 12, fontWeight: 700,
+                                    border: '2px solid rgba(255,255,255,0.3)',
+                                    boxShadow: `0 4px 20px ${s.bg}${Math.round((cfg.btnGlowOpacity ?? 50) / 100 * 255).toString(16).padStart(2, '0')}`,
+                                    opacity: s.opacity,
+                                    transition: 'all 0.3s ease',
+                                }}>
+                                    ✨ Bốc Thăm
+                                </div>
+                                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{s.label}</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
