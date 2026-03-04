@@ -11,6 +11,7 @@ import {
     saveBgImage,
     clearBgImage,
     BG_IMAGE_MAX_BYTES,
+    compressImage,
     FONT_OPTIONS,
     EMOJI_SETS,
     COMMON_EMOJIS,
