@@ -831,14 +831,21 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             const r = parseInt(oc.slice(1, 3), 16), g = parseInt(oc.slice(3, 5), 16), b = parseInt(oc.slice(5, 7), 16);
                             return `rgba(${r},${g},${b},${(cfg.bgOverlayOpacity ?? 70) / 100})`;
                         })(),
-                        textAlign: 'center',
+                        textAlign: cfg.titleAlign || 'center',
                     }}>
                         <h3 style={{
                             fontFamily: `'${activeFont}', sans-serif`,
                             fontSize: Math.min((cfg.titleFontSize ?? 56) * 0.35, 28),
                             fontWeight: 900,
-                            color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
-                            textShadow: `0 0 ${(cfg.titleGlow ?? 80) * 0.15}px rgba(150,200,255,${(cfg.titleGlow ?? 80) / 100}), 0 0 ${(cfg.titleGlow ?? 80) * 0.3}px rgba(100,150,255,${(cfg.titleGlow ?? 80) / 200})`,
+                            color: cfg.titleColor || '#ffffff',
+                            letterSpacing: `${(cfg.titleLetterSpacing ?? 5) / 100}em`,
+                            textShadow: (() => {
+                                const glowColor = cfg.titleGlowColor || '#96c8ff';
+                                const intensity = (cfg.titleGlow ?? 80) / 100;
+                                const size = (cfg.titleGlowSize ?? 40) * 0.35;
+                                const shadowY = (cfg.titleShadowY ?? 4) * 0.35;
+                                return `0 0 ${size}px ${glowColor}${Math.round(intensity * 255).toString(16).padStart(2, '0')}, 0 ${shadowY}px ${shadowY * 2}px rgba(0,0,0,0.5)`;
+                            })(),
                         }}>
                             {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                         </h3>
