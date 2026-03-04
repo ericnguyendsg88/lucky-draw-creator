@@ -941,7 +941,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                                     background: `rgba(${r},${g},${b},${(cfg.drawnNumBgOpacity ?? 80) / 100})`,
                                     color: cfg.drawnNumTextColor || '#ffffff',
                                     border: `2px solid rgba(${br},${bg2},${bb},0.6)`,
-                                    fontFamily: 'monospace', fontSize: 14, fontWeight: 900,
+                                    fontFamily: `'${activeFont}', sans-serif`, fontSize: 14, fontWeight: 900,
                                     boxShadow: `0 0 12px rgba(${br},${bg2},${bb},0.3)`,
                                 }}>
                                     {num}
