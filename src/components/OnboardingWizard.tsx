@@ -21,6 +21,7 @@ import {
     applyAccentTheme,
     applySlotTheme,
     applyDrawnNumTheme,
+    applyBtnTheme,
 } from "@/lib/drawConfig";
 import {
     Image,
