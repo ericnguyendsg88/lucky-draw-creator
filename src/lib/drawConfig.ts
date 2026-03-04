@@ -82,11 +82,40 @@ const ONBOARDED_KEY = 'luckyDrawOnboarded_session';
 export const BG_IMAGE_KEY = 'luckyDrawBgImage';
 export const CUSTOM_FONT_KEY = 'luckyDrawCustomFont';
 
-/** Max file size for custom background uploads: 6 MB.
- *  Base64 encoding adds ~33% overhead → ~8 MB in localStorage.
- *  This keeps us safely under the typical 10 MB localStorage limit
- *  while allowing full 1080p/4K-cropped JPEGs and WebP assets. */
-export const BG_IMAGE_MAX_BYTES = 6 * 1024 * 1024; // 6 MB
+/** Max file size for custom background uploads: 10 MB raw.
+ *  Images are compressed before storage via compressImage(). */
+export const BG_IMAGE_MAX_BYTES = 10 * 1024 * 1024; // 10 MB (will be compressed)
+
+// ---------------------------------------------------------------------------
+// Image compression — resize + re-encode to JPEG before localStorage storage
+// ---------------------------------------------------------------------------
+/** Compress a data-URL image to max `maxWidth` px wide, JPEG at `quality`.
+ *  Typically reduces a 4 MB upload to ~200-400 KB base64. */
+export function compressImage(
+    dataUrl: string,
+    maxWidth = 1920,
+    quality = 0.75,
+): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            let { width, height } = img;
+            if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) { reject(new Error('Canvas context unavailable')); return; }
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => reject(new Error('Failed to load image for compression'));
+        img.src = dataUrl;
+    });
+}
 
 /** Returns null if no config has been saved yet. */
 export function loadConfig(): DrawConfig | null {

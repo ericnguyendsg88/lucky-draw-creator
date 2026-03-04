@@ -22,6 +22,7 @@ import {
   BG_IMAGE_MAX_BYTES,
   BG_IMAGE_KEY,
   CUSTOM_FONT_KEY,
+  compressImage,
   applyAccentTheme,
   applySlotTheme,
   applyDrawnNumTheme,
@@ -65,17 +66,18 @@ function BackgroundAdjuster({ cfg, onSave }: { cfg: DrawConfig; onSave: (c: Draw
     }
     if (file.size > BG_IMAGE_MAX_BYTES) {
       const mb = (file.size / 1024 / 1024).toFixed(1);
-      setUploadError(`File ${mb} MB. Tối đa 6 MB.`);
+      setUploadError(`File ${mb} MB. Tối đa 10 MB.`);
       return;
     }
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
+    reader.onload = async (e) => {
+      const rawDataUrl = e.target?.result as string;
       try {
-        saveBgImage(dataUrl);
-        setBgImageUrl(dataUrl);
+        const compressed = await compressImage(rawDataUrl);
+        saveBgImage(compressed);
+        setBgImageUrl(compressed);
       } catch {
-        setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy. Hãy thử file nhỏ hơn.');
+        setUploadError('Không thể lưu — bộ nhớ trình duyệt có thể đã đầy. Hãy thử xóa ảnh cũ trước.');
       }
     };
     reader.readAsDataURL(file);
