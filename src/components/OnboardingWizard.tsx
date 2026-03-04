@@ -643,7 +643,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎨 Màu Chủ Đạo</label>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                         {ACCENT_PRESETS.map(color => (
-                            <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor); }}
+                            <button key={color} type="button" onClick={() => { onChange({ accentColor: color }); setHexInput(color); applyAccentTheme(color, cfg.titleColor, cfg.cardTextColor, cfg.bgOverlayColor, cfg.fontFamily); }}
                                 style={{
                                     width: 36, height: 36, borderRadius: '50%', background: color,
                                     border: cfg.accentColor === color ? '3px solid white' : '2px solid rgba(255,255,255,0.2)',
