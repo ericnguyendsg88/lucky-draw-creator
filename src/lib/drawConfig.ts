@@ -56,6 +56,14 @@ export interface DrawConfig {
     drawnNumTextColor: string;  // hex for drawn number text
     drawnNumBorderColor: string;// hex for drawn number border
     drawnNumBgOpacity: number;  // 0-100
+    // button style
+    btnBgColor: string;         // hex for button background
+    btnTextColor: string;       // hex for button text
+    btnBorderRadius: number;    // px border radius
+    btnGlowOpacity: number;     // 0-100 glow intensity
+    // title style
+    titleFontSize: number;      // title font size in px (32-96)
+    titleGlow: number;          // title glow intensity 0-100
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
