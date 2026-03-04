@@ -606,7 +606,7 @@
 }
 
 .onb-step-title {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   font-size: 18px;
   font-weight: 800;
   color: white;
