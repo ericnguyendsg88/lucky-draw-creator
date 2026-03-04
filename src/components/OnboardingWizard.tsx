@@ -811,6 +811,89 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
 
                     <SliderRow label="Độ phát sáng" value={cfg.btnGlowOpacity ?? 50} min={0} max={100} step={5} onChange={v => { onChange({ btnGlowOpacity: v }); applyBtnTheme({ ...cfg, btnGlowOpacity: v }); }} unit="%" />
                 </div>
+
+                {/* ── Confetti Effects ── */}
+                <div className="onb-card" style={{ marginBottom: 16 }}>
+                    <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🎊 Hiệu Ứng Pháo Giấy</label>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                        <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Bật pháo giấy</span>
+                        <button type="button" onClick={() => onChange({ confettiEnabled: !(cfg.confettiEnabled ?? true) })}
+                            style={{
+                                width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
+                                background: (cfg.confettiEnabled ?? true) ? cfg.accentColor || '#3b82f6' : 'rgba(255,255,255,0.15)',
+                                position: 'relative', transition: 'all 0.2s',
+                            }}>
+                            <div style={{
+                                width: 18, height: 18, borderRadius: '50%', background: 'white',
+                                position: 'absolute', top: 3,
+                                left: (cfg.confettiEnabled ?? true) ? 23 : 3,
+                                transition: 'all 0.2s',
+                            }} />
+                        </button>
+                    </div>
+
+                    {(cfg.confettiEnabled ?? true) && (
+                        <>
+                            <SliderRow label="Số hạt" value={cfg.confettiParticleCount ?? 150} min={20} max={500} step={10} onChange={v => onChange({ confettiParticleCount: v })} unit="" />
+                            <SliderRow label="Góc bắn" value={cfg.confettiSpread ?? 80} min={20} max={180} step={5} onChange={v => onChange({ confettiSpread: v })} unit="°" />
+                            <SliderRow label="Trọng lực" value={Math.round((cfg.confettiGravity ?? 1) * 10)} min={5} max={30} step={1} onChange={v => onChange({ confettiGravity: v / 10 })} unit="" />
+
+                            <div style={{ marginTop: 8 }}>
+                                <label className="onb-label" style={{ marginBottom: 6, display: 'block', fontSize: 12 }}>Màu pháo giấy</label>
+                                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                                    {(cfg.confettiColors ?? ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa', '#34d399']).map((color, i) => (
+                                        <label key={i} style={{
+                                            width: 32, height: 32, borderRadius: 8, background: color,
+                                            border: '2px solid rgba(255,255,255,0.3)', cursor: 'pointer',
+                                            position: 'relative', overflow: 'hidden',
+                                        }}>
+                                            <input type="color" value={color} onChange={e => {
+                                                const newColors = [...(cfg.confettiColors ?? ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa', '#34d399'])];
+                                                newColors[i] = e.target.value;
+                                                onChange({ confettiColors: newColors });
+                                            }} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                                        </label>
+                                    ))}
+                                    {(cfg.confettiColors ?? []).length < 8 && (
+                                        <button type="button" onClick={() => onChange({ confettiColors: [...(cfg.confettiColors ?? ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa', '#34d399']), '#ffffff'] })}
+                                            style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.1)', border: '2px dashed rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: 18, color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            +
+                                        </button>
+                                    )}
+                                </div>
+                                {(cfg.confettiColors ?? []).length > 2 && (
+                                    <button type="button" onClick={() => {
+                                        const colors = [...(cfg.confettiColors ?? [])];
+                                        colors.pop();
+                                        onChange({ confettiColors: colors });
+                                    }} style={{ marginTop: 6, fontSize: 11, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                        Xóa màu cuối
+                                    </button>
+                                )}
+                            </div>
+
+                            <button type="button" onClick={() => {
+                                import('canvas-confetti').then(mod => {
+                                    mod.default({
+                                        particleCount: cfg.confettiParticleCount ?? 150,
+                                        spread: cfg.confettiSpread ?? 80,
+                                        colors: cfg.confettiColors ?? ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa', '#34d399'],
+                                        gravity: cfg.confettiGravity ?? 1,
+                                        origin: { y: 0.7 },
+                                    });
+                                });
+                            }} style={{
+                                marginTop: 10, width: '100%', padding: '8px 16px', borderRadius: 10,
+                                background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                                color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                transition: 'all 0.2s',
+                            }}>
+                                🎉 Thử Pháo Giấy
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
 
             {/* ── Sticky Live Preview (right column) ── */}

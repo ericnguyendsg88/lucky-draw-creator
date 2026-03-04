@@ -235,15 +235,20 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   const isComplete = currentCard === null || currentPrize === null || currentPrize.remaining === 0;
 
   const triggerConfetti = (cardId: number) => {
+    if (drawConfig.confettiEnabled === false) return;
     const totalCards = prizeCards.length;
-    const importance = 1 - cardId / (totalCards + 1); // 0=last, 1=first
+    const importance = 1 - cardId / (totalCards + 1);
+    const baseCount = drawConfig.confettiParticleCount ?? 150;
+    const baseSpread = drawConfig.confettiSpread ?? 80;
+    const colors = drawConfig.confettiColors?.length
+      ? drawConfig.confettiColors
+      : ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa'];
     confetti({
-      particleCount: Math.round(50 + importance * 250),
-      spread: 40 + importance * 80,
+      particleCount: Math.round(baseCount * (0.3 + importance * 0.7)),
+      spread: baseSpread * (0.5 + importance * 0.5),
       startVelocity: 30 + importance * 50,
-      colors: CARD_COLORS[cardId % CARD_COLORS.length].border
-        ? ['#ffd700', '#ff69b4', '#60a5fa', '#a78bfa']
-        : ['#3b82f6', '#60a5fa', '#93c5fd'],
+      colors,
+      gravity: drawConfig.confettiGravity ?? 1,
       origin: { y: 0.7 },
     });
   };
