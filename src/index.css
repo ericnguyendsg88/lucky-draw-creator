@@ -471,7 +471,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--draw-font, 'Orbitron', sans-serif);
   font-size: 14px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
