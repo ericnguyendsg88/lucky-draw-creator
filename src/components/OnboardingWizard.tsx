@@ -774,8 +774,27 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                 {/* ── Title Style ── */}
                 <div className="onb-card" style={{ marginBottom: 16 }}>
                     <label className="onb-label" style={{ marginBottom: 8, display: 'block' }}>🔠 Kiểu Tiêu Đề</label>
-                    <SliderRow label="Cỡ chữ tiêu đề" value={cfg.titleFontSize ?? 56} min={24} max={96} step={2} onChange={v => onChange({ titleFontSize: v })} unit="px" />
-                    <SliderRow label="Độ phát sáng" value={cfg.titleGlow ?? 80} min={0} max={100} step={5} onChange={v => onChange({ titleGlow: v })} unit="%" />
+                    <SliderRow label="Cỡ chữ" value={cfg.titleFontSize ?? 56} min={24} max={96} step={2} onChange={v => onChange({ titleFontSize: v })} unit="px" />
+                    <SliderRow label="Giãn chữ" value={cfg.titleLetterSpacing ?? 5} min={0} max={30} step={1} onChange={v => onChange({ titleLetterSpacing: v })} unit="" />
+
+                    <SlotColorRow label="Màu phát sáng" value={cfg.titleGlowColor || '#96c8ff'}
+                        onChange={c => onChange({ titleGlowColor: c })} />
+                    <SliderRow label="Cường độ sáng" value={cfg.titleGlow ?? 80} min={0} max={100} step={5} onChange={v => onChange({ titleGlow: v })} unit="%" />
+                    <SliderRow label="Vùng phát sáng" value={cfg.titleGlowSize ?? 40} min={0} max={120} step={5} onChange={v => onChange({ titleGlowSize: v })} unit="px" />
+                    <SliderRow label="Bóng đổ dọc" value={cfg.titleShadowY ?? 4} min={0} max={20} step={1} onChange={v => onChange({ titleShadowY: v })} unit="px" />
+
+                    <div style={{ marginTop: 8 }}>
+                        <label className="onb-label" style={{ marginBottom: 4, display: 'block', fontSize: 12 }}>Vị trí</label>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                            {(['left', 'center', 'right'] as const).map(align => (
+                                <button key={align} type="button" onClick={() => onChange({ titleAlign: align })}
+                                    className={`onb-style-option ${(cfg.titleAlign || 'center') === align ? 'onb-style-option--active' : ''}`}
+                                    style={{ flex: 1, textTransform: 'capitalize', padding: '8px 12px', fontSize: 13 }}>
+                                    {align === 'left' ? '◀ Trái' : align === 'center' ? '● Giữa' : 'Phải ▶'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* ── Button Style ── */}
@@ -812,14 +831,21 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             const r = parseInt(oc.slice(1, 3), 16), g = parseInt(oc.slice(3, 5), 16), b = parseInt(oc.slice(5, 7), 16);
                             return `rgba(${r},${g},${b},${(cfg.bgOverlayOpacity ?? 70) / 100})`;
                         })(),
-                        textAlign: 'center',
+                        textAlign: cfg.titleAlign || 'center',
                     }}>
                         <h3 style={{
                             fontFamily: `'${activeFont}', sans-serif`,
                             fontSize: Math.min((cfg.titleFontSize ?? 56) * 0.35, 28),
                             fontWeight: 900,
-                            color: cfg.titleColor || '#ffffff', letterSpacing: '0.05em',
-                            textShadow: `0 0 ${(cfg.titleGlow ?? 80) * 0.15}px rgba(150,200,255,${(cfg.titleGlow ?? 80) / 100}), 0 0 ${(cfg.titleGlow ?? 80) * 0.3}px rgba(100,150,255,${(cfg.titleGlow ?? 80) / 200})`,
+                            color: cfg.titleColor || '#ffffff',
+                            letterSpacing: `${(cfg.titleLetterSpacing ?? 5) / 100}em`,
+                            textShadow: (() => {
+                                const glowColor = cfg.titleGlowColor || '#96c8ff';
+                                const intensity = (cfg.titleGlow ?? 80) / 100;
+                                const size = (cfg.titleGlowSize ?? 40) * 0.35;
+                                const shadowY = (cfg.titleShadowY ?? 4) * 0.35;
+                                return `0 0 ${size}px ${glowColor}${Math.round(intensity * 255).toString(16).padStart(2, '0')}, 0 ${shadowY}px ${shadowY * 2}px rgba(0,0,0,0.5)`;
+                            })(),
                         }}>
                             {cfg.drawTitle || 'BỐC THĂM MAY MẮN'}
                         </h3>

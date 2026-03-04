@@ -529,17 +529,24 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
         </div>
 
         {/* ── Header ── */}
-        <motion.div className="text-center mb-6"
+        <motion.div className="w-full mb-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          style={{ textAlign: drawConfig.titleAlign || 'center' }}
         >
           <h1 className="font-black mb-2"
             style={{
               fontFamily: `'${drawConfig.fontFamily}', sans-serif`,
               fontSize: `clamp(24px, ${drawConfig.titleFontSize || 56}px, 96px)`,
               color: drawConfig.titleColor || '#ffffff',
-              textShadow: `0 0 ${(drawConfig.titleGlow ?? 80) * 0.5}px rgba(150,200,255,${(drawConfig.titleGlow ?? 80) / 100}), 0 0 ${(drawConfig.titleGlow ?? 80)}px rgba(100,150,255,${(drawConfig.titleGlow ?? 80) / 200}), 0 4px 8px rgba(0,0,0,0.5)`,
-              letterSpacing: '0.05em',
+              textShadow: (() => {
+                const glowColor = drawConfig.titleGlowColor || '#96c8ff';
+                const intensity = (drawConfig.titleGlow ?? 80) / 100;
+                const size = drawConfig.titleGlowSize ?? 40;
+                const shadowY = drawConfig.titleShadowY ?? 4;
+                return `0 0 ${size}px ${glowColor}${Math.round(intensity * 255).toString(16).padStart(2, '0')}, 0 0 ${size * 2}px ${glowColor}${Math.round(intensity * 0.5 * 255).toString(16).padStart(2, '0')}, 0 ${shadowY}px ${shadowY * 2}px rgba(0,0,0,0.5)`;
+              })(),
+              letterSpacing: `${(drawConfig.titleLetterSpacing ?? 5) / 100}em`,
             }}>
             {drawConfig.drawTitle || 'BỐC THĂM MAY MẮN'}
           </h1>

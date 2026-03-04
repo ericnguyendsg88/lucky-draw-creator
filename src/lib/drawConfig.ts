@@ -62,8 +62,13 @@ export interface DrawConfig {
     btnBorderRadius: number;    // px border radius
     btnGlowOpacity: number;     // 0-100 glow intensity
     // title style
-    titleFontSize: number;      // title font size in px (32-96)
+    titleFontSize: number;      // title font size in px (24-96)
     titleGlow: number;          // title glow intensity 0-100
+    titleGlowColor: string;     // hex for title glow color
+    titleGlowSize: number;      // glow spread in px (0-120)
+    titleLetterSpacing: number; // letter spacing in em * 100 (0-30)
+    titleAlign: 'left' | 'center' | 'right';
+    titleShadowY: number;      // vertical text shadow offset (0-20)
 }
 
 const STORAGE_KEY = 'luckyDrawConfig_v2';
@@ -280,6 +285,11 @@ export const DEFAULT_CONFIG: DrawConfig = {
     btnGlowOpacity: 50,
     titleFontSize: 56,
     titleGlow: 80,
+    titleGlowColor: '#96c8ff',
+    titleGlowSize: 40,
+    titleLetterSpacing: 5,
+    titleAlign: 'center',
+    titleShadowY: 4,
 };
 
 // ─── Style options ──────────────────────────────────────────────────────────
