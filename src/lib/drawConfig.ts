@@ -327,6 +327,7 @@ export const DEFAULT_CONFIG: DrawConfig = {
     titleLetterSpacing: 5,
     titleAlign: 'center',
     titleShadowY: 4,
+    showDrawnNumbers: true,
     confettiEnabled: true,
     confettiParticleCount: 150,
     confettiSpread: 80,
