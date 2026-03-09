@@ -744,7 +744,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </div>
 
             {/* History for single-draw cards */}
-            {currentCard.drawsPerSession === 1 && (
+            {(drawConfig.showDrawnNumbers !== false) && currentCard.drawsPerSession === 1 && (
               <div className="w-full mt-4">
                 <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
