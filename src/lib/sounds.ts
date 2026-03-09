@@ -5,7 +5,7 @@ type SoundPack = 'arcade' | 'vegas' | 'retro' | 'modern';
 class SoundManager {
   private audioContext: AudioContext | null = null;
   private lastTickTime: number = 0;
-  private tickInterval: number = 40;
+  private tickInterval: number = 60; // increased from 40ms to reduce audio node creation
   private currentPack: SoundPack = 'vegas';
   
   constructor() {
