@@ -19,6 +19,9 @@ export interface DrawConfig {
     drawTitle: string;       // display title for the draw
     maxNumber: number;       // highest ticket number
     prizeCards: PrizeCardConfig[];
+    // free draw mode settings
+    freeDrawSeconds: number;      // spin duration for free draw mode (seconds)
+    freeDrawBatchSize: number;    // how many numbers to draw per click in free draw
     // background
     bgWidth: number;
     bgPosX: number;
