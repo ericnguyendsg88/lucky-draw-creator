@@ -1102,25 +1102,56 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
     return (
         <div className="onb-step-content">
-            <div className="onb-cards-list">
-                {cfg.prizeCards.map((card, i) => {
-                    const color = CARD_COLORS[i % CARD_COLORS.length];
-                    return (
-                        <motion.div key={i} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
-                            className="onb-timing-row" style={{ borderColor: color.border }}>
-                            <div className="onb-timing-name" style={{ color: color.border }}>{card.name}</div>
-                            <div className="onb-timing-controls">
-                                <Clock size={14} style={{ opacity: 0.6 }} />
-                                <input type="range" min={1} max={30} step={0.5} value={card.drawSeconds}
-                                    onChange={e => updateCard(i, { drawSeconds: Number(e.target.value) })}
-                                    className="onb-slider onb-slider-timing" />
-                                <span className="onb-timing-val">{card.drawSeconds}s</span>
-                            </div>
-                        </motion.div>
-                    );
-                })}
+            {cfg.prizeCards.length === 0 ? (
+                <div className="onb-card" style={{ textAlign: 'center', padding: 32, color: 'rgba(255,255,255,0.5)' }}>
+                    <Clock size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                    <div style={{ fontSize: 14 }}>Chưa có giải thưởng nào.</div>
+                    <div style={{ fontSize: 12, marginTop: 4 }}>Chế độ bốc tự do sẽ dùng thời gian mặc định 3 giây.</div>
+                </div>
+            ) : (
+                <div className="onb-cards-list">
+                    {cfg.prizeCards.map((card, i) => {
+                        const color = CARD_COLORS[i % CARD_COLORS.length];
+                        return (
+                            <motion.div key={i} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+                                className="onb-timing-row" style={{ borderColor: color.border }}>
+                                <div className="onb-timing-name" style={{ color: color.border }}>{card.name}</div>
+                                <div className="onb-timing-controls">
+                                    <Clock size={14} style={{ opacity: 0.6 }} />
+                                    <input type="range" min={1} max={30} step={0.5} value={card.drawSeconds}
+                                        onChange={e => updateCard(i, { drawSeconds: Number(e.target.value) })}
+                                        className="onb-slider onb-slider-timing" />
+                                    <span className="onb-timing-val">{card.drawSeconds}s</span>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* Toggle: Show drawn numbers */}
+            <div className="onb-card" style={{ marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
+                <div>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.9)' }}>Hiển thị các số trúng thưởng</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>Bật/tắt bảng hiển thị các số đã bốc</div>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => onChange({ showDrawnNumbers: !cfg.showDrawnNumbers })}
+                    style={{
+                        width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
+                        background: cfg.showDrawnNumbers ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.15)',
+                        position: 'relative', transition: 'background 0.2s',
+                    }}
+                >
+                    <div style={{
+                        width: 18, height: 18, borderRadius: '50%', background: 'white',
+                        position: 'absolute', top: 3,
+                        left: cfg.showDrawnNumbers ? 23 : 3,
+                        transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                    }} />
+                </button>
             </div>
-            
         </div>
     );
 }
