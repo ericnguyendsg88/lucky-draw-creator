@@ -1103,10 +1103,15 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
     return (
         <div className="onb-step-content">
             {cfg.prizeCards.length === 0 ? (
-                <div className="onb-card" style={{ textAlign: 'center', padding: 32, color: 'rgba(255,255,255,0.5)' }}>
-                    <Clock size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
-                    <div style={{ fontSize: 14 }}>Chưa có giải thưởng nào.</div>
-                    <div style={{ fontSize: 12, marginTop: 4 }}>Chế độ bốc tự do sẽ dùng thời gian mặc định 3 giây.</div>
+                <div className="onb-card" style={{ padding: 16 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.9)', marginBottom: 12 }}>⏱️ Thời gian quay (Bốc tự do)</div>
+                    <div className="onb-timing-controls">
+                        <Clock size={14} style={{ opacity: 0.6 }} />
+                        <input type="range" min={1} max={30} step={0.5} value={cfg.freeDrawSeconds ?? 3}
+                            onChange={e => onChange({ freeDrawSeconds: Number(e.target.value) })}
+                            className="onb-slider onb-slider-timing" />
+                        <span className="onb-timing-val">{cfg.freeDrawSeconds ?? 3}s</span>
+                    </div>
                 </div>
             ) : (
                 <div className="onb-cards-list">
