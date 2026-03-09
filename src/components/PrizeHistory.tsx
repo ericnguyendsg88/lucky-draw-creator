@@ -94,18 +94,28 @@ export const PrizeHistory = ({ history, place }: PrizeHistoryProps) => {
               }}
             >
               <AnimatePresence initial={false}>
-                {group.items.map((item, index) => (
-                  <motion.div
-                    key={`${item.number}-${item.place}-${item.round}-${index}`}
-                    className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    whileHover={{ scale: 1.08 }}
-                  >
-                    <span className="font-black">{String(item.number).padStart(3, "0")}</span>
-                  </motion.div>
-                ))}
+                {group.items.map((item, index) => {
+                  const isRecent = index >= group.items.length - 3;
+                  return isRecent ? (
+                    <motion.div
+                      key={`${item.number}-${item.place}-${item.round}-${index}`}
+                      className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.25 }}
+                      whileHover={{ scale: 1.08 }}
+                    >
+                      <span className="font-black">{String(item.number).padStart(3, "0")}</span>
+                    </motion.div>
+                  ) : (
+                    <div
+                      key={`${item.number}-${item.place}-${item.round}-${index}`}
+                      className={`history-number border ${placeColors[item.place]} ${placeSizes[item.place]}`}
+                    >
+                      <span className="font-black">{String(item.number).padStart(3, "0")}</span>
+                    </div>
+                  );
+                })}
               </AnimatePresence>
             </div>
           </div>
