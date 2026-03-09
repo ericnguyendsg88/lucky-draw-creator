@@ -1103,10 +1103,15 @@ function StepDrawTiming({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
     return (
         <div className="onb-step-content">
             {cfg.prizeCards.length === 0 ? (
-                <div className="onb-card" style={{ textAlign: 'center', padding: 32, color: 'rgba(255,255,255,0.5)' }}>
-                    <Clock size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
-                    <div style={{ fontSize: 14 }}>Chưa có giải thưởng nào.</div>
-                    <div style={{ fontSize: 12, marginTop: 4 }}>Chế độ bốc tự do sẽ dùng thời gian mặc định 3 giây.</div>
+                <div className="onb-card" style={{ padding: 16 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.9)', marginBottom: 12 }}>⏱️ Thời gian quay (Bốc tự do)</div>
+                    <div className="onb-timing-controls">
+                        <Clock size={14} style={{ opacity: 0.6 }} />
+                        <input type="range" min={1} max={30} step={0.5} value={cfg.freeDrawSeconds ?? 3}
+                            onChange={e => onChange({ freeDrawSeconds: Number(e.target.value) })}
+                            className="onb-slider onb-slider-timing" />
+                        <span className="onb-timing-val">{cfg.freeDrawSeconds ?? 3}s</span>
+                    </div>
                 </div>
             ) : (
                 <div className="onb-cards-list">
@@ -1165,10 +1170,16 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
     return (
         <div className="onb-step-content">
             {cfg.prizeCards.length === 0 ? (
-                <div className="onb-card" style={{ textAlign: 'center', padding: 32, color: 'rgba(255,255,255,0.5)' }}>
-                    <Users size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
-                    <div style={{ fontSize: 14 }}>Chưa có giải thưởng nào.</div>
-                    <div style={{ fontSize: 12, marginTop: 4 }}>Chế độ bốc tự do sẽ bốc 1 số mỗi lần.</div>
+                <div className="onb-card" style={{ padding: 16 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.9)', marginBottom: 12 }}>🎯 Số lượt quay mỗi lần bấm (Bốc tự do)</div>
+                    <div className="onb-number-row">
+                        <button type="button" className="onb-num-btn" onClick={() => onChange({ freeDrawBatchSize: clamp((cfg.freeDrawBatchSize ?? 1) - 1, 1, 50) })}>−</button>
+                        <input type="number" min={1} max={50} value={cfg.freeDrawBatchSize ?? 1}
+                            onChange={e => onChange({ freeDrawBatchSize: clamp(Number(e.target.value), 1, 50) })}
+                            className="onb-input onb-input-num" />
+                        <button type="button" className="onb-num-btn" onClick={() => onChange({ freeDrawBatchSize: clamp((cfg.freeDrawBatchSize ?? 1) + 1, 1, 50) })}>+</button>
+                        <span className="onb-per-session">số/lần bấm</span>
+                    </div>
                 </div>
             ) : (
                 <div className="onb-cards-list">

@@ -19,6 +19,9 @@ export interface DrawConfig {
     drawTitle: string;       // display title for the draw
     maxNumber: number;       // highest ticket number
     prizeCards: PrizeCardConfig[];
+    // free draw mode settings
+    freeDrawSeconds: number;      // spin duration for free draw mode (seconds)
+    freeDrawBatchSize: number;    // how many numbers to draw per click in free draw
     // background
     bgWidth: number;
     bgPosX: number;
@@ -286,6 +289,8 @@ export const DEFAULT_CONFIG: DrawConfig = {
     drawTitle: 'LUCKY DRAW',
     maxNumber: 250,
     prizeCards: DEFAULT_PRIZE_CARDS,
+    freeDrawSeconds: 3,
+    freeDrawBatchSize: 1,
     bgWidth: 100,
     bgPosX: 50,
     bgPosY: 0,

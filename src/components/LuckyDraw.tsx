@@ -387,35 +387,43 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     continueDrawing(numbersToAdd, 0, selectedCardId);
   }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, maxNumber, prizeCards]);
 
-  // Free draw mode: draw a single number with no prize card
+  // Free draw mode: draw number(s) with no prize card
   const freeDrawNumber = useCallback(() => {
     if (isDrawing) return;
-    if (drawnNumbers.size >= maxNumber) return; // all numbers exhausted
+    if (drawnNumbers.size >= maxNumber) return;
 
     soundManager.playClick();
     setIsDrawing(true);
     setIsPaused(false);
 
-    let n: number;
-    do { n = Math.floor(Math.random() * maxNumber) + 1; } while (drawnNumbers.has(n));
-
+    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, maxNumber - drawnNumbers.size);
+    const spinMs = (drawConfig.freeDrawSeconds ?? 3) * 1000;
     const newDrawn = new Set(drawnNumbers);
-    newDrawn.add(n);
-    setDrawnNumbers(newDrawn);
+    const numbersToAdd: number[] = [];
 
-    const spinMs = 3000; // 3 second spin
+    for (let i = 0; i < batchSize; i++) {
+      let n: number;
+      do { n = Math.floor(Math.random() * maxNumber) + 1; } while (newDrawn.has(n));
+      numbersToAdd.push(n);
+      newDrawn.add(n);
+    }
+    setDrawnNumbers(newDrawn);
     setIsSpinning(true);
 
-    const revealTimeout = setTimeout(() => {
-      setCurrentNumber(n);
-      setIsSpinning(false);
-      setHistory(prev => [...prev, { number: n, cardId: -1 }]);
-      triggerConfetti(0);
-      soundManager.playWin('medium');
-      setIsDrawing(false);
-    }, spinMs);
-    drawTimeoutsRef.current.push(revealTimeout);
-  }, [isDrawing, drawnNumbers, maxNumber]);
+    // Reveal numbers sequentially
+    numbersToAdd.forEach((n, idx) => {
+      const delay = idx === 0 ? spinMs : spinMs + idx * 1500;
+      const timeout = setTimeout(() => {
+        setCurrentNumber(n);
+        if (idx === numbersToAdd.length - 1) setIsSpinning(false);
+        setHistory(prev => [...prev, { number: n, cardId: -1 }]);
+        triggerConfetti(0);
+        soundManager.playWin('medium');
+        if (idx === numbersToAdd.length - 1) setIsDrawing(false);
+      }, delay);
+      drawTimeoutsRef.current.push(timeout);
+    });
+  }, [isDrawing, drawnNumbers, maxNumber, drawConfig.freeDrawSeconds, drawConfig.freeDrawBatchSize]);
 
   const handleCardClick = (cardId: number) => {
     if (!isDrawing) {
