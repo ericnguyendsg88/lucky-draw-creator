@@ -289,6 +289,8 @@ export const DEFAULT_CONFIG: DrawConfig = {
     drawTitle: 'LUCKY DRAW',
     maxNumber: 250,
     prizeCards: DEFAULT_PRIZE_CARDS,
+    freeDrawSeconds: 3,
+    freeDrawBatchSize: 1,
     bgWidth: 100,
     bgPosX: 50,
     bgPosY: 0,
