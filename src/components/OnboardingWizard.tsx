@@ -1164,30 +1164,37 @@ function StepWinnersPerSession({ cfg, onChange }: { cfg: DrawConfig; onChange: (
 
     return (
         <div className="onb-step-content">
-            <div className="onb-cards-list">
-                {cfg.prizeCards.map((card, i) => {
-                    const color = CARD_COLORS[i % CARD_COLORS.length];
-                    const max = card.totalPrizes;
-                    const val = clamp(card.drawsPerSession, 1, max);
-                    return (
-                        <motion.div key={i} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
-                            className="onb-winners-row" style={{ borderColor: color.border }}>
-                            <div className="onb-timing-name" style={{ color: color.border }}>
-                                {card.name}<span className="onb-card-total"> (Tổng: {card.totalPrizes})</span>
-                            </div>
-                            <div className="onb-number-row">
-                                <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val - 1, 1, max) })}>−</button>
-                                <input type="number" min={1} max={max} value={val}
-                                    onChange={e => updateCard(i, { drawsPerSession: clamp(Number(e.target.value), 1, max) })}
-                                    className="onb-input onb-input-num" />
-                                <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val + 1, 1, max) })}>+</button>
-                                <span className="onb-per-session">giải/lần bấm</span>
-                            </div>
-                        </motion.div>
-                    );
-                })}
-            </div>
-            
+            {cfg.prizeCards.length === 0 ? (
+                <div className="onb-card" style={{ textAlign: 'center', padding: 32, color: 'rgba(255,255,255,0.5)' }}>
+                    <Users size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                    <div style={{ fontSize: 14 }}>Chưa có giải thưởng nào.</div>
+                    <div style={{ fontSize: 12, marginTop: 4 }}>Chế độ bốc tự do sẽ bốc 1 số mỗi lần.</div>
+                </div>
+            ) : (
+                <div className="onb-cards-list">
+                    {cfg.prizeCards.map((card, i) => {
+                        const color = CARD_COLORS[i % CARD_COLORS.length];
+                        const max = card.totalPrizes;
+                        const val = clamp(card.drawsPerSession, 1, max);
+                        return (
+                            <motion.div key={i} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+                                className="onb-winners-row" style={{ borderColor: color.border }}>
+                                <div className="onb-timing-name" style={{ color: color.border }}>
+                                    {card.name}<span className="onb-card-total"> (Tổng: {card.totalPrizes})</span>
+                                </div>
+                                <div className="onb-number-row">
+                                    <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val - 1, 1, max) })}>−</button>
+                                    <input type="number" min={1} max={max} value={val}
+                                        onChange={e => updateCard(i, { drawsPerSession: clamp(Number(e.target.value), 1, max) })}
+                                        className="onb-input onb-input-num" />
+                                    <button type="button" className="onb-num-btn" onClick={() => updateCard(i, { drawsPerSession: clamp(val + 1, 1, max) })}>+</button>
+                                    <span className="onb-per-session">giải/lần bấm</span>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
