@@ -699,7 +699,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </motion.div>
 
             {/* History for multi-draw cards first, then slot machine */}
-            {currentCard.drawsPerSession > 1 && (
+            {(drawConfig.showDrawnNumbers !== false) && currentCard.drawsPerSession > 1 && (
               <div className="w-full mb-4">
                 <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
