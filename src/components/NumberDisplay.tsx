@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo, useCallback } from "react";
 import { soundManager } from "@/lib/sounds";
 
 interface NumberDisplayProps {
@@ -8,29 +8,36 @@ interface NumberDisplayProps {
   isComplete?: boolean;
 }
 
-const SlotDigit = ({ digit, isDrawing }: { digit: string; isDrawing: boolean }) => {
+const SlotDigit = memo(({ digit, isDrawing }: { digit: string; isDrawing: boolean }) => {
   const [displayDigit, setDisplayDigit] = useState<string | number>(digit);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  
+  const rafRef = useRef<number>(0);
+  const lastTickRef = useRef(0);
+
   useEffect(() => {
     if (isDrawing) {
-      intervalRef.current = setInterval(() => {
-        setDisplayDigit(Math.floor(Math.random() * 10));
-        soundManager.playRolling();
-      }, 50);
-      
+      const tick = (time: number) => {
+        // Throttle updates to ~66ms (15fps visual) instead of 50ms setInterval
+        if (time - lastTickRef.current >= 66) {
+          lastTickRef.current = time;
+          setDisplayDigit(Math.floor(Math.random() * 10));
+          soundManager.playRolling();
+        }
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+
       return () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
       };
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
       }
       setDisplayDigit(digit);
     }
   }, [isDrawing, digit]);
-  
+
   return (
     <div className="slot-digit-container">
       <div className="slot-digit-frame">
@@ -40,14 +47,15 @@ const SlotDigit = ({ digit, isDrawing }: { digit: string; isDrawing: boolean }) 
       </div>
     </div>
   );
-};
+});
 
-export const NumberDisplay = ({ number, isDrawing, selectedPlace, isComplete }: NumberDisplayProps) => {
+SlotDigit.displayName = 'SlotDigit';
+
+export const NumberDisplay = memo(({ number, isDrawing, selectedPlace, isComplete }: NumberDisplayProps) => {
   const [displayDigits, setDisplayDigits] = useState<string[]>(["-", "-", "-"]);
-  
-  // Check if this is prize 3 or 4 and drawing is complete
+
   const shouldBeSmall = isComplete && (selectedPlace === 3 || selectedPlace === 4);
-  
+
   useEffect(() => {
     if (!isDrawing && number !== null) {
       const numStr = String(number).padStart(3, "0");
@@ -56,12 +64,12 @@ export const NumberDisplay = ({ number, isDrawing, selectedPlace, isComplete }: 
       setDisplayDigits(["-", "-", "-"]);
     }
   }, [isDrawing, number]);
-  
+
   return (
     <div className={`relative ${shouldBeSmall ? 'scale-75' : ''} transition-transform duration-500`}>
       {/* Glow effect */}
       <div className={`absolute inset-0 bg-primary/15 blur-2xl rounded-full transition-opacity duration-200 ${isDrawing ? 'slot-glow-pulse' : 'opacity-20'}`} />
-      
+
       {/* Slot machine container */}
       <div className="slot-machine-container relative z-10">
         <div className="slot-digits-wrapper">
@@ -72,4 +80,6 @@ export const NumberDisplay = ({ number, isDrawing, selectedPlace, isComplete }: 
       </div>
     </div>
   );
-};
+});
+
+NumberDisplay.displayName = 'NumberDisplay';

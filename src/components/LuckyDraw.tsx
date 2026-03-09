@@ -599,14 +599,23 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   Các Số Đã Bốc ({history.length} / {maxNumber})
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {history.map((item, i) => (
-                    <motion.span key={i} className="history-number"
-                      style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
-                      initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.02 }}>
-                      {String(item.number).padStart(3, '0')}
-                    </motion.span>
-                  ))}
+                  {history.map((item, i) => {
+                    // Only animate the last 3 items to avoid layout thrashing
+                    const isRecent = i >= history.length - 3;
+                    return isRecent ? (
+                      <motion.span key={`${item.number}-${i}`} className="history-number"
+                        style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
+                        initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}>
+                        {String(item.number).padStart(3, '0')}
+                      </motion.span>
+                    ) : (
+                      <span key={`${item.number}-${i}`} className="history-number"
+                        style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}>
+                        {String(item.number).padStart(3, '0')}
+                      </span>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
