@@ -583,7 +583,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </div>
 
             {/* Drawn numbers history */}
-            {history.length > 0 && (
+            {(drawConfig.showDrawnNumbers !== false) && history.length > 0 && (
               <motion.div className="w-full max-w-2xl mt-8 p-4 rounded-2xl"
                 style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid hsl(var(--primary) / 0.4)' }}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -699,7 +699,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </motion.div>
 
             {/* History for multi-draw cards first, then slot machine */}
-            {currentCard.drawsPerSession > 1 && (
+            {(drawConfig.showDrawnNumbers !== false) && currentCard.drawsPerSession > 1 && (
               <div className="w-full mb-4">
                 <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
@@ -744,7 +744,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </div>
 
             {/* History for single-draw cards */}
-            {currentCard.drawsPerSession === 1 && (
+            {(drawConfig.showDrawnNumbers !== false) && currentCard.drawsPerSession === 1 && (
               <div className="w-full mt-4">
                 <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
               </div>
