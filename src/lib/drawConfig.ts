@@ -69,6 +69,8 @@ export interface DrawConfig {
     titleLetterSpacing: number;
     titleAlign: 'left' | 'center' | 'right';
     titleShadowY: number;
+    // drawn numbers visibility
+    showDrawnNumbers: boolean;     // toggle to show/hide drawn numbers panel
     // confetti effects
     confettiEnabled: boolean;
     confettiParticleCount: number;  // base count 20-500
