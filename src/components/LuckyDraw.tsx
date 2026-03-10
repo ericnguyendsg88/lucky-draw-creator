@@ -665,36 +665,6 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           // Arrange: layout + controls based on button position
           const isLayoutRow = isRow;
 
-          if (btnPos === 'middle') {
-            if (isLayoutRow) {
-              const first = machineFirst ? slotEl : numbersPanel;
-              const second = machineFirst ? numbersPanel : slotEl;
-              return (
-                <motion.div style={{
-                  display: 'flex', flexDirection: 'row', gap: 24, width: '100%',
-                  alignItems: 'center', minHeight: 340, flex: 1,
-                }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                  {first}
-                  {controlsEl}
-                  {second}
-                </motion.div>
-              );
-            } else {
-              return (
-                <motion.div style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  width: '100%', gap: 24, flex: 1,
-                }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                  {machineFirst && slotEl}
-                  {!machineFirst && numbersPanel}
-                  {controlsEl}
-                  {!machineFirst && slotEl}
-                  {machineFirst && numbersPanel}
-                </motion.div>
-              );
-            }
-          }
-
           const layoutEl = (() => {
             if (isLayoutRow) {
               const first = machineFirst ? slotEl : numbersPanel;
@@ -705,6 +675,13 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   alignItems: 'stretch', minHeight: 340, flex: 1,
                 }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                   {first}
+                  {btnPos === 'middle' && (
+                    <div style={{ width: 0, height: 0, position: 'relative', alignSelf: 'center', zIndex: 50 }}>
+                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap' }}>
+                        {controlsEl}
+                      </div>
+                    </div>
+                  )}
                   {second}
                 </motion.div>
               );
@@ -715,8 +692,22 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   width: '100%', gap: 24, flex: 1,
                 }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                   {machineFirst && slotEl}
+                  {btnPos === 'middle' && (
+                    <div style={{ width: 0, height: 0, position: 'relative', alignSelf: 'center', zIndex: 50 }}>
+                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap' }}>
+                        {controlsEl}
+                      </div>
+                    </div>
+                  )}
                   {!machineFirst && numbersPanel}
                   {!machineFirst && slotEl}
+                  {btnPos === 'middle' && !machineFirst && (
+                    <div style={{ width: 0, height: 0, position: 'relative', alignSelf: 'center', zIndex: 50 }}>
+                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap' }}>
+                        {controlsEl}
+                      </div>
+                    </div>
+                  )}
                   {machineFirst && numbersPanel}
                 </motion.div>
               );
@@ -738,7 +729,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             }}>
               {buttonFirst && controlsEl}
               {layoutEl}
-              {!buttonFirst && controlsEl}
+              {!buttonFirst && btnPos !== 'middle' && controlsEl}
             </div>
           );
         })()}
@@ -924,10 +915,16 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <motion.div style={{
                 display: 'flex',
                 flexDirection: machineFirst ? 'row' : 'row-reverse',
-                width: '100%', gap: 24, alignItems: (btnPos === 'middle' ? 'center' : 'stretch'),
+                width: '100%', gap: 24, alignItems: 'stretch',
               }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
                 {slotEl}
-                {btnPos === 'middle' && drawBtnEl}
+                {btnPos === 'middle' && (
+                  <div style={{ width: 0, height: 0, position: 'relative', alignSelf: 'center', zIndex: 50 }}>
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap' }}>
+                      {drawBtnEl}
+                    </div>
+                  </div>
+                )}
                 {contentPanel}
               </motion.div>
             );
@@ -935,10 +932,16 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             return (
               <motion.div style={{
                 display: 'flex', flexDirection: machineFirst ? 'column' : 'column-reverse',
-                alignItems: 'center', width: '100%', gap: 16,
+                alignItems: 'stretch', width: '100%', gap: 24,
               }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
                 {slotEl}
-                {btnPos === 'middle' && drawBtnEl}
+                {btnPos === 'middle' && (
+                  <div style={{ width: 0, height: 0, position: 'relative', alignSelf: 'center', zIndex: 50 }}>
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap' }}>
+                      {drawBtnEl}
+                    </div>
+                  </div>
+                )}
                 {contentPanel}
               </motion.div>
             );
