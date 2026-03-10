@@ -663,12 +663,45 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 display: 'flex', flexDirection: 'row', gap: 24, width: '100%',
                 alignItems: 'stretch', minHeight: 340,
               }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                {first}
+              {first}
                 {second}
-                {/* Controls centred below in a separate row */}
               </motion.div>
             );
-          } else {
+          }
+
+          // Always render controls below the layout
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%' }}>
+              {(() => {
+                if (isRow) {
+                  const first = machineFirst ? slotEl : numbersPanel;
+                  const second = machineFirst ? numbersPanel : slotEl;
+                  return (
+                    <motion.div style={{
+                      display: 'flex', flexDirection: 'row', gap: 24, width: '100%',
+                      alignItems: 'stretch', minHeight: 340,
+                    }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                      {first}
+                      {second}
+                    </motion.div>
+                  );
+                } else {
+                  return (
+                    <motion.div style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      width: '100%', gap: 24,
+                    }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                      {machineFirst && slotEl}
+                      {!machineFirst && numbersPanel}
+                      {!machineFirst && slotEl}
+                      {machineFirst && numbersPanel}
+                    </motion.div>
+                  );
+                }
+              })()}
+              {controlsEl}
+            </div>
+          );
             // Vertical: stack with controls in between
             return (
               <motion.div style={{
