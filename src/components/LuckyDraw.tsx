@@ -620,12 +620,18 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </motion.div>
           ) : null;
 
+          const btnSizeCls = (drawConfig.drawButtonSize ?? 'large') === 'small'
+            ? 'min-w-[140px] px-4 py-2 text-sm'
+            : (drawConfig.drawButtonSize ?? 'large') === 'medium'
+              ? 'min-w-[180px] px-5 py-3 text-base'
+              : 'min-w-[220px] px-6 py-5 text-lg md:text-xl';
+
           const controlsEl = (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <Button
                 onClick={freeDrawNumber}
                 disabled={isDrawing || drawnNumbers.size >= maxNumber}
-                className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
+                className={`draw-button text-primary-foreground ${btnSizeCls}`}
                 size="lg">
                 <Sparkles className="w-7 h-7 mr-3" />
                 {isDrawing ? 'Đang quay...' : drawnNumbers.size >= maxNumber ? 'Đã hết số!' : 'Bốc Thăm'}
