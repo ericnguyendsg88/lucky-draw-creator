@@ -208,7 +208,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     if (drawConfig.customFontName) {
       const stored = loadCustomFont();
       if (stored) {
-        registerCustomFont(drawConfig.customFontName, stored).catch(() => {});
+        registerCustomFont(drawConfig.customFontName, stored).catch(() => { });
       }
     }
   }, [drawConfig.customFontName]);
@@ -566,20 +566,62 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
         </motion.div>
 
         {/* ── Free Draw Mode (no prize cards) ── */}
-        {isFreeDrawMode && (
-          <motion.div className="flex flex-col items-center"
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+        {isFreeDrawMode && (() => {
+          const machinePos = (drawConfig.drawMachinePosition ?? 'left') as 'top' | 'bottom' | 'left' | 'right';
+          const showNumbers = drawConfig.showDrawnNumbers !== false;
+          const sizeRatio = drawConfig.drawMachineSizeRatio ?? 0.5;
+          const isRow = machinePos === 'left' || machinePos === 'right';
+          const machineFirst = machinePos === 'left' || machinePos === 'top';
 
-            <div className="mt-4 mb-6">
+          const slotEl = (
+            <div style={{
+              flex: `0 0 ${sizeRatio * 100}%`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: isRow ? '0' : '12px 0',
+            }}>
               <NumberDisplay
-                number={currentNumber}
-                isDrawing={isSpinning}
-                selectedPlace={null}
-                isComplete={!isDrawing}
+                number={currentNumber} isDrawing={isSpinning}
+                selectedPlace={null} isComplete={!isDrawing}
               />
             </div>
+          );
 
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+          const historyEl = showNumbers && history.length > 0 ? (
+            <motion.div
+              style={{
+                flex: 1, background: 'rgba(20,30,70,0.7)',
+                border: '1px solid hsl(var(--primary) / 0.4)',
+                borderRadius: 16, padding: 16,
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+              }}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
+                Các Số Đã Bốc ({history.length} / {maxNumber})
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {history.map((item, i) => {
+                  const isRecent = i >= history.length - 3;
+                  return isRecent ? (
+                    <motion.span key={`${item.number}-${i}`} className="history-number"
+                      style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
+                      initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.2 }}>
+                      {String(item.number).padStart(3, '0')}
+                    </motion.span>
+                  ) : (
+                    <span key={`${item.number}-${i}`} className="history-number"
+                      style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}>
+                      {String(item.number).padStart(3, '0')}
+                    </span>
+                  );
+                })}
+              </div>
+            </motion.div>
+          ) : null;
+
+          const controlsEl = (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <Button
                 onClick={freeDrawNumber}
                 disabled={isDrawing || drawnNumbers.size >= maxNumber}
@@ -588,41 +630,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 <Sparkles className="w-7 h-7 mr-3" />
                 {isDrawing ? 'Đang quay...' : drawnNumbers.size >= maxNumber ? 'Đã hết số!' : 'Bốc Thăm'}
               </Button>
-            </div>
-
-            {/* Drawn numbers history */}
-            {(drawConfig.showDrawnNumbers !== false) && history.length > 0 && (
-              <motion.div className="w-full max-w-2xl mt-8 p-4 rounded-2xl"
-                style={{ background: 'rgba(20,30,70,0.7)', border: '1px solid hsl(var(--primary) / 0.4)' }}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
-                  Các Số Đã Bốc ({history.length} / {maxNumber})
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {history.map((item, i) => {
-                    // Only animate the last 3 items to avoid layout thrashing
-                    const isRecent = i >= history.length - 3;
-                    return isRecent ? (
-                      <motion.span key={`${item.number}-${i}`} className="history-number"
-                        style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
-                        initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}>
-                        {String(item.number).padStart(3, '0')}
-                      </motion.span>
-                    ) : (
-                      <span key={`${item.number}-${i}`} className="history-number"
-                        style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}>
-                        {String(item.number).padStart(3, '0')}
-                      </span>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Reset */}
-            {history.length > 0 && (
-              <div className="flex justify-center mt-6">
+              {history.length > 0 && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" size="lg" className="px-6">
@@ -640,10 +648,43 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
-              </div>
-            )}
-          </motion.div>
-        )}
+              )}
+            </div>
+          );
+
+          const numbersPanel = showNumbers && history.length > 0 ? historyEl : null;
+
+          if (isRow) {
+            // Horizontal: machine | numbers side-by-side, full-height panels
+            const first = machineFirst ? slotEl : numbersPanel;
+            const second = machineFirst ? numbersPanel : slotEl;
+            return (
+              <motion.div style={{
+                display: 'flex', flexDirection: 'row', gap: 24, width: '100%',
+                alignItems: 'stretch', minHeight: 340,
+              }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                {first}
+                {second}
+                {/* Controls centred below in a separate row */}
+              </motion.div>
+            );
+          } else {
+            // Vertical: stack with controls in between
+            return (
+              <motion.div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                width: '100%', gap: 24,
+              }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                {machineFirst && slotEl}
+                {!machineFirst && numbersPanel}
+                {controlsEl}
+                {machineFirst && numbersPanel}
+                {!machineFirst && slotEl}
+              </motion.div>
+            );
+          }
+        })()}
+
 
         {/* ── Prize Cards grid ── */}
         {!isFreeDrawMode && !isFocusMode && (
@@ -683,107 +724,76 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
         )}
 
         {/* ── Focus mode: single card + draw area ── */}
-        {isFocusMode && selectedCardId !== null && currentCard !== null && (
-          <motion.div
-            className="flex flex-col items-center"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            {/* Focused card */}
-            <motion.div className="w-full max-w-sm mb-6"
-              animate={{ scale: 1.06 }}
-              transition={{ duration: 0.4 }}
-            >
-              <DynPrizeCard
-                card={currentCard}
-                prizeState={prizes[currentCard.id] ?? { total: currentCard.totalPrizes, remaining: currentCard.totalPrizes }}
-                isActive={isDrawing}
-                isSelected
-                isFocused
-                onClick={() => { }}
-                fontFamily={drawConfig.fontFamily}
-                accentColor={drawConfig.accentColor}
-                cardTextColor={drawConfig.cardTextColor}
-                cardOpacity={drawConfig.cardOpacity}
-                cardBlur={drawConfig.cardBlur}
-                cardPadding={drawConfig.cardPadding ?? 20}
-                cardBorderRadius={drawConfig.cardBorderRadius ?? 16}
-                cardFontSize={drawConfig.cardFontSize ?? 100}
-                cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
-                cardElementOrder={drawConfig.cardElementOrder ?? ['emoji', 'name', 'number']}
-              />
-            </motion.div>
+        {isFocusMode && selectedCardId !== null && currentCard !== null && (() => {
+          const machinePos = (drawConfig.drawMachinePosition ?? 'left') as 'top' | 'bottom' | 'left' | 'right';
+          const showNumbers = drawConfig.showDrawnNumbers !== false;
+          const sizeRatio = drawConfig.drawMachineSizeRatio ?? 0.5;
+          const isRow = machinePos === 'left' || machinePos === 'right';
+          const machineFirst = machinePos === 'left' || machinePos === 'top';
 
-            {/* History for multi-draw cards first, then slot machine */}
-            {(drawConfig.showDrawnNumbers !== false) && currentCard.drawsPerSession > 1 && (
-              <div className="w-full mb-4">
-                <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
-              </div>
-            )}
-
-            {/* Draw button */}
-            <div className="mt-2 flex flex-col sm:flex-row gap-4 items-center justify-center">
-              {isDrawing && !isPaused ? (
-                <Button onClick={pauseDraw}
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                  size="lg">
-                  <Pause className="w-7 h-7 mr-3" />
-                  Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
-                </Button>
-              ) : isPaused ? (
-                <Button onClick={resumeDraw}
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                  size="lg">
-                  <Play className="w-7 h-7 mr-3" />
-                  Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
-                </Button>
-              ) : (
-                <Button
-                  onClick={drawNumber}
-                  disabled={selectedCardId === null || isComplete}
-                  className="draw-button text-primary-foreground min-w-[220px] px-6 py-5 text-lg md:text-xl"
-                  size="lg">
-                  <Sparkles className="w-7 h-7 mr-3" />
-                  {getButtonText()}
-                </Button>
-              )}
-            </div>
-
-            {/* Slot machine (for single-draw cards: show first; for multi: show after) */}
-            <div className="mt-8">
+          // ── Slot machine panel ─────────────────────────────────────────────
+          const slotEl = (
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              ...(isRow
+                ? { flex: `0 0 ${sizeRatio * 100}%`, alignSelf: 'stretch' }
+                : { width: '100%', padding: '8px 0' }),
+            }}>
               <NumberDisplay
-                number={currentNumber}
-                isDrawing={isSpinning}
-                selectedPlace={null}
-                isComplete={!isDrawing}
+                number={currentNumber} isDrawing={isSpinning}
+                selectedPlace={null} isComplete={!isDrawing}
               />
             </div>
+          );
 
-            {/* History for single-draw cards */}
-            {(drawConfig.showDrawnNumbers !== false) && currentCard.drawsPerSession === 1 && (
-              <div className="w-full mt-4">
-                <PrizeHistoryDyn history={history} cardId={selectedCardId} accentColor={drawConfig.accentColor} cardAccentColor={currentCard.accentColor} />
-              </div>
-            )}
+          // ── Drawn numbers history ──────────────────────────────────────────
+          const historyEl = showNumbers ? (
+            <PrizeHistoryDyn
+              history={history} cardId={selectedCardId}
+              accentColor={drawConfig.accentColor}
+              cardAccentColor={currentCard.accentColor}
+            />
+          ) : null;
 
-            {/* Back / Reset buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-10">
+          // ── Draw action button ─────────────────────────────────────────────
+          const drawBtnEl = isDrawing && !isPaused ? (
+            <Button onClick={pauseDraw}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[200px] px-6 py-4 text-base md:text-lg"
+              size="lg">
+              <Pause className="w-5 h-5 mr-2" />
+              Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
+            </Button>
+          ) : isPaused ? (
+            <Button onClick={resumeDraw}
+              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[200px] px-6 py-4 text-base md:text-lg"
+              size="lg">
+              <Play className="w-5 h-5 mr-2" />
+              Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
+            </Button>
+          ) : (
+            <Button onClick={drawNumber}
+              disabled={selectedCardId === null || isComplete}
+              className="draw-button text-primary-foreground min-w-[200px] px-6 py-4 text-base md:text-lg"
+              size="lg">
+              <Sparkles className="w-5 h-5 mr-2" />
+              {getButtonText()}
+            </Button>
+          );
+
+          // ── Nav / reset buttons ────────────────────────────────────────────
+          const navBtnsEl = (
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
               <Button onClick={goBackHome}
-                disabled={isDrawing && !isPaused}
-                variant="outline"
-                className="px-5 py-3 text-base font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm shadow-lg">
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Trang Chủ
+                disabled={isDrawing && !isPaused} variant="outline"
+                className="px-4 py-2 text-sm font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Trang Chủ
               </Button>
-
               {history.some(h => h.cardId === selectedCardId) && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline"
-                      className="px-5 py-3 text-base font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm shadow-lg">
-                       <RotateCcw className="w-5 h-5 mr-2" />
-                      Đặt Lại Giải Này
+                      className="px-4 py-2 text-sm font-bold bg-white/10 border-primary/50 text-primary-foreground hover:bg-primary/20 hover:border-primary transition-all backdrop-blur-sm">
+                      <RotateCcw className="w-4 h-4 mr-2" /> Đặt Lại Giải Này
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -801,8 +811,73 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 </AlertDialog>
               )}
             </div>
-          </motion.div>
-        )}
+          );
+
+          // ── Content panel (card + buttons + history) ───────────────────────
+          const contentPanel = (
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              justifyContent: 'center',
+              gap: 16,
+              ...(isRow ? { flex: 1, minWidth: 0, alignSelf: 'stretch', padding: '24px 0' } : { width: '100%' }),
+            }}>
+              {/* Prize card */}
+              <motion.div style={{ width: '100%', maxWidth: 340 }}
+                animate={{ scale: 1.04 }} transition={{ duration: 0.4 }}>
+                <DynPrizeCard
+                  card={currentCard}
+                  prizeState={prizes[currentCard.id] ?? { total: currentCard.totalPrizes, remaining: currentCard.totalPrizes }}
+                  isActive={isDrawing} isSelected isFocused onClick={() => { }}
+                  fontFamily={drawConfig.fontFamily}
+                  accentColor={drawConfig.accentColor}
+                  cardTextColor={drawConfig.cardTextColor}
+                  cardOpacity={drawConfig.cardOpacity}
+                  cardBlur={drawConfig.cardBlur}
+                  cardPadding={drawConfig.cardPadding ?? 20}
+                  cardBorderRadius={drawConfig.cardBorderRadius ?? 16}
+                  cardFontSize={drawConfig.cardFontSize ?? 100}
+                  cardTextAlign={drawConfig.cardTextAlign ?? 'center'}
+                  cardElementOrder={drawConfig.cardElementOrder ?? ['emoji', 'name', 'number']}
+                />
+              </motion.div>
+
+              {/* Draw button */}
+              {drawBtnEl}
+
+              {/* Drawn numbers */}
+              {historyEl}
+
+              {/* Nav buttons */}
+              {navBtnsEl}
+            </div>
+          );
+
+          // ── Final layout ───────────────────────────────────────────────────
+          if (isRow) {
+            return (
+              <motion.div style={{
+                display: 'flex',
+                flexDirection: machineFirst ? 'row' : 'row-reverse',
+                width: '100%', gap: 24, alignItems: 'stretch',
+              }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+                {slotEl}
+                {contentPanel}
+              </motion.div>
+            );
+          } else {
+            return (
+              <motion.div style={{
+                display: 'flex', flexDirection: machineFirst ? 'column' : 'column-reverse',
+                alignItems: 'center', width: '100%', gap: 16,
+              }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+                {slotEl}
+                {contentPanel}
+              </motion.div>
+            );
+          }
+        })()}
+
+
 
         {/* ── Global reset (homepage only) ── */}
         {!isFreeDrawMode && !isFocusMode && history.length > 0 && (

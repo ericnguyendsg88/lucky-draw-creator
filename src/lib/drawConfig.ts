@@ -72,6 +72,10 @@ export interface DrawConfig {
     titleLetterSpacing: number;
     titleAlign: 'left' | 'center' | 'right';
     titleShadowY: number;
+    // draw screen layout
+    drawMachinePosition?: 'top' | 'bottom' | 'left' | 'right'; // where slot machine appears in focus mode
+    drawnNumbersPosition?: 'top' | 'bottom' | 'left' | 'right'; // where drawn numbers panel appears
+    drawMachineSizeRatio?: number; // 0.2–0.8, how much space the machine gets vs numbers (default 0.5)
     // drawn numbers visibility
     showDrawnNumbers: boolean;     // toggle to show/hide drawn numbers panel
     // confetti effects
@@ -332,6 +336,9 @@ export const DEFAULT_CONFIG: DrawConfig = {
     titleLetterSpacing: 5,
     titleAlign: 'center',
     titleShadowY: 4,
+    drawMachinePosition: 'left',
+    drawnNumbersPosition: 'right',
+    drawMachineSizeRatio: 0.5,
     showDrawnNumbers: true,
     confettiEnabled: true,
     confettiParticleCount: 150,
@@ -354,8 +361,8 @@ export const FONT_OPTIONS = [
 
 export const EMOJI_SETS: Record<string, { label: string; emojis: string[] }> = {
     classic: { label: '🏆 Classic', emojis: ['🏆', '👑', '🥈', '🥉', '⭐', '🎖️', '🎗️', '🏅'] },
-    luxury:  { label: '💎 Luxury', emojis: ['💎', '👑', '🥇', '🎖️', '✨', '🌟', '💫', '⚡'] },
-    party:   { label: '🎉 Party', emojis: ['🎉', '🎊', '🎁', '🎀', '🎈', '🎯', '🎪', '🎠'] },
-    nature:  { label: '🌟 Nature', emojis: ['🌟', '🔥', '⚡', '💫', '🌙', '☀️', '🌈', '🍀'] },
-    sports:  { label: '🏀 Sports', emojis: ['🏀', '⚽', '🏆', '🥇', '🏅', '🎯', '🏈', '⚾'] },
+    luxury: { label: '💎 Luxury', emojis: ['💎', '👑', '🥇', '🎖️', '✨', '🌟', '💫', '⚡'] },
+    party: { label: '🎉 Party', emojis: ['🎉', '🎊', '🎁', '🎀', '🎈', '🎯', '🎪', '🎠'] },
+    nature: { label: '🌟 Nature', emojis: ['🌟', '🔥', '⚡', '💫', '🌙', '☀️', '🌈', '🍀'] },
+    sports: { label: '🏀 Sports', emojis: ['🏀', '⚽', '🏆', '🥇', '🏅', '🎯', '🏈', '⚾'] },
 };

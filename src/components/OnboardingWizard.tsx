@@ -48,6 +48,7 @@ import {
     Minimize2,
     GripVertical,
     Eye,
+    Monitor,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -61,6 +62,7 @@ const ALL_STEP_LABELS = [
     { icon: Clock, label: "Thời gian" },
     { icon: Users, label: "Số lượt" },
     { icon: LayoutGrid, label: "Bố cục" },
+    { icon: Monitor, label: "Máy quay" },
 ];
 
 const ALL_STEP_TITLES = [
@@ -71,6 +73,7 @@ const ALL_STEP_TITLES = [
     "⏱️  Thời Gian Quay",
     "🎯  Số Lượt Quay",
     "📐  Bố Cục Thẻ Giải",
+    "🖥️  Vị Trí Máy Quay & Kết Quả",
 ];
 
 const CARD_COLORS = [
@@ -311,7 +314,7 @@ function StepBackground({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     🗑️ Xóa ảnh (dùng mặc định)
                 </button>
             )}
-            
+
         </div>
     );
 }
@@ -447,7 +450,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
 
             <div className="onb-field-group onb-max-number">
                 <label className="onb-label">Số phiếu tối đa <span className="onb-required">*</span></label>
-                
+
                 <input type="number" min={1} max={9999} value={cfg.maxNumber}
                     onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), 1, 9999) })}
                     className="onb-input onb-input-max" placeholder="VD: 250" />
@@ -534,7 +537,7 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
         if (cfg.customFontName) {
             const stored = loadCustomFont();
             if (stored) {
-                registerCustomFont(cfg.customFontName, stored).then(() => setCustomFontLoaded(true)).catch(() => {});
+                registerCustomFont(cfg.customFontName, stored).then(() => setCustomFontLoaded(true)).catch(() => { });
             }
         }
     }, []);
@@ -969,29 +972,29 @@ function StepStyle({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Par
                             border: `2px solid ${(previewCard?.accentColor || cfg.accentColor)}40`, textAlign: cfg.cardTextAlign,
                             transition: 'all 0.3s ease',
                         }}>
-                        {elementOrder.map(el => {
-                            const cardAccent = previewCard?.accentColor || cfg.accentColor;
-                            if (el === 'emoji') return (
-                                <div key="emoji" style={{ fontSize: 22 * (cfg.cardFontSize / 100), marginBottom: 2 }}>
-                                    {previewCard?.emoji ?? '🏆'}
-                                </div>
-                            );
-                            if (el === 'name') return (
-                                <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 14 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 2 }}>
-                                    {previewCard?.name ?? 'Giải Đặc Biệt'}
-                                </div>
-                            );
-                            if (el === 'number') return (
-                                <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 22 * (cfg.cardFontSize / 100), fontWeight: 900, color: cardAccent, marginBottom: 2 }}>
-                                    5 <span style={{ fontSize: 10 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
-                                </div>
-                            );
-                            return null;
-                        })}
-                        <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4 }}>
-                            <div style={{ width: '50%', height: '100%', borderRadius: 3, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
+                            {elementOrder.map(el => {
+                                const cardAccent = previewCard?.accentColor || cfg.accentColor;
+                                if (el === 'emoji') return (
+                                    <div key="emoji" style={{ fontSize: 22 * (cfg.cardFontSize / 100), marginBottom: 2 }}>
+                                        {previewCard?.emoji ?? '🏆'}
+                                    </div>
+                                );
+                                if (el === 'name') return (
+                                    <div key="name" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 14 * (cfg.cardFontSize / 100), fontWeight: 800, color: cfg.cardTextColor || 'white', marginBottom: 2 }}>
+                                        {previewCard?.name ?? 'Giải Đặc Biệt'}
+                                    </div>
+                                );
+                                if (el === 'number') return (
+                                    <div key="number" style={{ fontFamily: `'${activeFont}', sans-serif`, fontSize: 22 * (cfg.cardFontSize / 100), fontWeight: 900, color: cardAccent, marginBottom: 2 }}>
+                                        5 <span style={{ fontSize: 10 * (cfg.cardFontSize / 100), color: 'rgba(255,255,255,0.5)' }}>/ 10</span>
+                                    </div>
+                                );
+                                return null;
+                            })}
+                            <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.3)', overflow: 'hidden', marginTop: 4 }}>
+                                <div style={{ width: '50%', height: '100%', borderRadius: 3, background: previewCard?.accentColor || cfg.accentColor, transition: 'all 0.3s' }} />
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </div>
 
@@ -1439,6 +1442,268 @@ function StepLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Pa
     );
 }
 
+// ─── Step 8: Draw Machine & Numbers Layout ────────────────────────────────────
+type LayoutPos = 'top' | 'bottom' | 'left' | 'right';
+
+function StepDrawLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial: Partial<DrawConfig>) => void }) {
+    const machinePos = (cfg.drawMachinePosition ?? 'left') as LayoutPos;
+    const numbersPos = (cfg.drawnNumbersPosition ?? 'right') as LayoutPos;
+    const ratio = cfg.drawMachineSizeRatio ?? 0.5;
+
+    // Derive direction + order from config
+    const isRow = machinePos === 'left' || machinePos === 'right';
+    const machineFirst = machinePos === 'left' || machinePos === 'top';
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [dragging, setDragging] = useState(false);
+
+    // ─── Handlers ───
+    const setDirection = (horizontal: boolean) => {
+        if (horizontal) {
+            onChange({
+                drawMachinePosition: machineFirst ? 'left' : 'right',
+                drawnNumbersPosition: machineFirst ? 'right' : 'left',
+            });
+        } else {
+            onChange({
+                drawMachinePosition: machineFirst ? 'top' : 'bottom',
+                drawnNumbersPosition: machineFirst ? 'bottom' : 'top',
+            });
+        }
+    };
+
+    const swapBlocks = () => {
+        onChange({
+            drawMachinePosition: numbersPos,
+            drawnNumbersPosition: machinePos,
+        });
+    };
+
+    // ─── Divider drag ───
+    const onDividerDown = (e: React.PointerEvent) => {
+        e.preventDefault();
+        setDragging(true);
+        const el = containerRef.current;
+        if (!el) return;
+
+        const move = (ev: PointerEvent) => {
+            const rect = el.getBoundingClientRect();
+            let newRatio: number;
+            if (isRow) {
+                newRatio = (ev.clientX - rect.left) / rect.width;
+            } else {
+                newRatio = (ev.clientY - rect.top) / rect.height;
+            }
+            // If machine is second, invert
+            if (!machineFirst) newRatio = 1 - newRatio;
+            newRatio = Math.max(0.2, Math.min(0.8, newRatio));
+            onChange({ drawMachineSizeRatio: Math.round(newRatio * 100) / 100 });
+        };
+
+        const up = () => {
+            setDragging(false);
+            window.removeEventListener('pointermove', move);
+            window.removeEventListener('pointerup', up);
+        };
+
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+    };
+
+    const machineRatio = machineFirst ? ratio : 1 - ratio;
+    const numbersRatio = 1 - machineRatio;
+
+    const MC = '#E4A614';
+    const NC = '#7C54E0';
+
+    const pctLabel = (r: number) => `${Math.round(r * 100)}%`;
+
+    return (
+        <div className="onb-step-content">
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 14, textAlign: 'center' }}>
+                Kéo đường phân cách để thay đổi kích thước · Nhấn ⇋ để đổi vị trí
+            </div>
+
+            {/* ── Direction toggle + swap ── */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <button
+                    type="button" onClick={() => setDirection(true)}
+                    style={{
+                        padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                        border: isRow ? '2px solid rgba(96,165,250,0.9)' : '2px solid rgba(255,255,255,0.12)',
+                        background: isRow ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.04)',
+                        color: 'white', cursor: 'pointer', transition: 'all 0.15s',
+                    }}
+                >⬌ Ngang</button>
+                <button
+                    type="button" onClick={() => setDirection(false)}
+                    style={{
+                        padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                        border: !isRow ? '2px solid rgba(96,165,250,0.9)' : '2px solid rgba(255,255,255,0.12)',
+                        background: !isRow ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.04)',
+                        color: 'white', cursor: 'pointer', transition: 'all 0.15s',
+                    }}
+                >⬍ Dọc</button>
+                <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.12)', margin: '0 4px' }} />
+                <button
+                    type="button" onClick={swapBlocks}
+                    style={{
+                        padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                        border: '2px solid rgba(255,255,255,0.15)',
+                        background: 'rgba(255,255,255,0.06)',
+                        color: 'white', cursor: 'pointer', transition: 'all 0.15s',
+                    }}
+                    title="Đổi vị trí hai khối"
+                >⇋ Đổi chỗ</button>
+            </div>
+
+            {/* ── Interactive layout canvas ── */}
+            <div
+                ref={containerRef}
+                style={{
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: isRow ? 'row' : 'column',
+                    width: '100%',
+                    height: isRow ? 220 : 300,
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    background: 'rgba(10,15,40,0.85)',
+                    border: '2px solid rgba(255,255,255,0.1)',
+                    userSelect: 'none',
+                    marginBottom: 16,
+                }}
+            >
+                {/* First block */}
+                {(() => {
+                    const first = machineFirst ? 'machine' : 'numbers';
+                    const bg = first === 'machine' ? MC : NC;
+                    const emoji = first === 'machine' ? '🎰' : '📋';
+                    const label = first === 'machine' ? 'Máy quay số' : 'Số đã bốc';
+                    const blockRatio = machineFirst ? machineRatio : numbersRatio;
+                    return (
+                        <div style={{
+                            flex: `0 0 ${blockRatio * 100}%`,
+                            display: 'flex', flexDirection: 'column',
+                            alignItems: 'center', justifyContent: 'center',
+                            gap: 6, background: bg, opacity: 0.92,
+                            transition: dragging ? 'none' : 'flex-basis 0.15s ease',
+                            position: 'relative',
+                        }}>
+                            <span style={{ fontSize: 32 }}>{emoji}</span>
+                            <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{label}</span>
+                            <span style={{
+                                fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600,
+                                background: 'rgba(0,0,0,0.2)', padding: '2px 8px', borderRadius: 6,
+                            }}>{pctLabel(blockRatio)}</span>
+                        </div>
+                    );
+                })()}
+
+                {/* ── Draggable divider ── */}
+                <div
+                    onPointerDown={onDividerDown}
+                    style={{
+                        position: 'relative',
+                        zIndex: 10,
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        ...(isRow
+                            ? { width: 16, cursor: 'col-resize' }
+                            : { height: 16, cursor: 'row-resize' }),
+                        background: dragging ? 'rgba(96,165,250,0.35)' : 'rgba(96,165,250,0.15)',
+                        transition: 'background 0.15s',
+                    }}
+                >
+                    {/* Handle dots */}
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: isRow ? 'column' : 'row',
+                        gap: 3,
+                    }}>
+                        {[0, 1, 2, 3, 4].map(i => (
+                            <div key={i} style={{
+                                width: 4, height: 4, borderRadius: '50%',
+                                background: dragging ? 'rgba(96,165,250,0.9)' : 'rgba(255,255,255,0.35)',
+                                transition: 'background 0.15s',
+                            }} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Second block */}
+                {(() => {
+                    const second = machineFirst ? 'numbers' : 'machine';
+                    const bg = second === 'machine' ? MC : NC;
+                    const emoji = second === 'machine' ? '🎰' : '📋';
+                    const label = second === 'machine' ? 'Máy quay số' : 'Số đã bốc';
+                    const blockRatio = machineFirst ? numbersRatio : machineRatio;
+                    return (
+                        <div style={{
+                            flex: 1,
+                            display: 'flex', flexDirection: 'column',
+                            alignItems: 'center', justifyContent: 'center',
+                            gap: 6, background: bg, opacity: 0.88,
+                            transition: dragging ? 'none' : 'flex-basis 0.15s ease',
+                            position: 'relative',
+                        }}>
+                            <span style={{ fontSize: 32 }}>{emoji}</span>
+                            <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{label}</span>
+                            <span style={{
+                                fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600,
+                                background: 'rgba(0,0,0,0.2)', padding: '2px 8px', borderRadius: 6,
+                            }}>{pctLabel(blockRatio)}</span>
+                        </div>
+                    );
+                })()}
+            </div>
+
+            {/* ── Quick presets ── */}
+            <div style={{
+                display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 12,
+            }}>
+                {[
+                    { label: '30 / 70', machineR: 0.3 },
+                    { label: '40 / 60', machineR: 0.4 },
+                    { label: '50 / 50', machineR: 0.5 },
+                    { label: '60 / 40', machineR: 0.6 },
+                    { label: '70 / 30', machineR: 0.7 },
+                ].map(p => {
+                    const active = Math.abs(ratio - p.machineR) < 0.02;
+                    return (
+                        <button
+                            key={p.label} type="button"
+                            onClick={() => onChange({ drawMachineSizeRatio: p.machineR })}
+                            style={{
+                                padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600,
+                                border: active ? '1.5px solid rgba(96,165,250,0.8)' : '1px solid rgba(255,255,255,0.1)',
+                                background: active ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.03)',
+                                color: active ? 'rgba(147,197,253,1)' : 'rgba(255,255,255,0.5)',
+                                cursor: 'pointer', transition: 'all 0.12s',
+                            }}
+                        >{p.label}</button>
+                    );
+                })}
+            </div>
+
+            {/* ── Legend ── */}
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 2, background: MC, display: 'inline-block' }} />
+                    🎰 Máy quay số
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 2, background: NC, display: 'inline-block' }} />
+                    📋 Số đã bốc
+                </span>
+            </div>
+        </div>
+    );
+}
+
+
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 interface OnboardingWizardProps {
     onComplete: (config: DrawConfig) => void;
@@ -1451,9 +1716,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const [showPreview, setShowPreview] = useState(false);
     const isAdjusting = loadConfig() !== null;
 
-    // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize
+    // Steps: 0=Title, 1=Background, 2=Prizes, 3=Style, 4=Timing, 5=BatchSize, 6=CardLayout, 7=DrawLayout
     const hasMultipleCards = cfg.prizeCards.length >= 2;
-    const activeStepIndices = hasMultipleCards ? [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 3, 4, 5];
+    const activeStepIndices = hasMultipleCards ? [0, 1, 2, 3, 4, 5, 6, 7] : [0, 1, 2, 3, 4, 5, 7];
     const totalSteps = activeStepIndices.length;
 
     const handleChange = useCallback((partial: Partial<DrawConfig>) => {
@@ -1559,6 +1824,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                             {currentRealStep === 4 && <StepDrawTiming cfg={cfg} onChange={handleChange} />}
                             {currentRealStep === 5 && <StepWinnersPerSession cfg={cfg} onChange={handleChange} />}
                             {currentRealStep === 6 && <StepLayout cfg={cfg} onChange={handleChange} />}
+                            {currentRealStep === 7 && <StepDrawLayout cfg={cfg} onChange={handleChange} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -1568,8 +1834,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         <ChevronLeft size={18} /> Quay Lại
                     </button>
 
-                    {/* Preview Layout button – visible on all steps except the Layout step itself */}
-                    {currentRealStep !== 6 && cfg.prizeCards.length > 0 && (
+                    {/* Preview Layout button – shows card layout on most steps, draw layout on step 7 */}
+                    {currentRealStep !== 6 && currentRealStep !== 7 && cfg.prizeCards.length > 0 && (
                         <button
                             type="button"
                             onClick={() => setShowPreview(true)}
@@ -1590,6 +1856,28 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         </button>
                     )}
 
+                    {/* Draw layout preview button – only on step 7 */}
+                    {currentRealStep === 7 && (
+                        <button
+                            type="button"
+                            onClick={() => setShowPreview(true)}
+                            style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6,
+                                padding: '8px 14px', borderRadius: 10,
+                                background: 'rgba(96,165,250,0.1)',
+                                border: '1px solid rgba(96,165,250,0.3)',
+                                color: 'rgba(147,197,253,0.9)',
+                                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                transition: 'all 0.15s',
+                            }}
+                            onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(96,165,250,0.2)'; }}
+                            onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(96,165,250,0.1)'; }}
+                            title="Preview draw screen layout"
+                        >
+                            <Monitor size={15} /> Xem trước
+                        </button>
+                    )}
+
                     <button type="button" onClick={next} className="onb-btn-next">
                         {step < totalSteps - 1 ? (
                             <><span>Tiếp Theo</span> <ChevronRight size={18} /></>
@@ -1599,25 +1887,129 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                     </button>
                 </div>
 
-                {/* Layout Preview Dialog */}
+                {/* Preview Dialog – card layout or draw layout depending on step */}
                 <Dialog open={showPreview} onOpenChange={setShowPreview}>
                     <DialogContent style={{
                         background: 'rgba(10,15,30,0.95)',
                         border: '1px solid rgba(255,255,255,0.15)',
                         backdropFilter: 'blur(20px)',
-                        maxWidth: 520,
+                        maxWidth: currentRealStep === 7 ? 600 : 520,
                     }}>
-                        <DialogHeader>
-                            <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <LayoutGrid size={18} /> Xem Trước Màn Hình Chính
-                            </DialogTitle>
-                        </DialogHeader>
-                        <div style={{ padding: '8px 0' }}>
-                            <LayoutGridPreview cfg={cfg} />
-                        </div>
-                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: 4 }}>
-                            Bạn có thể tùy chỉnh bố cục ở bước cuối cùng
-                        </div>
+                        {currentRealStep === 7 ? (
+                            <>
+                                <DialogHeader>
+                                    <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <Monitor size={18} /> Xem Trước Màn Hình Bốc Thăm
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <div style={{ padding: '8px 0' }}>
+                                    {/* Draw screen mockup */}
+                                    {(() => {
+                                        const mPos = (cfg.drawMachinePosition ?? 'left') as LayoutPos;
+                                        const isH = mPos === 'left' || mPos === 'right';
+                                        const mFirst = mPos === 'left' || mPos === 'top';
+                                        const r = cfg.drawMachineSizeRatio ?? 0.5;
+                                        const MC = '#E4A614';
+                                        const NC = '#7C54E0';
+
+                                        const machineBlock = (
+                                            <div style={{
+                                                flex: `0 0 ${r * 100}%`,
+                                                background: `linear-gradient(135deg, ${MC}dd, ${MC}99)`,
+                                                borderRadius: 12, padding: 16,
+                                                display: 'flex', flexDirection: 'column',
+                                                alignItems: 'center', justifyContent: 'center', gap: 10,
+                                                minHeight: isH ? 200 : 100,
+                                            }}>
+                                                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
+                                                    🎰 Máy Quay Số
+                                                </div>
+                                                {/* Fake slot display */}
+                                                <div style={{
+                                                    display: 'flex', gap: 6, background: 'rgba(0,0,0,0.3)',
+                                                    padding: '12px 16px', borderRadius: 10,
+                                                }}>
+                                                    {['0', '4', '2'].map((n, i) => (
+                                                        <div key={i} style={{
+                                                            width: 36, height: 48, borderRadius: 6,
+                                                            background: 'rgba(255,255,255,0.12)',
+                                                            border: '1px solid rgba(255,255,255,0.2)',
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            fontSize: 22, fontWeight: 900, color: 'white',
+                                                            fontFamily: 'monospace',
+                                                        }}>{n}</div>
+                                                    ))}
+                                                </div>
+                                                <div style={{
+                                                    padding: '6px 20px', borderRadius: 8,
+                                                    background: 'rgba(255,255,255,0.2)',
+                                                    fontSize: 12, fontWeight: 700, color: 'white',
+                                                }}>QUAY SỐ</div>
+                                            </div>
+                                        );
+
+                                        const numbersBlock = (
+                                            <div style={{
+                                                flex: `0 0 ${(1 - r) * 100}%`,
+                                                background: `linear-gradient(135deg, ${NC}dd, ${NC}99)`,
+                                                borderRadius: 12, padding: 16,
+                                                display: 'flex', flexDirection: 'column',
+                                                alignItems: 'center', justifyContent: 'center', gap: 8,
+                                                minHeight: isH ? 200 : 80,
+                                            }}>
+                                                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
+                                                    📋 Số Đã Bốc
+                                                </div>
+                                                {/* Fake drawn numbers */}
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
+                                                    {['017', '023', '045', '089', '112'].map((n, i) => (
+                                                        <div key={i} style={{
+                                                            padding: '4px 10px', borderRadius: 6,
+                                                            background: 'rgba(255,255,255,0.15)',
+                                                            fontSize: 13, fontWeight: 700, color: 'white',
+                                                            fontFamily: 'monospace',
+                                                        }}>{n}</div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+
+                                        return (
+                                            <div style={{
+                                                display: 'flex',
+                                                flexDirection: isH ? 'row' : 'column',
+                                                gap: 8,
+                                                background: 'rgba(0,0,0,0.3)',
+                                                borderRadius: 14, padding: 10,
+                                                border: '1px solid rgba(255,255,255,0.08)',
+                                            }}>
+                                                {mFirst ? <>{machineBlock}{numbersBlock}</> : <>{numbersBlock}{machineBlock}</>}
+                                            </div>
+                                        );
+                                    })()}
+                                </div>
+                                <div style={{
+                                    display: 'flex', gap: 16, justifyContent: 'center',
+                                    fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 6,
+                                }}>
+                                    <span>Tỷ lệ: 🎰 {Math.round((cfg.drawMachineSizeRatio ?? 0.5) * 100)}% · 📋 {Math.round((1 - (cfg.drawMachineSizeRatio ?? 0.5)) * 100)}%</span>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <DialogHeader>
+                                    <DialogTitle style={{ color: 'white', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <LayoutGrid size={18} /> Xem Trước Màn Hình Chính
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <div style={{ padding: '8px 0' }}>
+                                    <LayoutGridPreview cfg={cfg} />
+                                </div>
+                                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: 4 }}>
+                                    Bạn có thể tùy chỉnh bố cục ở bước cuối cùng
+                                </div>
+                            </>
+                        )}
                     </DialogContent>
                 </Dialog>
             </motion.div>
