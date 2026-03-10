@@ -1670,6 +1670,11 @@ function StepDrawLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     if (btnPos === 'bottom') { posStyle.bottom = 10; posStyle.left = '50%'; posStyle.transform = 'translateX(-50%)'; }
                     else if (btnPos === 'top') { posStyle.top = 10; posStyle.left = '50%'; posStyle.transform = 'translateX(-50%)'; }
                     else if (btnPos === 'left') { posStyle.left = 10; posStyle.top = '50%'; posStyle.transform = 'translateY(-50%)'; }
+                    else if (btnPos === 'middle') {
+                        posStyle.top = '50%'; posStyle.left = '50%';
+                        posStyle.transform = 'translate(-50%, -50%)';
+                        posStyle.zIndex = 25; // on top of the separator if it crosses
+                    }
                     else { posStyle.right = 10; posStyle.top = '50%'; posStyle.transform = 'translateY(-50%)'; }
                     return (
                         <div style={posStyle}>
@@ -1704,7 +1709,8 @@ function StepDrawLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                         { pos: 'bottom', label: '⬇ Dưới' },
                         { pos: 'left', label: '⬅ Trái' },
                         { pos: 'right', label: '➡ Phải' },
-                    ] as { pos: 'top' | 'bottom' | 'left' | 'right'; label: string }[]).map(({ pos, label }) => {
+                        { pos: 'middle', label: '⏺ Giữa' },
+                    ] as { pos: 'top' | 'bottom' | 'left' | 'right' | 'middle'; label: string }[]).map(({ pos, label }) => {
                         const active = (cfg.drawButtonPosition ?? 'bottom') === pos;
                         return (
                             <button
