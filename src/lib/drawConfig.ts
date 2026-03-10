@@ -76,6 +76,9 @@ export interface DrawConfig {
     drawMachinePosition?: 'top' | 'bottom' | 'left' | 'right'; // where slot machine appears in focus mode
     drawnNumbersPosition?: 'top' | 'bottom' | 'left' | 'right'; // where drawn numbers panel appears
     drawMachineSizeRatio?: number; // 0.2–0.8, how much space the machine gets vs numbers (default 0.5)
+    // draw button
+    drawButtonPosition?: 'top' | 'bottom' | 'left' | 'right'; // where button appears relative to layout
+    drawButtonSize?: 'small' | 'medium' | 'large'; // button size preset
     // drawn numbers visibility
     showDrawnNumbers: boolean;     // toggle to show/hide drawn numbers panel
     // confetti effects
@@ -339,6 +342,8 @@ export const DEFAULT_CONFIG: DrawConfig = {
     drawMachinePosition: 'left',
     drawnNumbersPosition: 'right',
     drawMachineSizeRatio: 0.5,
+    drawButtonPosition: 'bottom',
+    drawButtonSize: 'large',
     showDrawnNumbers: true,
     confettiEnabled: true,
     confettiParticleCount: 150,
