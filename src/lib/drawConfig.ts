@@ -342,6 +342,8 @@ export const DEFAULT_CONFIG: DrawConfig = {
     drawMachinePosition: 'left',
     drawnNumbersPosition: 'right',
     drawMachineSizeRatio: 0.5,
+    drawButtonPosition: 'bottom',
+    drawButtonSize: 'large',
     showDrawnNumbers: true,
     confettiEnabled: true,
     confettiParticleCount: 150,
