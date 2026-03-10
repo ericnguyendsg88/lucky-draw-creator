@@ -1658,6 +1658,38 @@ function StepDrawLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                         </div>
                     );
                 })()}
+
+                {/* ── Draw Button preview ── */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: isRow ? 12 : 'auto',
+                    top: !isRow ? 'auto' : 'auto',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 15,
+                    ...(isRow ? { bottom: 12 } : {
+                        // In vertical mode, place between machine and numbers
+                    }),
+                }}>
+                    <div style={{
+                        padding: '6px 20px',
+                        borderRadius: cfg.btnBorderRadius ?? 16,
+                        background: cfg.btnBgColor || '#3b82f6',
+                        color: cfg.btnTextColor || '#ffffff',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        boxShadow: `0 0 ${(cfg.btnGlowOpacity ?? 50) / 5}px ${cfg.btnBgColor || '#3b82f6'}60, 0 4px 12px rgba(0,0,0,0.3)`,
+                        pointerEvents: 'none',
+                        whiteSpace: 'nowrap',
+                    }}>
+                        <span style={{ fontSize: 13 }}>✨</span>
+                        Bốc Thăm
+                    </div>
+                </div>
             </div>
 
             {/* ── Quick presets ── */}
