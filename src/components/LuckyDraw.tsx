@@ -665,13 +665,19 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           // Arrange: layout + controls based on button position
           const isLayoutRow = isRow;
 
+          // Position controls relative to layout
+          const isButtonRow = btnPos === 'left' || btnPos === 'right';
+          const containerDir = isButtonRow ? 'row' : 'column';
+          const buttonFirst = btnPos === 'top' || btnPos === 'left';
+
           const layoutEl = (() => {
+            const gapSize = btnPos === 'middle' ? (containerDir === 'row' ? 240 : 120) : 24;
             if (isLayoutRow) {
               const first = machineFirst ? slotEl : numbersPanel;
               const second = machineFirst ? numbersPanel : slotEl;
               return (
                 <motion.div style={{
-                  display: 'flex', flexDirection: 'row', gap: 24, width: '100%',
+                  display: 'flex', flexDirection: 'row', gap: gapSize, width: '100%',
                   alignItems: 'stretch', minHeight: 340, flex: 1,
                 }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                   {first}
@@ -689,7 +695,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               return (
                 <motion.div style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  width: '100%', gap: 24, flex: 1,
+                  width: '100%', gap: gapSize, flex: 1,
                 }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                   {machineFirst && slotEl}
                   {btnPos === 'middle' && (
@@ -713,11 +719,6 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               );
             }
           })();
-
-          // Position controls relative to layout
-          const isButtonRow = btnPos === 'left' || btnPos === 'right';
-          const containerDir = isButtonRow ? 'row' : 'column';
-          const buttonFirst = btnPos === 'top' || btnPos === 'left';
 
           return (
             <div style={{
@@ -910,12 +911,13 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           );
 
           // ── Final layout ───────────────────────────────────────────────────
+          const gapSize = btnPos === 'middle' ? (isRow ? 240 : 100) : 24;
           if (isRow) {
             return (
               <motion.div style={{
                 display: 'flex',
                 flexDirection: machineFirst ? 'row' : 'row-reverse',
-                width: '100%', gap: 24, alignItems: 'stretch',
+                width: '100%', gap: gapSize, alignItems: 'stretch',
               }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
                 {slotEl}
                 {btnPos === 'middle' && (
@@ -932,7 +934,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             return (
               <motion.div style={{
                 display: 'flex', flexDirection: machineFirst ? 'column' : 'column-reverse',
-                alignItems: 'stretch', width: '100%', gap: 24,
+                alignItems: 'stretch', width: '100%', gap: gapSize,
               }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
                 {slotEl}
                 {btnPos === 'middle' && (
