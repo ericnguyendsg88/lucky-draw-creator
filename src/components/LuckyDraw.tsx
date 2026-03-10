@@ -586,7 +586,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </div>
           );
 
-          const historyEl = showNumbers && history.length > 0 ? (
+          const historyEl = showNumbers ? (
             <motion.div
               style={{
                 flex: 1, background: 'rgba(20,30,70,0.7)',
@@ -600,7 +600,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                 Các Số Đã Bốc ({history.length} / {maxNumber})
               </div>
               <div className="flex flex-wrap gap-2 justify-center">
-                {history.map((item, i) => {
+                {history.length > 0 ? history.map((item, i) => {
                   const isRecent = i >= history.length - 3;
                   return isRecent ? (
                     <motion.span key={`${item.number}-${i}`} className="history-number"
@@ -615,7 +615,9 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                       {String(item.number).padStart(3, '0')}
                     </span>
                   );
-                })}
+                }) : (
+                  <span className="text-white/30 text-sm italic py-2">Chưa có người trúng thưởng</span>
+                )}
               </div>
             </motion.div>
           ) : null;
@@ -658,7 +660,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             </div>
           );
 
-          const numbersPanel = showNumbers && history.length > 0 ? historyEl : null;
+          const numbersPanel = showNumbers ? historyEl : null;
 
           const btnPos = drawConfig.drawButtonPosition ?? 'bottom';
 
@@ -1002,7 +1004,6 @@ interface HistItem { number: number; cardId: number; sessionRound?: number; }
 
 function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string }) {
   const items = history.filter(h => h.cardId === cardId);
-  if (items.length === 0) return null;
   const colorHex = cardAccentColor || accentColor || '#3b82f6';
 
   return (
@@ -1016,7 +1017,7 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
         Các Số Trúng Thưởng ({items.length})
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
-        {items.map((item, i) => (
+        {items.length > 0 ? items.map((item, i) => (
           <motion.span
             key={i}
             className="history-number"
@@ -1027,7 +1028,9 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
           >
             {String(item.number).padStart(3, '0')}
           </motion.span>
-        ))}
+        )) : (
+          <span className="text-white/30 text-sm italic py-2">Chưa có người trúng thưởng</span>
+        )}
       </div>
     </motion.div>
   );
