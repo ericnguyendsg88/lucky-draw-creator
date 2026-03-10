@@ -660,14 +660,18 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
           const numbersPanel = showNumbers && history.length > 0 ? historyEl : null;
 
+          const btnPos = drawConfig.drawButtonPosition ?? 'bottom';
+
+          // Arrange: layout + controls based on button position
+          const isLayoutRow = isRow;
           const layoutEl = (() => {
-            if (isRow) {
+            if (isLayoutRow) {
               const first = machineFirst ? slotEl : numbersPanel;
               const second = machineFirst ? numbersPanel : slotEl;
               return (
                 <motion.div style={{
                   display: 'flex', flexDirection: 'row', gap: 24, width: '100%',
-                  alignItems: 'stretch', minHeight: 340,
+                  alignItems: 'stretch', minHeight: 340, flex: 1,
                 }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                   {first}
                   {second}
@@ -677,7 +681,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               return (
                 <motion.div style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  width: '100%', gap: 24,
+                  width: '100%', gap: 24, flex: 1,
                 }} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                   {machineFirst && slotEl}
                   {!machineFirst && numbersPanel}
@@ -688,10 +692,22 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             }
           })();
 
+          // Position controls relative to layout
+          const isButtonRow = btnPos === 'left' || btnPos === 'right';
+          const containerDir = isButtonRow ? 'row' : 'column';
+          const buttonFirst = btnPos === 'top' || btnPos === 'left';
+
           return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%' }}>
+            <div style={{
+              display: 'flex',
+              flexDirection: containerDir,
+              alignItems: 'center',
+              gap: 24,
+              width: '100%',
+            }}>
+              {buttonFirst && controlsEl}
               {layoutEl}
-              {controlsEl}
+              {!buttonFirst && controlsEl}
             </div>
           );
         })()}
