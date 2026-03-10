@@ -783,16 +783,22 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           ) : null;
 
           // ── Draw action button ─────────────────────────────────────────────
+          const focusBtnSizeCls = (drawConfig.drawButtonSize ?? 'large') === 'small'
+            ? 'min-w-[120px] px-3 py-2 text-sm'
+            : (drawConfig.drawButtonSize ?? 'large') === 'medium'
+              ? 'min-w-[160px] px-5 py-3 text-base'
+              : 'min-w-[200px] px-6 py-4 text-base md:text-lg';
+
           const drawBtnEl = isDrawing && !isPaused ? (
             <Button onClick={pauseDraw}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white min-w-[200px] px-6 py-4 text-base md:text-lg"
+              className={`bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white ${focusBtnSizeCls}`}
               size="lg">
               <Pause className="w-5 h-5 mr-2" />
               Tạm Dừng ({currentDrawIndex}/{pendingNumbers.length})
             </Button>
           ) : isPaused ? (
             <Button onClick={resumeDraw}
-              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white min-w-[200px] px-6 py-4 text-base md:text-lg"
+              className={`bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white ${focusBtnSizeCls}`}
               size="lg">
               <Play className="w-5 h-5 mr-2" />
               Tiếp Tục ({currentDrawIndex}/{pendingNumbers.length})
@@ -800,7 +806,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
           ) : (
             <Button onClick={drawNumber}
               disabled={selectedCardId === null || isComplete}
-              className="draw-button text-primary-foreground min-w-[200px] px-6 py-4 text-base md:text-lg"
+              className={`draw-button text-primary-foreground ${focusBtnSizeCls}`}
               size="lg">
               <Sparkles className="w-5 h-5 mr-2" />
               {getButtonText()}
