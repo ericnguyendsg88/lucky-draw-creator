@@ -1659,36 +1659,89 @@ function StepDrawLayout({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     );
                 })()}
 
-                {/* ── Draw Button preview ── */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: isRow ? 12 : 'auto',
-                    top: !isRow ? 'auto' : 'auto',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 15,
-                    ...(isRow ? { bottom: 12 } : {
-                        // In vertical mode, place between machine and numbers
-                    }),
-                }}>
-                    <div style={{
-                        padding: '6px 20px',
-                        borderRadius: cfg.btnBorderRadius ?? 16,
-                        background: cfg.btnBgColor || '#3b82f6',
-                        color: cfg.btnTextColor || '#ffffff',
-                        fontSize: 11,
-                        fontWeight: 700,
-                        fontFamily: `'${cfg.fontFamily}', sans-serif`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        boxShadow: `0 0 ${(cfg.btnGlowOpacity ?? 50) / 5}px ${cfg.btnBgColor || '#3b82f6'}60, 0 4px 12px rgba(0,0,0,0.3)`,
-                        pointerEvents: 'none',
-                        whiteSpace: 'nowrap',
-                    }}>
-                        <span style={{ fontSize: 13 }}>✨</span>
-                        Bốc Thăm
-                    </div>
+                {/* ── Draw Button preview (positioned based on config) ── */}
+                {(() => {
+                    const btnPos = cfg.drawButtonPosition ?? 'bottom';
+                    const btnSize = cfg.drawButtonSize ?? 'large';
+                    const sizePx = btnSize === 'small' ? { px: '4px 12px', fs: 9 } : btnSize === 'medium' ? { px: '5px 16px', fs: 10 } : { px: '6px 20px', fs: 11 };
+                    const posStyle: React.CSSProperties = {
+                        position: 'absolute', zIndex: 15, pointerEvents: 'none',
+                    };
+                    if (btnPos === 'bottom') { posStyle.bottom = 10; posStyle.left = '50%'; posStyle.transform = 'translateX(-50%)'; }
+                    else if (btnPos === 'top') { posStyle.top = 10; posStyle.left = '50%'; posStyle.transform = 'translateX(-50%)'; }
+                    else if (btnPos === 'left') { posStyle.left = 10; posStyle.top = '50%'; posStyle.transform = 'translateY(-50%)'; }
+                    else { posStyle.right = 10; posStyle.top = '50%'; posStyle.transform = 'translateY(-50%)'; }
+                    return (
+                        <div style={posStyle}>
+                            <div style={{
+                                padding: sizePx.px,
+                                borderRadius: cfg.btnBorderRadius ?? 16,
+                                background: cfg.btnBgColor || '#3b82f6',
+                                color: cfg.btnTextColor || '#ffffff',
+                                fontSize: sizePx.fs,
+                                fontWeight: 700,
+                                fontFamily: `'${cfg.fontFamily}', sans-serif`,
+                                display: 'flex', alignItems: 'center', gap: 5,
+                                boxShadow: `0 0 ${(cfg.btnGlowOpacity ?? 50) / 5}px ${cfg.btnBgColor || '#3b82f6'}60, 0 4px 12px rgba(0,0,0,0.3)`,
+                                whiteSpace: 'nowrap',
+                            }}>
+                                <span style={{ fontSize: sizePx.fs + 2 }}>✨</span>
+                                Bốc Thăm
+                            </div>
+                        </div>
+                    );
+                })()}
+            </div>
+
+            {/* ── Button Position & Size controls ── */}
+            <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 8, textAlign: 'center', fontWeight: 600 }}>
+                    Vị trí & Kích thước nút Bốc Thăm
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                    {([
+                        { pos: 'top', label: '⬆ Trên' },
+                        { pos: 'bottom', label: '⬇ Dưới' },
+                        { pos: 'left', label: '⬅ Trái' },
+                        { pos: 'right', label: '➡ Phải' },
+                    ] as { pos: 'top' | 'bottom' | 'left' | 'right'; label: string }[]).map(({ pos, label }) => {
+                        const active = (cfg.drawButtonPosition ?? 'bottom') === pos;
+                        return (
+                            <button
+                                key={pos} type="button"
+                                onClick={() => onChange({ drawButtonPosition: pos })}
+                                style={{
+                                    padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600,
+                                    border: active ? '1.5px solid rgba(96,165,250,0.8)' : '1px solid rgba(255,255,255,0.1)',
+                                    background: active ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.03)',
+                                    color: active ? 'rgba(147,197,253,1)' : 'rgba(255,255,255,0.5)',
+                                    cursor: 'pointer', transition: 'all 0.12s',
+                                }}
+                            >{label}</button>
+                        );
+                    })}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
+                    {([
+                        { size: 'small', label: 'Nhỏ' },
+                        { size: 'medium', label: 'Vừa' },
+                        { size: 'large', label: 'Lớn' },
+                    ] as { size: 'small' | 'medium' | 'large'; label: string }[]).map(({ size, label }) => {
+                        const active = (cfg.drawButtonSize ?? 'large') === size;
+                        return (
+                            <button
+                                key={size} type="button"
+                                onClick={() => onChange({ drawButtonSize: size })}
+                                style={{
+                                    padding: '5px 14px', borderRadius: 7, fontSize: 11, fontWeight: 600,
+                                    border: active ? '1.5px solid rgba(96,165,250,0.8)' : '1px solid rgba(255,255,255,0.1)',
+                                    background: active ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.03)',
+                                    color: active ? 'rgba(147,197,253,1)' : 'rgba(255,255,255,0.5)',
+                                    cursor: 'pointer', transition: 'all 0.12s',
+                                }}
+                            >{label}</button>
+                        );
+                    })}
                 </div>
             </div>
 
