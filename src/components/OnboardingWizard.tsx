@@ -1839,7 +1839,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     };
 
     const goToStep = (i: number) => {
-        if (i <= step) {
+        if (isAdjusting || i <= step) {
             setDirection(i < step ? -1 : 1);
             setStep(i);
         }
@@ -1915,7 +1915,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 </div>
 
                 <div className="onb-footer">
-                    <button type="button" onClick={back} className={`onb-btn-back ${step === 0 ? "invisible" : ""}`}>
+                    <button type="button" onClick={back} className={`onb-btn-back ${step === 0 ? 'invisible' : ''}`}>
                         <ChevronLeft size={18} /> Quay Lại
                     </button>
 
@@ -1963,13 +1963,38 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         </button>
                     )}
 
-                    <button type="button" onClick={next} className="onb-btn-next">
-                        {step < totalSteps - 1 ? (
-                            <><span>Tiếp Theo</span> <ChevronRight size={18} /></>
-                        ) : (
-                            <><Zap size={16} /> <span>Bắt Đầu Bốc Thăm!</span></>
-                        )}
-                    </button>
+                    {/* When adjusting: Save & Close button always visible */}
+                    {isAdjusting && (
+                        <button
+                            type="button"
+                            onClick={() => finalize(cfg)}
+                            style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6,
+                                padding: '9px 18px', borderRadius: 10,
+                                background: 'linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25))',
+                                border: '1.5px solid rgba(34,197,94,0.5)',
+                                color: 'rgba(134,239,172,1)',
+                                fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                transition: 'all 0.15s',
+                            }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34,197,94,0.4), rgba(16,185,129,0.4))'; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25))'; }}
+                            title="Lưu cấu hình và đóng"
+                        >
+                            <Check size={15} /> Lưu & Đóng
+                        </button>
+                    )}
+
+                    {/* Next / Start button (hidden when adjusting on last step – replaced by Save & Close) */}
+                    {(!isAdjusting || step < totalSteps - 1) && (
+                        <button type="button" onClick={next} className="onb-btn-next">
+                            {step < totalSteps - 1 ? (
+                                <><span>Tiếp Theo</span> <ChevronRight size={18} /></>
+                            ) : (
+                                <><Zap size={16} /> <span>Bắt Đầu Bốc Thăm!</span></>
+                            )}
+                        </button>
+                    )}
                 </div>
 
                 {/* Preview Dialog – card layout or draw layout depending on step */}
