@@ -387,7 +387,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
     continueDrawing(numbersToAdd, 0, selectedCardId);
-  }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, maxNumber, prizeCards]);
+  }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, totalPool, prizeCards, drawConfig]);
 
   // Free draw mode: draw number(s) with no prize card
   const freeDrawNumber = useCallback(() => {
