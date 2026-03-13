@@ -608,7 +608,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                       style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
                       initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.2 }}>
-                      {String(item.number).padStart(3, '0')}
+                      {formatTicket(item.number, drawConfig)}
                     </motion.span>
                   ) : (
                     <span key={`${item.number}-${i}`} className="history-number"
