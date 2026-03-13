@@ -378,8 +378,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     const numbersToAdd: number[] = [];
     const newDrawnNumbers = new Set(drawnNumbers);
     for (let i = 0; i < batchSize; i++) {
-      let n: number;
-      do { n = Math.floor(Math.random() * maxNumber) + 1; } while (newDrawnNumbers.has(n));
+      const n = generateRandomTicket(drawConfig, newDrawnNumbers);
+      numbersToAdd.push(n);
       numbersToAdd.push(n);
       newDrawnNumbers.add(n);
     }
