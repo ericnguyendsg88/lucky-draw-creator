@@ -806,6 +806,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               history={history} cardId={selectedCardId}
               accentColor={drawConfig.accentColor}
               cardAccentColor={currentCard.accentColor}
+              drawConfig={drawConfig}
             />
           ) : null;
 
