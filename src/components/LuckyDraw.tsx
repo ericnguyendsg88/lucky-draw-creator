@@ -597,7 +597,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             >
               <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
-                Các Số Đã Bốc ({history.length} / {maxNumber})
+                Các Số Đã Bốc ({history.length} / {totalPool})
               </div>
               <div className="flex flex-wrap gap-2 justify-center">
                 {history.length > 0 ? history.map((item, i) => {
