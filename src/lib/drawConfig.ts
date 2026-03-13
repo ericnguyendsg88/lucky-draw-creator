@@ -15,9 +15,18 @@ export interface PrizeCardConfig {
     colSpan?: 1 | 2;     // grid column span on home screen (1=normal, 2=wide)
 }
 
+export interface AlphaPrefix {
+    prefix: string;
+    rangeStart: number;
+    rangeEnd: number;
+}
+
 export interface DrawConfig {
     drawTitle: string;       // display title for the draw
     maxNumber: number;       // highest ticket number
+    minNumber: number;       // lowest ticket number (default 1)
+    drawMode: 'numeric' | 'alphanumeric'; // ticket format mode
+    alphaPrefixes: AlphaPrefix[];         // prefix definitions for alpha mode
     prizeCards: PrizeCardConfig[];
     // free draw mode settings
     freeDrawSeconds: number;      // spin duration for free draw mode (seconds)
