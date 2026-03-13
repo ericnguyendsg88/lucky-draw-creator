@@ -397,14 +397,13 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     setIsDrawing(true);
     setIsPaused(false);
 
-    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, maxNumber - drawnNumbers.size);
+    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, totalPool - drawnNumbers.size);
     const spinMs = (drawConfig.freeDrawSeconds ?? 3) * 1000;
     const newDrawn = new Set(drawnNumbers);
     const numbersToAdd: number[] = [];
 
     for (let i = 0; i < batchSize; i++) {
-      let n: number;
-      do { n = Math.floor(Math.random() * maxNumber) + 1; } while (newDrawn.has(n));
+      const n = generateRandomTicket(drawConfig, newDrawn);
       numbersToAdd.push(n);
       newDrawn.add(n);
     }
