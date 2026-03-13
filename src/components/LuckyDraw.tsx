@@ -795,6 +795,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <NumberDisplay
                 number={currentNumber} isDrawing={isSpinning}
                 selectedPlace={null} isComplete={!isDrawing}
+                drawConfig={drawConfig}
               />
             </div>
           );
