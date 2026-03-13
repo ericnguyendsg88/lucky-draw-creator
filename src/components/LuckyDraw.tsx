@@ -17,6 +17,7 @@ import {
 } from "./ui/dropdown-menu";
 import { soundManager, SoundPack } from "@/lib/sounds";
 import { DrawConfig, PrizeCardConfig, loadCustomFont, registerCustomFont } from "@/lib/drawConfig";
+import { getPoolSize, formatTicket, generateRandomTicket } from "@/lib/ticketPool";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
