@@ -632,11 +632,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <Button
                 onClick={freeDrawNumber}
-                disabled={isDrawing || drawnNumbers.size >= maxNumber}
+                disabled={isDrawing || drawnNumbers.size >= totalPool}
                 className={`draw-button text-primary-foreground ${btnSizeCls}`}
                 size="lg">
                 <Sparkles className="w-7 h-7 mr-3" />
-                {isDrawing ? 'Đang quay...' : drawnNumbers.size >= maxNumber ? 'Đã hết số!' : 'Bốc Thăm'}
+                {isDrawing ? 'Đang quay...' : drawnNumbers.size >= totalPool ? 'Đã hết số!' : 'Bốc Thăm'}
               </Button>
               {history.length > 0 && (
                 <AlertDialog>
