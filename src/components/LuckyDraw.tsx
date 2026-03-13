@@ -1004,7 +1004,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
 interface HistItem { number: number; cardId: number; sessionRound?: number; }
 
-function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string }) {
+function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor, drawConfig }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string; drawConfig?: DrawConfig }) {
   const items = history.filter(h => h.cardId === cardId);
   const colorHex = cardAccentColor || accentColor || '#3b82f6';
 
@@ -1028,7 +1028,7 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
           >
-            {String(item.number).padStart(3, '0')}
+            {drawConfig ? formatTicket(item.number, drawConfig) : String(item.number).padStart(3, '0')}
           </motion.span>
         )) : (
           <span className="text-white/30 text-sm italic py-2">Chưa có người trúng thưởng</span>
