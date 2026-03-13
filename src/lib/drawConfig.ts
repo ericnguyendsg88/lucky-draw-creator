@@ -304,6 +304,9 @@ export const COMMON_EMOJIS = [
 export const DEFAULT_CONFIG: DrawConfig = {
     drawTitle: 'LUCKY DRAW',
     maxNumber: 250,
+    minNumber: 1,
+    drawMode: 'numeric',
+    alphaPrefixes: [{ prefix: 'A', rangeStart: 1, rangeEnd: 99 }],
     prizeCards: DEFAULT_PRIZE_CARDS,
     freeDrawSeconds: 3,
     freeDrawBatchSize: 1,
