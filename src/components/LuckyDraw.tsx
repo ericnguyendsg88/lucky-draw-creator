@@ -392,8 +392,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   // Free draw mode: draw number(s) with no prize card
   const freeDrawNumber = useCallback(() => {
     if (isDrawing) return;
-    if (drawnNumbers.size >= maxNumber) return;
-
+    if (drawnNumbers.size >= totalPool) return;
     soundManager.playClick();
     setIsDrawing(true);
     setIsPaused(false);
