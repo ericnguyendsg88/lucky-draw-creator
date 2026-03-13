@@ -423,7 +423,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
       }, delay);
       drawTimeoutsRef.current.push(timeout);
     });
-  }, [isDrawing, drawnNumbers, maxNumber, drawConfig.freeDrawSeconds, drawConfig.freeDrawBatchSize]);
+  }, [isDrawing, drawnNumbers, totalPool, drawConfig]);
 
   const handleCardClick = (cardId: number) => {
     if (!isDrawing) {
