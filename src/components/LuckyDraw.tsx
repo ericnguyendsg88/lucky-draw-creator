@@ -182,6 +182,7 @@ interface LuckyDrawProps {
 
 export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   const { prizeCards, maxNumber } = drawConfig;
+  const totalPool = getPoolSize(drawConfig);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [prizes, setPrizes] = useState<Record<number, PrizeState>>(() => buildInitialPrizes(prizeCards));
