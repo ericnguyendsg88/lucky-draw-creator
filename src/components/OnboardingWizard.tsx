@@ -448,13 +448,109 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                 </button>
             )}
 
-            <div className="onb-field-group onb-max-number">
-                <label className="onb-label">Số phiếu tối đa <span className="onb-required">*</span></label>
-
-                <input type="number" min={1} max={9999} value={cfg.maxNumber}
-                    onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), 1, 9999) })}
-                    className="onb-input onb-input-max" placeholder="VD: 250" />
+            {/* ── Draw Range Mode ── */}
+            <div className="onb-field-group" style={{ marginTop: 16 }}>
+                <label className="onb-label" style={{ marginBottom: 8 }}>Chế độ phiếu</label>
+                <div style={{ display: 'flex', gap: 8 }}>
+                    {(['numeric', 'alphanumeric'] as const).map(mode => (
+                        <button key={mode} type="button"
+                            onClick={() => onChange({ drawMode: mode })}
+                            style={{
+                                flex: 1, padding: '10px 12px', borderRadius: 10,
+                                background: (cfg.drawMode || 'numeric') === mode ? 'rgba(var(--accent-color-hex, 59,130,246), 0.3)' : 'rgba(255,255,255,0.06)',
+                                border: (cfg.drawMode || 'numeric') === mode ? '2px solid var(--accent-color-hex, #3b82f6)' : '1px solid rgba(255,255,255,0.15)',
+                                color: 'white', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                                transition: 'all 0.2s',
+                            }}>
+                            {mode === 'numeric' ? '🔢 Số (001–999)' : '🔤 Chữ+Số (A01–Z99)'}
+                        </button>
+                    ))}
+                </div>
             </div>
+
+            {(cfg.drawMode || 'numeric') === 'numeric' ? (
+                <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                    <div className="onb-field-group" style={{ flex: 1 }}>
+                        <label className="onb-label">Số bắt đầu</label>
+                        <input type="number" min={1} max={999} value={cfg.minNumber ?? 1}
+                            onChange={e => onChange({ minNumber: clamp(Number(e.target.value), 1, cfg.maxNumber || 999) })}
+                            className="onb-input onb-input-max" placeholder="1" />
+                    </div>
+                    <div className="onb-field-group" style={{ flex: 1 }}>
+                        <label className="onb-label">Số kết thúc</label>
+                        <input type="number" min={cfg.minNumber ?? 1} max={999} value={cfg.maxNumber}
+                            onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), cfg.minNumber ?? 1, 999) })}
+                            className="onb-input onb-input-max" placeholder="250" />
+                    </div>
+                </div>
+            ) : (
+                <div style={{ marginTop: 12 }}>
+                    <label className="onb-label" style={{ marginBottom: 8 }}>Nhóm phiếu (prefix)</label>
+                    {(cfg.alphaPrefixes ?? [{ prefix: 'A', rangeStart: 1, rangeEnd: 99 }]).map((ap, idx) => (
+                        <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+                            <input type="text" maxLength={2} value={ap.prefix}
+                                onChange={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [{ prefix: 'A', rangeStart: 1, rangeEnd: 99 }])];
+                                    prefixes[idx] = { ...prefixes[idx], prefix: e.target.value.toUpperCase() };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                style={{
+                                    width: 50, padding: '8px 10px', borderRadius: 8, fontSize: 15, fontWeight: 700,
+                                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)',
+                                    color: 'white', textAlign: 'center', textTransform: 'uppercase',
+                                }}
+                                placeholder="A" />
+                            <input type="number" min={0} max={99} value={ap.rangeStart}
+                                onChange={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes[idx] = { ...prefixes[idx], rangeStart: clamp(Number(e.target.value), 0, ap.rangeEnd) };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                className="onb-input onb-input-num" style={{ width: 60 }} placeholder="01" />
+                            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>–</span>
+                            <input type="number" min={ap.rangeStart} max={99} value={ap.rangeEnd}
+                                onChange={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value), ap.rangeStart, 99) };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                className="onb-input onb-input-num" style={{ width: 60 }} placeholder="99" />
+                            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                                = {ap.rangeEnd - ap.rangeStart + 1} phiếu
+                            </span>
+                            {(cfg.alphaPrefixes ?? []).length > 1 && (
+                                <button type="button" onClick={() => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes.splice(idx, 1);
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                    style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 6, padding: '4px 8px', color: '#fca5a5', cursor: 'pointer', fontSize: 12 }}>
+                                    <Trash2 size={12} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    {(cfg.alphaPrefixes ?? []).length < 26 && (
+                        <button type="button" onClick={() => {
+                            const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                            const nextChar = String.fromCharCode(65 + prefixes.length); // A, B, C...
+                            prefixes.push({ prefix: nextChar, rangeStart: 1, rangeEnd: 99 });
+                            onChange({ alphaPrefixes: prefixes });
+                        }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px',
+                                background: 'rgba(255,255,255,0.06)', border: '1px dashed rgba(255,255,255,0.2)',
+                                borderRadius: 8, color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 13, width: '100%', justifyContent: 'center',
+                            }}>
+                            <Plus size={14} /> Thêm nhóm
+                        </button>
+                    )}
+                    <div style={{ marginTop: 8, padding: '8px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>
+                        Tổng: {(cfg.alphaPrefixes ?? []).reduce((s, p) => s + (p.rangeEnd - p.rangeStart + 1), 0)} phiếu
+                        {' · '}VD: {(cfg.alphaPrefixes ?? []).slice(0, 2).map(p => `${p.prefix}${String(p.rangeStart).padStart(2, '0')}–${p.prefix}${String(p.rangeEnd).padStart(2, '0')}`).join(', ')}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
