@@ -17,6 +17,7 @@ import {
 } from "./ui/dropdown-menu";
 import { soundManager, SoundPack } from "@/lib/sounds";
 import { DrawConfig, PrizeCardConfig, loadCustomFont, registerCustomFont } from "@/lib/drawConfig";
+import { getPoolSize, formatTicket, generateRandomTicket } from "@/lib/ticketPool";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -181,6 +182,7 @@ interface LuckyDrawProps {
 
 export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   const { prizeCards, maxNumber } = drawConfig;
+  const totalPool = getPoolSize(drawConfig);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [prizes, setPrizes] = useState<Record<number, PrizeState>>(() => buildInitialPrizes(prizeCards));
@@ -376,8 +378,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     const numbersToAdd: number[] = [];
     const newDrawnNumbers = new Set(drawnNumbers);
     for (let i = 0; i < batchSize; i++) {
-      let n: number;
-      do { n = Math.floor(Math.random() * maxNumber) + 1; } while (newDrawnNumbers.has(n));
+      const n = generateRandomTicket(drawConfig, newDrawnNumbers);
+      numbersToAdd.push(n);
       numbersToAdd.push(n);
       newDrawnNumbers.add(n);
     }
@@ -385,25 +387,23 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
     continueDrawing(numbersToAdd, 0, selectedCardId);
-  }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, maxNumber, prizeCards]);
+  }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, totalPool, prizeCards, drawConfig]);
 
   // Free draw mode: draw number(s) with no prize card
   const freeDrawNumber = useCallback(() => {
     if (isDrawing) return;
-    if (drawnNumbers.size >= maxNumber) return;
-
+    if (drawnNumbers.size >= totalPool) return;
     soundManager.playClick();
     setIsDrawing(true);
     setIsPaused(false);
 
-    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, maxNumber - drawnNumbers.size);
+    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, totalPool - drawnNumbers.size);
     const spinMs = (drawConfig.freeDrawSeconds ?? 3) * 1000;
     const newDrawn = new Set(drawnNumbers);
     const numbersToAdd: number[] = [];
 
     for (let i = 0; i < batchSize; i++) {
-      let n: number;
-      do { n = Math.floor(Math.random() * maxNumber) + 1; } while (newDrawn.has(n));
+      const n = generateRandomTicket(drawConfig, newDrawn);
       numbersToAdd.push(n);
       newDrawn.add(n);
     }
@@ -423,7 +423,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
       }, delay);
       drawTimeoutsRef.current.push(timeout);
     });
-  }, [isDrawing, drawnNumbers, maxNumber, drawConfig.freeDrawSeconds, drawConfig.freeDrawBatchSize]);
+  }, [isDrawing, drawnNumbers, totalPool, drawConfig]);
 
   const handleCardClick = (cardId: number) => {
     if (!isDrawing) {
@@ -582,6 +582,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <NumberDisplay
                 number={currentNumber} isDrawing={isSpinning}
                 selectedPlace={null} isComplete={!isDrawing}
+                drawConfig={drawConfig}
               />
             </div>
           );
@@ -597,7 +598,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             >
               <div className="font-display font-bold text-sm mb-3" style={{ color: 'hsl(var(--primary))' }}>
-                Các Số Đã Bốc ({history.length} / {maxNumber})
+                Các Số Đã Bốc ({history.length} / {totalPool})
               </div>
               <div className="flex flex-wrap gap-2 justify-center">
                 {history.length > 0 ? history.map((item, i) => {
@@ -607,12 +608,12 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                       style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}
                       initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.2 }}>
-                      {String(item.number).padStart(3, '0')}
+                      {formatTicket(item.number, drawConfig)}
                     </motion.span>
                   ) : (
                     <span key={`${item.number}-${i}`} className="history-number"
                       style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}>
-                      {String(item.number).padStart(3, '0')}
+                      {formatTicket(item.number, drawConfig)}
                     </span>
                   );
                 }) : (
@@ -632,11 +633,11 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <Button
                 onClick={freeDrawNumber}
-                disabled={isDrawing || drawnNumbers.size >= maxNumber}
+                disabled={isDrawing || drawnNumbers.size >= totalPool}
                 className={`draw-button text-primary-foreground ${btnSizeCls}`}
                 size="lg">
                 <Sparkles className="w-7 h-7 mr-3" />
-                {isDrawing ? 'Đang quay...' : drawnNumbers.size >= maxNumber ? 'Đã hết số!' : 'Bốc Thăm'}
+                {isDrawing ? 'Đang quay...' : drawnNumbers.size >= totalPool ? 'Đã hết số!' : 'Bốc Thăm'}
               </Button>
               {history.length > 0 && (
                 <AlertDialog>
@@ -794,6 +795,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               <NumberDisplay
                 number={currentNumber} isDrawing={isSpinning}
                 selectedPlace={null} isComplete={!isDrawing}
+                drawConfig={drawConfig}
               />
             </div>
           );
@@ -804,6 +806,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
               history={history} cardId={selectedCardId}
               accentColor={drawConfig.accentColor}
               cardAccentColor={currentCard.accentColor}
+              drawConfig={drawConfig}
             />
           ) : null;
 
@@ -1002,7 +1005,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
 interface HistItem { number: number; cardId: number; sessionRound?: number; }
 
-function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string }) {
+function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor, drawConfig }: { history: HistItem[]; cardId: number; accentColor?: string; cardAccentColor?: string; drawConfig?: DrawConfig }) {
   const items = history.filter(h => h.cardId === cardId);
   const colorHex = cardAccentColor || accentColor || '#3b82f6';
 
@@ -1026,7 +1029,7 @@ function PrizeHistoryDyn({ history, cardId, accentColor, cardAccentColor }: { hi
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.03 }}
           >
-            {String(item.number).padStart(3, '0')}
+            {drawConfig ? formatTicket(item.number, drawConfig) : String(item.number).padStart(3, '0')}
           </motion.span>
         )) : (
           <span className="text-white/30 text-sm italic py-2">Chưa có người trúng thưởng</span>

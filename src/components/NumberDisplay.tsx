@@ -1,25 +1,31 @@
 import { useEffect, useState, useRef, memo, useCallback } from "react";
 import { soundManager } from "@/lib/sounds";
+import type { DrawConfig } from "@/lib/drawConfig";
+import { getRandomSpinChar, getSlotDigits } from "@/lib/ticketPool";
 
 interface NumberDisplayProps {
   number: number | null;
   isDrawing: boolean;
   selectedPlace?: 0 | 1 | 2 | 3 | 4 | null;
   isComplete?: boolean;
+  drawConfig?: DrawConfig;
 }
 
-const SlotDigit = memo(({ digit, isDrawing }: { digit: string; isDrawing: boolean }) => {
-  const [displayDigit, setDisplayDigit] = useState<string | number>(digit);
+const SlotDigit = memo(({ digit, isDrawing, drawConfig, position }: { digit: string; isDrawing: boolean; drawConfig?: DrawConfig; position?: number }) => {
+  const [displayDigit, setDisplayDigit] = useState<string>(digit);
   const rafRef = useRef<number>(0);
   const lastTickRef = useRef(0);
 
   useEffect(() => {
     if (isDrawing) {
       const tick = (time: number) => {
-        // Throttle updates to ~66ms (15fps visual) instead of 50ms setInterval
         if (time - lastTickRef.current >= 66) {
           lastTickRef.current = time;
-          setDisplayDigit(Math.floor(Math.random() * 10));
+          if (drawConfig) {
+            setDisplayDigit(getRandomSpinChar(position ?? 0, drawConfig));
+          } else {
+            setDisplayDigit(String(Math.floor(Math.random() * 10)));
+          }
           soundManager.playRolling();
         }
         rafRef.current = requestAnimationFrame(tick);
@@ -36,7 +42,7 @@ const SlotDigit = memo(({ digit, isDrawing }: { digit: string; isDrawing: boolea
       }
       setDisplayDigit(digit);
     }
-  }, [isDrawing, digit]);
+  }, [isDrawing, digit, drawConfig, position]);
 
   return (
     <div className="slot-digit-container">
@@ -51,19 +57,23 @@ const SlotDigit = memo(({ digit, isDrawing }: { digit: string; isDrawing: boolea
 
 SlotDigit.displayName = 'SlotDigit';
 
-export const NumberDisplay = memo(({ number, isDrawing, selectedPlace, isComplete }: NumberDisplayProps) => {
+export const NumberDisplay = memo(({ number, isDrawing, selectedPlace, isComplete, drawConfig }: NumberDisplayProps) => {
   const [displayDigits, setDisplayDigits] = useState<string[]>(["-", "-", "-"]);
 
   const shouldBeSmall = isComplete && (selectedPlace === 3 || selectedPlace === 4);
 
   useEffect(() => {
     if (!isDrawing && number !== null) {
-      const numStr = String(number).padStart(3, "0");
-      setDisplayDigits([numStr[0], numStr[1], numStr[2]]);
+      if (drawConfig) {
+        setDisplayDigits(getSlotDigits(number, drawConfig));
+      } else {
+        const numStr = String(number).padStart(3, "0");
+        setDisplayDigits([numStr[0], numStr[1], numStr[2]]);
+      }
     } else if (!isDrawing && number === null) {
       setDisplayDigits(["-", "-", "-"]);
     }
-  }, [isDrawing, number]);
+  }, [isDrawing, number, drawConfig]);
 
   return (
     <div className={`relative ${shouldBeSmall ? 'scale-75' : ''} transition-transform duration-500`}>
@@ -74,7 +84,7 @@ export const NumberDisplay = memo(({ number, isDrawing, selectedPlace, isComplet
       <div className="slot-machine-container relative z-10">
         <div className="slot-digits-wrapper">
           {displayDigits.map((digit, index) => (
-            <SlotDigit key={`digit-${index}`} digit={digit} isDrawing={isDrawing} />
+            <SlotDigit key={`digit-${index}`} digit={digit} isDrawing={isDrawing} drawConfig={drawConfig} position={index} />
           ))}
         </div>
       </div>
