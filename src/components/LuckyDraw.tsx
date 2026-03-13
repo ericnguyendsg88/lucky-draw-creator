@@ -613,7 +613,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
                   ) : (
                     <span key={`${item.number}-${i}`} className="history-number"
                       style={{ borderColor: 'hsl(var(--primary) / 0.5)' }}>
-                      {String(item.number).padStart(3, '0')}
+                      {formatTicket(item.number, drawConfig)}
                     </span>
                   );
                 }) : (
