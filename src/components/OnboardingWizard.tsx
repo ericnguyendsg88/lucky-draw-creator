@@ -505,7 +505,12 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                             <input type="number" min={0} max={99} value={ap.rangeStart}
                                 onChange={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
-                                    prefixes[idx] = { ...prefixes[idx], rangeStart: clamp(Number(e.target.value), 0, ap.rangeEnd) };
+                                    prefixes[idx] = { ...prefixes[idx], rangeStart: Number(e.target.value) || 0 };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                onBlur={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes[idx] = { ...prefixes[idx], rangeStart: clamp(Number(e.target.value) || 0, 0, Math.max(0, ap.rangeEnd - 1)) };
                                     onChange({ alphaPrefixes: prefixes });
                                 }}
                                 className="onb-input onb-input-num" style={{ width: 60 }} placeholder="01" />
@@ -513,7 +518,12 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                             <input type="number" min={ap.rangeStart} max={99} value={ap.rangeEnd}
                                 onChange={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
-                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value), ap.rangeStart, 99) };
+                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: Number(e.target.value) || 0 };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                onBlur={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value) || 1, Math.max(ap.rangeStart + 1, 1), 99) };
                                     onChange({ alphaPrefixes: prefixes });
                                 }}
                                 className="onb-input onb-input-num" style={{ width: 60 }} placeholder="99" />
