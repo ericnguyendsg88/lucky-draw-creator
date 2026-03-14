@@ -472,14 +472,16 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                 <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
                     <div className="onb-field-group" style={{ flex: 1 }}>
                         <label className="onb-label">Số bắt đầu</label>
-                        <input type="number" min={1} max={999} value={cfg.minNumber ?? 1}
-                            onChange={e => onChange({ minNumber: clamp(Number(e.target.value), 1, cfg.maxNumber || 999) })}
+                        <input type="number" min={1} max={9999} value={cfg.minNumber ?? 1}
+                            onChange={e => onChange({ minNumber: Number(e.target.value) || 0 })}
+                            onBlur={e => onChange({ minNumber: clamp(Number(e.target.value) || 1, 1, Math.max(1, (cfg.maxNumber ?? 999) - 1)) })}
                             className="onb-input onb-input-max" placeholder="1" />
                     </div>
                     <div className="onb-field-group" style={{ flex: 1 }}>
                         <label className="onb-label">Số kết thúc</label>
-                        <input type="number" min={cfg.minNumber ?? 1} max={999} value={cfg.maxNumber}
-                            onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), cfg.minNumber ?? 1, 999) })}
+                        <input type="number" min={1} max={9999} value={cfg.maxNumber}
+                            onChange={e => onChange({ maxNumber: Number(e.target.value) || 0 })}
+                            onBlur={e => onChange({ maxNumber: clamp(Number(e.target.value) || 250, Math.max((cfg.minNumber ?? 1) + 1, 2), 9999) })}
                             className="onb-input onb-input-max" placeholder="250" />
                     </div>
                 </div>
@@ -503,7 +505,12 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                             <input type="number" min={0} max={99} value={ap.rangeStart}
                                 onChange={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
-                                    prefixes[idx] = { ...prefixes[idx], rangeStart: clamp(Number(e.target.value), 0, ap.rangeEnd) };
+                                    prefixes[idx] = { ...prefixes[idx], rangeStart: Number(e.target.value) || 0 };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                onBlur={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes[idx] = { ...prefixes[idx], rangeStart: clamp(Number(e.target.value) || 0, 0, Math.max(0, ap.rangeEnd - 1)) };
                                     onChange({ alphaPrefixes: prefixes });
                                 }}
                                 className="onb-input onb-input-num" style={{ width: 60 }} placeholder="01" />
@@ -511,7 +518,12 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                             <input type="number" min={ap.rangeStart} max={99} value={ap.rangeEnd}
                                 onChange={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
-                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value), ap.rangeStart, 99) };
+                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: Number(e.target.value) || 0 };
+                                    onChange({ alphaPrefixes: prefixes });
+                                }}
+                                onBlur={e => {
+                                    const prefixes = [...(cfg.alphaPrefixes ?? [])];
+                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value) || 1, Math.max(ap.rangeStart + 1, 1), 99) };
                                     onChange({ alphaPrefixes: prefixes });
                                 }}
                                 className="onb-input onb-input-num" style={{ width: 60 }} placeholder="99" />
