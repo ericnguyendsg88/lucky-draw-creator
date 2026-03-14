@@ -472,14 +472,16 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                 <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
                     <div className="onb-field-group" style={{ flex: 1 }}>
                         <label className="onb-label">Số bắt đầu</label>
-                        <input type="number" min={1} max={999} value={cfg.minNumber ?? 1}
-                            onChange={e => onChange({ minNumber: clamp(Number(e.target.value), 1, cfg.maxNumber || 999) })}
+                        <input type="number" min={1} max={9999} value={cfg.minNumber ?? 1}
+                            onChange={e => onChange({ minNumber: Number(e.target.value) || 0 })}
+                            onBlur={e => onChange({ minNumber: clamp(Number(e.target.value) || 1, 1, Math.max(1, (cfg.maxNumber ?? 999) - 1)) })}
                             className="onb-input onb-input-max" placeholder="1" />
                     </div>
                     <div className="onb-field-group" style={{ flex: 1 }}>
                         <label className="onb-label">Số kết thúc</label>
-                        <input type="number" min={cfg.minNumber ?? 1} max={999} value={cfg.maxNumber}
-                            onChange={e => onChange({ maxNumber: clamp(Number(e.target.value), cfg.minNumber ?? 1, 999) })}
+                        <input type="number" min={1} max={9999} value={cfg.maxNumber}
+                            onChange={e => onChange({ maxNumber: Number(e.target.value) || 0 })}
+                            onBlur={e => onChange({ maxNumber: clamp(Number(e.target.value) || 250, Math.max((cfg.minNumber ?? 1) + 1, 2), 9999) })}
                             className="onb-input onb-input-max" placeholder="250" />
                     </div>
                 </div>
