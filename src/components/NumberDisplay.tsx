@@ -58,7 +58,7 @@ const SlotDigit = memo(({ digit, isDrawing, drawConfig, position }: { digit: str
 SlotDigit.displayName = 'SlotDigit';
 
 export const NumberDisplay = memo(({ number, isDrawing, selectedPlace, isComplete, drawConfig }: NumberDisplayProps) => {
-  const [displayDigits, setDisplayDigits] = useState<string[]>(["-", "-", "-"]);
+  const [displayDigits, setDisplayDigits] = useState<string[]>([]);
 
   const shouldBeSmall = isComplete && (selectedPlace === 3 || selectedPlace === 4);
 
@@ -71,9 +71,20 @@ export const NumberDisplay = memo(({ number, isDrawing, selectedPlace, isComplet
         setDisplayDigits([numStr[0], numStr[1], numStr[2]]);
       }
     } else if (!isDrawing && number === null) {
-      setDisplayDigits(["-", "-", "-"]);
+      if (drawConfig) {
+        setDisplayDigits(getSlotDigits(null, drawConfig));
+      } else {
+        setDisplayDigits(["-", "-", "-"]);
+      }
+    } else if (isDrawing && displayDigits.length === 0) {
+       // initialize correctly during draw if empty
+       if (drawConfig) {
+         setDisplayDigits(getSlotDigits(null, drawConfig));
+       } else {
+         setDisplayDigits(["-", "-", "-"]);
+       }
     }
-  }, [isDrawing, number, drawConfig]);
+  }, [isDrawing, number, drawConfig, displayDigits.length]);
 
   return (
     <div className={`relative ${shouldBeSmall ? 'scale-75' : ''} transition-transform duration-500`}>

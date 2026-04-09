@@ -192,6 +192,8 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   const [isPaused, setIsPaused] = useState(false);
   const [history, setHistory] = useState<DrawnNumber[]>([]);
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
+  // Ref mirrors drawnNumbers but is always synchronously current (state updates are async)
+  const drawnNumbersRef = useRef<Set<number>>(new Set());
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [drawCounts, setDrawCounts] = useState<Record<number, number>>(() => {
@@ -376,38 +378,42 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     const batchSize = Math.min(card.drawsPerSession, prizeState.remaining);
 
     const numbersToAdd: number[] = [];
-    const newDrawnNumbers = new Set(drawnNumbers);
+    // Always read from ref (synchronously current) to prevent duplicates
+    const snapshot = new Set(drawnNumbersRef.current);
     for (let i = 0; i < batchSize; i++) {
-      const n = generateRandomTicket(drawConfig, newDrawnNumbers);
+      const n = generateRandomTicket(drawConfig, snapshot);
       numbersToAdd.push(n);
-      numbersToAdd.push(n);
-      newDrawnNumbers.add(n);
+      snapshot.add(n);
     }
-    setDrawnNumbers(newDrawnNumbers);
+    // Update ref immediately (sync), state for UI re-render
+    drawnNumbersRef.current = snapshot;
+    setDrawnNumbers(new Set(snapshot));
     setPendingNumbers(numbersToAdd);
     setCurrentDrawIndex(0);
     continueDrawing(numbersToAdd, 0, selectedCardId);
-  }, [isDrawing, drawnNumbers, selectedCardId, prizes, drawCounts, totalPool, prizeCards, drawConfig]);
+  }, [isDrawing, selectedCardId, prizes, drawCounts, totalPool, prizeCards, drawConfig]);
 
   // Free draw mode: draw number(s) with no prize card
   const freeDrawNumber = useCallback(() => {
     if (isDrawing) return;
-    if (drawnNumbers.size >= totalPool) return;
+    if (drawnNumbersRef.current.size >= totalPool) return;
     soundManager.playClick();
     setIsDrawing(true);
     setIsPaused(false);
 
-    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, totalPool - drawnNumbers.size);
+    const batchSize = Math.min(drawConfig.freeDrawBatchSize ?? 1, totalPool - drawnNumbersRef.current.size);
     const spinMs = (drawConfig.freeDrawSeconds ?? 3) * 1000;
-    const newDrawn = new Set(drawnNumbers);
+    // Use ref for synchronous accuracy
+    const snapshot = new Set(drawnNumbersRef.current);
     const numbersToAdd: number[] = [];
 
     for (let i = 0; i < batchSize; i++) {
-      const n = generateRandomTicket(drawConfig, newDrawn);
+      const n = generateRandomTicket(drawConfig, snapshot);
       numbersToAdd.push(n);
-      newDrawn.add(n);
+      snapshot.add(n);
     }
-    setDrawnNumbers(newDrawn);
+    drawnNumbersRef.current = snapshot;
+    setDrawnNumbers(new Set(snapshot));
     setIsSpinning(true);
 
     // Reveal numbers sequentially
@@ -423,7 +429,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
       }, delay);
       drawTimeoutsRef.current.push(timeout);
     });
-  }, [isDrawing, drawnNumbers, totalPool, drawConfig]);
+  }, [isDrawing, totalPool, drawConfig]);
 
   const handleCardClick = (cardId: number) => {
     if (!isDrawing) {
@@ -443,6 +449,7 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
     setPrizes(buildInitialPrizes(prizeCards));
     setCurrentNumber(null);
     setHistory([]);
+    drawnNumbersRef.current = new Set();
     setDrawnNumbers(new Set());
     setSelectedCardId(null);
     setIsFocusMode(false);
@@ -456,11 +463,9 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
   const resetCard = (cardId: number) => {
     soundManager.playClick();
     const numbersToRemove = history.filter(h => h.cardId === cardId).map(h => h.number);
-    setDrawnNumbers(prev => {
-      const s = new Set(prev);
-      numbersToRemove.forEach(n => s.delete(n));
-      return s;
-    });
+    // Update ref first (sync), then state
+    numbersToRemove.forEach(n => drawnNumbersRef.current.delete(n));
+    setDrawnNumbers(new Set(drawnNumbersRef.current));
     setHistory(prev => prev.filter(h => h.cardId !== cardId));
     setPrizes(prev => ({
       ...prev,
@@ -631,14 +636,24 @@ export const LuckyDraw = ({ drawConfig }: LuckyDrawProps) => {
 
           const controlsEl = (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-              <Button
-                onClick={freeDrawNumber}
-                disabled={isDrawing || drawnNumbers.size >= totalPool}
-                className={`draw-button text-primary-foreground ${btnSizeCls}`}
-                size="lg">
-                <Sparkles className="w-7 h-7 mr-3" />
-                {isDrawing ? 'Đang quay...' : drawnNumbers.size >= totalPool ? 'Đã hết số!' : 'Bốc Thăm'}
-              </Button>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+                <Button
+                  onClick={freeDrawNumber}
+                  disabled={isDrawing || drawnNumbersRef.current.size >= totalPool}
+                  className={`draw-button text-primary-foreground ${btnSizeCls}`}
+                  size="lg">
+                  <Sparkles className="w-7 h-7 mr-3" />
+                  {isDrawing ? 'Đang quay...' : drawnNumbers.size >= totalPool ? 'Đã hết số!' : 'Bốc Thăm'}
+                </Button>
+                <Button
+                  onClick={() => setCurrentNumber(null)}
+                  disabled={isDrawing}
+                  variant="outline"
+                  className={btnSizeCls}
+                  size="lg">
+                  ---
+                </Button>
+              </div>
               {history.length > 0 && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>

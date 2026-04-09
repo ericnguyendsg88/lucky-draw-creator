@@ -20,8 +20,9 @@ export function buildTicketPool(config: DrawConfig): string[] {
     for (const p of config.alphaPrefixes) {
       const start = p.rangeStart ?? 1;
       const end = p.rangeEnd ?? 99;
+      const padLen = Math.max(2, String(end).length);
       for (let i = start; i <= end; i++) {
-        pool.push(p.prefix + String(i).padStart(2, '0'));
+        pool.push(p.prefix + String(i).padStart(padLen, '0'));
       }
     }
     return pool;
@@ -78,14 +79,26 @@ export function generateRandomTicket(config: DrawConfig, drawnSet: Set<number>):
 
 /**
  * Get the digits/characters to display on the slot machine for a ticket.
- * Always returns exactly 3 characters.
+ * Always returns exactly the number of digits needed (3 or 4)
  */
 export function getSlotDigits(internalNum: number | null, config: DrawConfig): string[] {
-  if (internalNum === null) return ['-', '-', '-'];
+  const isAlpha = config.drawMode === 'alphanumeric';
+  
+  // Predict max length
+  let maxLen = 3;
+  if (isAlpha && config.alphaPrefixes?.length) {
+    const maxEnd = Math.max(...config.alphaPrefixes.map(p => p.rangeEnd ?? 99));
+    const padLen = Math.max(2, String(maxEnd).length);
+    const prefixLen = Math.max(...config.alphaPrefixes.map(p => p.prefix?.length ?? 1));
+    maxLen = padLen + prefixLen;
+  }
+  
+  if (internalNum === null) return Array(maxLen).fill('-');
   const label = formatTicket(internalNum, config);
-  // Pad or trim to 3 characters
-  const padded = label.padStart(3, ' ').slice(-3);
-  return [padded[0], padded[1], padded[2]];
+  
+  // Pad or trim
+  const padded = label.padStart(maxLen, ' ').slice(-maxLen);
+  return padded.split('');
 }
 
 /** Get random characters for slot spinning animation based on mode */

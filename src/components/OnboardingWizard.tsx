@@ -502,7 +502,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     color: 'white', textAlign: 'center', textTransform: 'uppercase',
                                 }}
                                 placeholder="A" />
-                            <input type="number" min={0} max={99} value={ap.rangeStart}
+                            <input type="number" min={0} max={999} value={ap.rangeStart}
                                 onChange={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
                                     prefixes[idx] = { ...prefixes[idx], rangeStart: Number(e.target.value) || 0 };
@@ -513,9 +513,9 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                     prefixes[idx] = { ...prefixes[idx], rangeStart: clamp(Number(e.target.value) || 0, 0, Math.max(0, ap.rangeEnd - 1)) };
                                     onChange({ alphaPrefixes: prefixes });
                                 }}
-                                className="onb-input onb-input-num" style={{ width: 60 }} placeholder="01" />
+                                className="onb-input onb-input-num" style={{ width: 60 }} placeholder="001" />
                             <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>–</span>
-                            <input type="number" min={ap.rangeStart} max={99} value={ap.rangeEnd}
+                            <input type="number" min={ap.rangeStart} max={999} value={ap.rangeEnd}
                                 onChange={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
                                     prefixes[idx] = { ...prefixes[idx], rangeEnd: Number(e.target.value) || 0 };
@@ -523,10 +523,10 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                                 }}
                                 onBlur={e => {
                                     const prefixes = [...(cfg.alphaPrefixes ?? [])];
-                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value) || 1, Math.max(ap.rangeStart + 1, 1), 99) };
+                                    prefixes[idx] = { ...prefixes[idx], rangeEnd: clamp(Number(e.target.value) || 1, Math.max(ap.rangeStart + 1, 1), 999) };
                                     onChange({ alphaPrefixes: prefixes });
                                 }}
-                                className="onb-input onb-input-num" style={{ width: 60 }} placeholder="99" />
+                                className="onb-input onb-input-num" style={{ width: 60 }} placeholder="999" />
                             <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, whiteSpace: 'nowrap' }}>
                                 = {ap.rangeEnd - ap.rangeStart + 1} phiếu
                             </span>
@@ -546,7 +546,7 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                         <button type="button" onClick={() => {
                             const prefixes = [...(cfg.alphaPrefixes ?? [])];
                             const nextChar = String.fromCharCode(65 + prefixes.length); // A, B, C...
-                            prefixes.push({ prefix: nextChar, rangeStart: 1, rangeEnd: 99 });
+                            prefixes.push({ prefix: nextChar, rangeStart: 1, rangeEnd: 999 });
                             onChange({ alphaPrefixes: prefixes });
                         }}
                             style={{
