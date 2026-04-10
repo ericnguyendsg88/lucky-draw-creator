@@ -58,22 +58,34 @@ export function formatTicket(internalNum: number, config: DrawConfig): string {
   return String(internalNum).padStart(3, '0');
 }
 
-/**
- * Generate a random unused ticket number.
- * - Numeric mode: random in [minNumber, maxNumber]
- * - Alphanumeric mode: random in [1, poolSize]
- */
 export function generateRandomTicket(config: DrawConfig, drawnSet: Set<number>): number {
+  const isExcluded = (n: number) => {
+    const formatted = formatTicket(n, config);
+    const unpadded = String(n);
+    const excludes = config.excludedNumbers || [];
+    return excludes.includes(formatted) || excludes.includes(unpadded) || excludes.includes(formatted.trim());
+  };
+
   if (config.drawMode === 'alphanumeric' && config.alphaPrefixes?.length) {
     const poolSize = getPoolSize(config);
     let n: number;
-    do { n = Math.floor(Math.random() * poolSize) + 1; } while (drawnSet.has(n));
+    let attempts = 0;
+    do { 
+      n = Math.floor(Math.random() * poolSize) + 1; 
+      attempts++;
+      if (attempts > 10000) break;
+    } while (drawnSet.has(n) || isExcluded(n));
     return n;
   }
   const min = config.minNumber ?? 1;
   const max = config.maxNumber ?? 250;
   let n: number;
-  do { n = Math.floor(Math.random() * (max - min + 1)) + min; } while (drawnSet.has(n));
+  let attempts = 0;
+  do { 
+    n = Math.floor(Math.random() * (max - min + 1)) + min; 
+    attempts++;
+    if (attempts > 10000) break;
+  } while (drawnSet.has(n) || isExcluded(n));
   return n;
 }
 

@@ -563,6 +563,25 @@ function StepPrizeCards({ cfg, onChange }: { cfg: DrawConfig; onChange: (partial
                     </div>
                 </div>
             )}
+
+            {/* ── Excluded Numbers ── */}
+            <div className="onb-field-group" style={{ marginTop: 16 }}>
+                <label className="onb-label" style={{ marginBottom: 4 }}>Bỏ qua các số (không quay trúng)</label>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>
+                    Nhập các số phiếu, cách nhau bằng dấu phẩy. VD: 004, 13, A05
+                </div>
+                <input
+                    type="text"
+                    defaultValue={(cfg.excludedNumbers || []).join(', ')}
+                    onBlur={e => {
+                        const arr = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                        onChange({ excludedNumbers: arr });
+                        e.target.value = arr.join(', ');
+                    }}
+                    className="onb-input"
+                    placeholder="VD: 4, 13, A05"
+                />
+            </div>
         </div>
     );
 }
