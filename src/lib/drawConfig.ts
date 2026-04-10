@@ -29,6 +29,7 @@ export interface DrawConfig {
     alphaPrefixes: AlphaPrefix[];         // prefix definitions for alpha mode
     prizeCards: PrizeCardConfig[];
     excludedNumbers: string[];            // specific ticket numbers excluded from winning
+    presentedNumbers: string[];           // if non-empty, only these ticket numbers are eligible
     // free draw mode settings
     freeDrawSeconds: number;      // spin duration for free draw mode (seconds)
     freeDrawBatchSize: number;    // how many numbers to draw per click in free draw
@@ -310,6 +311,7 @@ export const DEFAULT_CONFIG: DrawConfig = {
     alphaPrefixes: [{ prefix: 'A', rangeStart: 1, rangeEnd: 99 }],
     prizeCards: DEFAULT_PRIZE_CARDS,
     excludedNumbers: [],
+    presentedNumbers: [],
     freeDrawSeconds: 3,
     freeDrawBatchSize: 1,
     bgWidth: 100,

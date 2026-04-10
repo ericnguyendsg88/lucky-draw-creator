@@ -59,17 +59,31 @@ export function formatTicket(internalNum: number, config: DrawConfig): string {
 }
 
 export function generateRandomTicket(config: DrawConfig, drawnSet: Set<number>): number {
+  const excludes = config.excludedNumbers || [];
+  const whitelist = config.presentedNumbers || [];
+
   const isExcluded = (n: number) => {
     const formatted = formatTicket(n, config);
     const unpadded = String(n);
-    const excludes = config.excludedNumbers || [];
-    return excludes.includes(formatted) || excludes.includes(unpadded) || excludes.includes(formatted.trim());
+    const trimmed = formatted.trim();
+    
+    // Check exclusion list
+    if (excludes.includes(formatted) || excludes.includes(unpadded) || excludes.includes(trimmed)) return true;
+    
+    // If whitelist exists, check if number is NOT in it
+    if (whitelist.length > 0) {
+      if (!whitelist.includes(formatted) && !whitelist.includes(unpadded) && !whitelist.includes(trimmed)) return true;
+    }
+    
+    return false;
   };
 
   if (config.drawMode === 'alphanumeric' && config.alphaPrefixes?.length) {
     const poolSize = getPoolSize(config);
     let n: number;
     let attempts = 0;
+    // Special case: if whitelist is active, we might want to only pick from valid indices
+    // but building the whole pool index map is slow. We'll stick to random selection with isExcluded check for now.
     do { 
       n = Math.floor(Math.random() * poolSize) + 1; 
       attempts++;
